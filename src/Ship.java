@@ -69,8 +69,8 @@ public class Ship implements Explorer{
 		while(r.nextInt(dis+100)> -1 && !(dirx == 0 && diry == 0)){
 			xloc+= dirx;
 			yloc+= diry;
-			if(owner.map.mapTerrain[yloc][xloc] != 0)
-				break;
+//			if(owner.map.mapTerrain[yloc][xloc] != 0)
+//				break;
 			dis++;
 			knowledge.add(yloc*100+xloc);
 			knowledge.add((yloc-1)*100+xloc);

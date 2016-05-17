@@ -115,10 +115,17 @@ public class City {
 		production.put(s, d);
 	}
 	
+	public int getTotalGarrison(){
+		int totalGarrison = 0;
+		for(int i = 0; i<garrison.size(); i++)
+			totalGarrison += garrison.get(i).number;
+		return totalGarrison;
+	}
+	
 
 	public String toString(){
 		String ret = "City Name: " + name + "\nPopulation: " + size + "\nfunding:  " + funding + 
-				"\ngarrison: " + garrison.size() + "\nresources:" + production.size() + "\n";
+				"\ngarrison: " + getTotalGarrison() + "\nresources:" + production.size() + "\n";
 		for(java.util.Map.Entry<String, Double> e : production.entrySet()){
 			ret+= "\t" + e.getKey() + " " + e.getValue() + "%\n";
 		}

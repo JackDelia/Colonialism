@@ -32,7 +32,7 @@ public class Player {
 	}
 	
 	public void foundCity(String name, int lattitude, int longitude){
-		if(map.valid(lattitude,longitude)){
+		if(map.valid(lattitude,longitude) && visible[lattitude][longitude]){
 			City n = new City(name, lattitude, longitude, this, map);
 			cities.add(n);
 			System.out.println("City " + name + " founded.");

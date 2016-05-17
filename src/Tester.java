@@ -1,36 +1,65 @@
+import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 
 public class Tester {
 
 	public static void printMap(Map m, Player p){
+		System.out.print("  ");
+		for(int a = 0; a< 100; a++){
+			System.out.print(a+ " ");
+			if(a < 10)
+				System.out.print(" ");
+		}
+		System.out.println();
 		for(int i = 0; i< 100; i++){
+			System.out.print(i);
+			if(i<10)
+				System.out.print(" ");
 			for(int j = 0; j< 100; j++){
 				if(p.visible[i][j])
-					System.out.print(m.mapTerrain[i][j]);
+					System.out.print(m.mapTerrain[j][i]+ "  ");
 				else
-					System.out.print("?");
+					System.out.print("?  ");
 			}
+			System.out.println();
 			System.out.println();
 		}
 	}
 	public static void main(String[] asdsfafs){
+
+		
 		Scanner s = new Scanner(System.in);
 		int day = 0;
 		int waiting = 0;
 		HashMap<Integer,ArrayList<Integer>> exploration = new HashMap<Integer,ArrayList<Integer>>();
 		HashMap<Integer, ArrayList<Explorer>> explorersOut = new HashMap<Integer, ArrayList<Explorer>>();
-		Map map = new Map();/*
+		Map map = new Map();
+		
+		
+		
+		/*
 		System.out.print("Enter name: ");*/
-		Player p = new Player("Jack", map);/*
+		Player p = new Player("Jack", map);
+		map.player = p;
+		
+		JFrame frame = new JFrame();
+		frame.add(map);
+		frame.setSize(600, 600);
+		frame.setVisible(true);
+		/*
 		System.out.print("Enter city name: ");
 		*/
 		p.ships.add(new Ship(p.yloc,p.xloc,p,1));
 		int input;
 		
 		while(p.cities.size()==0){
+			map.repaint();
 			if(exploration.get(day) != null){
 				System.out.println("Exploration finished");
 				for(Integer returnData : exploration.get(day)){

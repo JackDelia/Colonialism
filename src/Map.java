@@ -1,11 +1,16 @@
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 
-public class Map {
+
+public class Map extends JPanel{
 
 	public int[][] mapTerrain = new int[100][100];
 	public String[][][] mapResources = new String[100][100][];
@@ -14,6 +19,7 @@ public class Map {
 	public Random r = new Random();
 	public static final int MAPSIZE = 100;
 	public static final String[] NATURAL = {"gold", "stone", "iron"};
+	public Player player;
 	
 	public Map() {
 		//procedural generation possible later
@@ -29,9 +35,9 @@ public class Map {
 		formContinents();
 		formTerrain();
 		stockResources();
-		for(int i = 0; i<100; i++){
+		for(int i = 0; i<MAPSIZE; i++){
 			String[] res = {"iron", "stone", "gold"};
-			for(int j=0;j<100;j++){
+			for(int j=0;j<MAPSIZE;j++){
 				mapResources[i][j] = res;
 			}
 		}
@@ -66,6 +72,32 @@ public class Map {
 			}
 		}
 		
+	}
+	
+	public void paintComponent(Graphics g){
+		for(int i = 0; i< 100; i++){
+			for(int j = 0; j< 100; j++){
+				switch (mapTerrain[i][j]){
+				case 0: g.setColor(Color.BLUE);
+					break;
+				case 1: g.setColor(Color.ORANGE);
+					break;
+				case 2: g.setColor(Color.BLACK);
+					break;
+				case 3: g.setColor(Color.YELLOW);
+					break;
+				case 4: g.setColor(Color.GREEN);
+					break;
+				case 5: g.setColor(Color.CYAN);
+					break;
+				default: g.setColor(Color.RED);
+					break;
+				}
+				if(player != null && !player.visible[i][j])
+					g.setColor(Color.WHITE);
+				g.fillRect(i*5, j*5, 5, 5);
+			}
+		}
 	}
 	
 	public void formTerrain(){
@@ -183,6 +215,8 @@ public class Map {
 	//4-woods
 	//5-plains
 	public int getTerrain(int lattitude, int longitude){
+		if(lattitude >= MAPSIZE || longitude >= MAPSIZE || lattitude < 0 || longitude < 0)
+			return -1;
 		return mapTerrain[lattitude][longitude];
 	}
 

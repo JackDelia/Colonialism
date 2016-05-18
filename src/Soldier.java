@@ -30,8 +30,8 @@ public class Soldier implements Explorer{
 	
 	public Soldier(City origin, Player owner, int number){
 		this.origin = origin;
-		this.xloc = origin.lattitude;
-		this.yloc = origin.longitude;
+		this.xloc = origin.xpos;
+		this.yloc = origin.ypos;
 		this.xOrigin = xloc;
 		this.yOrigin = yloc;
 		this.owner = owner;

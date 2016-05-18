@@ -8,8 +8,8 @@ public class City {
 
 	public String name;
 	public int cityId;
-	public int lattitude;
-	public int longitude;
+	public int xpos;
+	public int ypos;
 	public int size = 50;
 	public double funding = 0;
 	public Player controller;
@@ -28,22 +28,22 @@ public class City {
 	public HashMap<String, ArrayList<Double>> instructions = new HashMap<String, ArrayList<Double>>();
 	public HashMap<String, Double> production = new HashMap<String, Double>();
 	
-	public City(String name, int lattitude, int longitude, Player controller, Map map) {
+	public City(String name, int xpos, int ypos, Player controller, Map map) {
 		this.name = name;
-		this.lattitude = lattitude;
-		this.longitude = longitude;
+		this.xpos = xpos;
+		this.ypos = ypos;
 		this.controller = controller;
 		this.map = map;
 		this.cityId = controller.cities.size();
-		this.terrain = map.getTerrain(lattitude, longitude);
+		this.terrain = map.getTerrain(xpos, ypos);
 		for(int i = -2; i<=2; i++){
-			if((map.getTerrain(lattitude+i, longitude+i) == 0) 
-					|| (map.getTerrain(lattitude+i, longitude) == 0)
-					|| (map.getTerrain(lattitude, longitude+i) == 0))
+			if((map.getTerrain(xpos+i, ypos+i) == 0) 
+					|| (map.getTerrain(xpos+i, ypos) == 0)
+					|| (map.getTerrain(xpos, ypos+i) == 0))
 				this.coastal = true;
 		}
 		map.cities.add(this);
-		this.availableResources = map.getNearbyResources(lattitude,longitude);
+		this.availableResources = map.getNearbyResources(xpos,ypos);
 		if(coastal)
 			this.availableResources.add("fish");
 	}

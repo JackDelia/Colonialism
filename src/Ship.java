@@ -30,8 +30,8 @@ public class Ship implements Explorer{
 	}
 	public Ship(City origin, Player owner, int number){
 		this.origin = origin;
-		this.xloc = origin.lattitude;
-		this.yloc = origin.longitude;
+		this.xloc = origin.xpos;
+		this.yloc = origin.ypos;
 		this.xOrigin = xloc;
 		this.yOrigin = yloc;
 		this.owner = owner;
@@ -116,17 +116,17 @@ public class Ship implements Explorer{
 				}
 			}
 		}
-		else if((origin!=null) && (xloc != origin.lattitude || yloc != origin.longitude)){
+		else if((origin!=null) && (xloc != origin.xpos || yloc != origin.ypos)){
 			for(int i = 0; i<speed; i++){
-				if(origin.lattitude > xloc)
+				if(origin.xpos > xloc)
 					xloc++;
-				if(origin.lattitude < xloc)
+				if(origin.xpos < xloc)
 					xloc--;
-				if(origin.longitude > yloc)
+				if(origin.ypos > yloc)
 					yloc++;
-				if(origin.longitude < yloc)
+				if(origin.ypos < yloc)
 					yloc--;
-				if(xloc == origin.lattitude && yloc == origin.longitude){
+				if(xloc == origin.xpos && yloc == origin.ypos){
 					owner.gainExploreKnowledge(knowledge);
 					knowledge = new ArrayList<Integer>();
 					break;

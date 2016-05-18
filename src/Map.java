@@ -1,10 +1,13 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -12,14 +15,16 @@ import javax.swing.JPanel;
 
 public class Map extends JPanel{
 
-	public int[][] mapTerrain = new int[100][100];
-	public String[][][] mapResources = new String[100][100][];
+	public int[][] mapTerrain = new int[MAPSIZE][MAPSIZE];
+	public String[][][] mapResources = new String[MAPSIZE][MAPSIZE][];
 	public ArrayList<City> cities = new ArrayList<City>();
 	public HashMap<String, Double> prices = new HashMap<String,Double>();
 	public Random r = new Random();
 	public static final int MAPSIZE = 100;
+	public static final int PIXELSTEP = 6;
 	public static final String[] NATURAL = {"gold", "stone", "iron"};
 	public Player player;
+	private int age = 0;
 	
 	public Map() {
 		//procedural generation possible later
@@ -41,6 +46,7 @@ public class Map extends JPanel{
 				mapResources[i][j] = res;
 			}
 		}
+		this.setSize(500,500);
 	}
 	
 	public void stockResources(){
@@ -75,8 +81,8 @@ public class Map extends JPanel{
 	}
 	
 	public void paintComponent(Graphics g){
-		for(int i = 0; i< 100; i++){
-			for(int j = 0; j< 100; j++){
+		for(int i = 0; i< MAPSIZE; i++){
+			for(int j = 0; j< MAPSIZE; j++){
 				switch (mapTerrain[i][j]){
 				case 0: g.setColor(Color.BLUE);
 					break;
@@ -95,14 +101,17 @@ public class Map extends JPanel{
 				}
 				if(player != null && !player.visible[i][j])
 					g.setColor(Color.WHITE);
-				g.fillRect(i*5, j*5, 5, 5);
+				if(player != null && player.xloc == i && player.yloc == j && !(age%7000 < 3500))
+					g.setColor(Color.RED);
+				g.fillRect(i*6, j*6, 6, 6);
 			}
+			age++;
 		}
 	}
 	
 	public void formTerrain(){
 		for(int i = 2; i<=4; i++){
-			int count = r.nextInt(10)+18;
+			int count = r.nextInt((int) (Math.pow(MAPSIZE, 2)/1000))+18;
 			System.out.println(i + "  " + count);
 			while (count > 0){
 				int x = r.nextInt(MAPSIZE-2)+1;
@@ -177,9 +186,9 @@ public class Map extends JPanel{
 		for(int i = 0; i< MAPSIZE; i++){
 			for(int j = 0; j< MAPSIZE; j++){
 				if(j<=lt || j>=rt)
-					mapTerrain[i][j] = 0;
+					mapTerrain[j][i] = 0;
 				else{
-					mapTerrain[i][j] = 5;
+					mapTerrain[j][i] = 5;
 					mass++;
 				}
 			}
@@ -240,11 +249,11 @@ public class Map extends JPanel{
 		return ret;
 	}
 
-	public boolean valid(int lattitude, int longitude) {
-		if(mapTerrain[lattitude][longitude] == 0)
+	public boolean valid(int xpos, int ypos) {
+		if(mapTerrain[xpos][ypos] == 0)
 			return false;
 		for(City c : cities)
-			if(((Math.pow((c.lattitude-lattitude),2))+ (Math.pow((c.longitude-longitude),2)))<10)
+			if(((Math.pow((c.xpos-xpos),2))+ (Math.pow((c.ypos-ypos),2)))<10)
 				return false;
 		return true;
 	}

@@ -1,10 +1,26 @@
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import sun.audio.AudioData; 
+import sun.audio.AudioPlayer;  
+import sun.audio.AudioStream;  
+import sun.audio.ContinuousAudioDataStream;  
 
 
 public class Tester {
@@ -31,7 +47,7 @@ public class Tester {
 			System.out.println();
 		}
 	}
-	public static void main(String[] asdsfafs){
+	public void notmain(String[] asdsfafs){
 
 		
 		Scanner s = new Scanner(System.in);
@@ -48,9 +64,28 @@ public class Tester {
 		Player p = new Player("Jack", map);
 		map.player = p;
 		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+		JButton exploreButton = new JButton("Explore");
+		exploreButton.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					
+				}
+		});
+		buttonPanel.add(exploreButton);
+		buttonPanel.add(new JButton("Found City"));
+		buttonPanel.add(new JButton("Wait"));
+		
+		
+		
 		JFrame frame = new JFrame();
-		frame.add(map);
-		frame.setSize(600, 600);
+		JPanel container = new JPanel();
+		frame.setSize(800, 600);
+		container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
+		container.setSize(700,700);
+		container.add(map);
+		container.add(buttonPanel);
+		frame.add(container);
 		frame.setVisible(true);
 		/*
 		System.out.print("Enter city name: ");
@@ -309,4 +344,5 @@ public class Tester {
 			explorersOut.put(l+day, ex);
 		}
 	}
+
 }

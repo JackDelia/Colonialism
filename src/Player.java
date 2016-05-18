@@ -24,7 +24,10 @@ public class Player {
 		for(boolean[] b1 : visible)
 			for(boolean b2 : b1)
 				b2 = false;
-		visible[0][map.MAPSIZE-1] = true;
+		for(int i = 0; i < 8; i++)
+			for(int j = 0; j< 8; j++)
+				if(i+j < 8)
+					visible[Map.MAPSIZE-1-i][j] = true;
 	}
 	
 	public void gainExploreKnowledge(ArrayList<Integer> knowledge){

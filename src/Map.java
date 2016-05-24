@@ -105,6 +105,12 @@ public class Map extends JPanel{
 					g.setColor(Color.RED);
 				g.fillRect(i*6, j*6, 6, 6);
 			}
+			
+			for(City c : cities){
+				g.setColor(Color.RED);
+				g.fillOval(c.xpos*6, c.ypos * 6, 7, 7);
+				g.drawString(c.name, c.xpos*6, c.ypos*6-10);
+			}
 			age++;
 		}
 	}

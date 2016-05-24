@@ -1,3 +1,4 @@
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -8,16 +9,19 @@ import java.awt.event.WindowEvent;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
-public class Game extends JFrame {
+public class Game extends JFrame{
 	private boolean exploreClicked;
 	private boolean foundClicked;
 	private Player pc;
 	private Map gameMap;
+	private JPanel buttonPanel;
 	
 	public Game(){
+		super("Colonialism!");
 		this.addWindowListener(new WindowAdapter() {
 	         public void windowClosing(WindowEvent windowEvent){
 	            System.exit(0);
@@ -30,7 +34,7 @@ public class Game extends JFrame {
 		pc = new Player("Jack", gameMap);
 		gameMap.player = pc;
 		
-		JPanel buttonPanel = new JPanel();
+		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		JButton exploreButton = new JButton("Explore");
 		exploreButton.addActionListener(new ActionListener(){
@@ -90,8 +94,22 @@ public class Game extends JFrame {
 	}
 
 	private void foundCity(int x, int y) {
-		pc.foundCity("NYC", x, y);
+		String cityName = JOptionPane.showInputDialog("Choose A City Name");
+		if(cityName == null)
+			return;
+		City c = pc.foundCity(cityName, x, y);
+		
 		foundClicked = false;
+		JButton cityButton = new JButton(cityName);
+		cityButton.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(c.toString());	
+			}
+			
+		});
+		buttonPanel.add(cityButton);
+		repaint();
 	}
 
 	private void explore(int i, int j) {
@@ -105,8 +123,10 @@ public class Game extends JFrame {
 	}
 
 	public void run() {	
-		while (true)
+		while (true){
+			repaint();
 			gameMap.repaint();
+		}
 	}
 
 }

@@ -34,19 +34,23 @@ public class Player {
 		
 	}
 	
-	public void foundCity(String name, int lattitude, int longitude){
+	public City foundCity(String name, int lattitude, int longitude){
 		if(map.valid(lattitude,longitude) && visible[lattitude][longitude]){
 			City n = new City(name, lattitude, longitude, this, map);
 			cities.add(n);
 			System.out.println("City " + name + " founded.");
 			if(cities.size() == 1){
+				xloc = lattitude;
+				yloc = longitude;
 				capitol = n;
 				for (int i = 0; i < troops.size(); i++)
 					n.garrison.add(troops.get(i));
 			}
+			return n;
 		}
 		else
 			System.out.println("Not a Valid location.");
+		return null;
 	}
 	
 	public void Update(int days){

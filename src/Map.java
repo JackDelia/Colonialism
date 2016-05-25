@@ -108,7 +108,8 @@ public class Map extends JPanel{
 			
 			for(City c : cities){
 				g.setColor(Color.RED);
-				g.fillOval(c.xpos*6, c.ypos * 6, 7, 7);
+				int ovalSize = 7 + c.size/2000;
+				g.fillOval(c.xpos*6 - ovalSize/2, c.ypos * 6-ovalSize/2, ovalSize , ovalSize);
 				g.drawString(c.name, c.xpos*6, c.ypos*6-10);
 			}
 			age++;

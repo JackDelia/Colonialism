@@ -105,8 +105,18 @@ public class Game extends JFrame{
 		gameMap.addMouseListener(new MouseListener(){
 
 			public void mouseClicked(MouseEvent e) {
-				if(exploreClicked)
+				if(exploreClicked){
+					if(!pc.inRange(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP)){
+						currentMessage += "\nToo far away";
+						return;
+					}
+					if(pc.money < 20){
+						currentMessage += "\nNot Enough Money.";
+						return;
+					}
+					pc.money -= 20;
 					explore(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
+				}
 				else if(foundClicked)
 					foundCity(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
 			}
@@ -181,7 +191,7 @@ public class Game extends JFrame{
 			if(System.currentTimeMillis() - lastUpdate > 500){
 				day++;
 				lastUpdate = System.currentTimeMillis();
-				messages.setText("Day " + day + "\n" + currentMessage);
+				messages.setText("Day " + day + "\n" + "Money: " + (int)pc.money + "G\n" + currentMessage);
 				pc.Update(1);
 			}
 		}

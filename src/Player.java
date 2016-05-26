@@ -4,7 +4,7 @@ public class Player {
 
 	public String name;
 	public Map map;
-	public double money = 0;
+	public double money = 100;
 	public Player liege;
 	public double influence = 50;
 	public ArrayList<Player> vassals = new ArrayList<Player>();
@@ -17,6 +17,7 @@ public class Player {
 	public int yloc = 0;
 	public City location = null;
 	public boolean inOldWorld = false;
+	public double exploreRange = 20;
 	
 	public Player(String name, Map map) {
 		this.name = name;
@@ -43,6 +44,7 @@ public class Player {
 				xloc = lattitude;
 				yloc = longitude;
 				capitol = n;
+				this.location = n;
 				for (int i = 0; i < troops.size(); i++)
 					n.garrison.add(troops.get(i));
 			}
@@ -61,6 +63,27 @@ public class Player {
 			c.update(days);
 		}
 		
+	}
+	
+	public boolean inRange(int x, int y)
+	{
+		double dis;
+		if(cities.size() == 0){
+			int dx = xloc - x;
+			int dy = this.yloc - y;
+			dis = Math.sqrt(dx*dx+dy*dy);
+			System.out.println(dis);
+			if(dis < exploreRange*2)
+				return true;
+		}
+		for(City c: cities){
+			int dx = c.xpos - x;
+			int dy = c.ypos - y;
+			dis = Math.sqrt(dx*dx+dy*dy);
+			if(dis < exploreRange)
+				return true;
+		}
+		return false;
 	}
 	
 	public String toString(){

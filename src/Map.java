@@ -29,23 +29,17 @@ public class Map extends JPanel{
 	public Map() {
 		//procedural generation possible later
 		//or maybe just a set map
-		prices.put("iron", 5.0);
-		prices.put("stone", 5.0);
-		prices.put("gold", 15.0);
-		prices.put("meat", 5.0);
-		prices.put("fish", 5.0);
-		prices.put("grain", 5.0);
-		prices.put("wood", 5.0);
-		prices.put("soldiers", 10.0);
+		prices.put("iron", .01);
+		prices.put("stone", .01);
+		prices.put("gold", .10);
+		prices.put("meat", .01);
+		prices.put("fish", .01);
+		prices.put("grain", .01);
+		prices.put("wood", .01);
+		prices.put("soldiers", .01);
 		formContinents();
 		formTerrain();
 		stockResources();
-		for(int i = 0; i<MAPSIZE; i++){
-			String[] res = {"iron", "stone", "gold"};
-			for(int j=0;j<MAPSIZE;j++){
-				mapResources[i][j] = res;
-			}
-		}
 		this.setSize(500,500);
 	}
 	
@@ -54,6 +48,7 @@ public class Map extends JPanel{
 			for(String[] s2: s1){
 				double value = Math.random();
 				if(value > (335/336.0)){
+					
 					s2 = new String[3];
 					s2[0] = NATURAL[r.nextInt(NATURAL.length)];
 					s2[1] = NATURAL[r.nextInt(NATURAL.length)];
@@ -64,16 +59,20 @@ public class Map extends JPanel{
 						s2[2] = NATURAL[r.nextInt(NATURAL.length)];
 				}
 				else if(value > (48/49.0)){
+					System.out.println("2");
 					s2 = new String[2];
 					s2[0] = NATURAL[r.nextInt(NATURAL.length)];
 					s2[1] = NATURAL[r.nextInt(NATURAL.length)];
 					while(s2[0] == s2[1])
 						s2[1] = NATURAL[r.nextInt(NATURAL.length)];
 				}
-				else if(value>(6/7.0)){
+				else if(value>(7/10.0)){
+					System.out.println("1");
 					s2 = new String[1]; 
 					s2[0] = NATURAL[r.nextInt(NATURAL.length)];
 				}
+				else
+					s2 = new String[0];
 				
 			}
 		}
@@ -101,16 +100,18 @@ public class Map extends JPanel{
 				}
 				if(player != null && !player.visible[i][j])
 					g.setColor(Color.WHITE);
-				if(player != null && player.xloc == i && player.yloc == j && !(age%7000 < 3500))
+				if(player != null && player.location == null && player.xloc == i && player.yloc == j && !(age%7000 < 3500))
 					g.setColor(Color.RED);
 				g.fillRect(i*6, j*6, 6, 6);
 			}
 			
 			for(City c : cities){
-				g.setColor(Color.RED);
-				int ovalSize = 7 + c.size/2000;
-				g.fillOval(c.xpos*6 - ovalSize/2, c.ypos * 6-ovalSize/2, ovalSize , ovalSize);
-				g.drawString(c.name, c.xpos*6, c.ypos*6-10);
+				if(!(player.location == c && age%7000 < 3500)){
+					g.setColor(Color.RED);
+					int ovalSize = 7 + c.size/2000;
+					g.fillOval(c.xpos*6 - ovalSize/2, c.ypos * 6-ovalSize/2, ovalSize , ovalSize);
+					g.drawString(c.name, c.xpos*6, c.ypos*6-10);
+				}
 			}
 			age++;
 		}
@@ -240,18 +241,23 @@ public class Map extends JPanel{
 			int longitude) {
 		
 		ArrayList<String> ret = new ArrayList<String>();
-		ret.add("grain");
-		ret.add("meat");
+		if(Math.random() > .5)
+			ret.add("meat");
 		for(int i = -2; i<=2; i++){
 			for(int j = -2; j<=2; j++){
-				for(String s: mapResources[lattitude+i][longitude+j]){
-					if(!ret.contains(s))
-						ret.add(s);
-				}
 				if(mapTerrain[lattitude+i][longitude+j] == 4 && !ret.contains("wood"))
 					ret.add("wood");
+				if(lattitude+i > 0 && longitude+j > 0 && lattitude+i < Map.MAPSIZE && longitude+j < Map.MAPSIZE && mapResources[lattitude+i][longitude+j] != null){
+					for(String s: mapResources[lattitude+i][longitude+j]){
+						if(!ret.contains(s))
+							ret.add(s);
+					}
+				}
 			}
 		}
+		
+		if(Math.random() > .5 || ret.size() == 0)
+			ret.add("grain");
 		
 		return ret;
 	}

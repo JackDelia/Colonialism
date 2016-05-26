@@ -49,7 +49,7 @@ public class City {
 	}
 	
 	public double getProductionPower(){
-		return funding*(size/10)*production.size();
+		return (size/10)*production.size();
 	}
 	
 	public void update(int days){
@@ -89,7 +89,7 @@ public class City {
 			production.put(r, 0.0);
 			stockpile.put(r, 0.0);
 			ArrayList<Double> inst = new ArrayList<Double>();
-			inst.add(0, 100.0);
+			inst.add(0, 20.0);
 			inst.add(1, 50.0);
 			inst.add(2,50.0);
 			instructions.put(r, inst);
@@ -127,11 +127,11 @@ public class City {
 		String ret = "City Name: " + name + "\nPopulation: " + size + "\nfunding:  " + funding + 
 				"\ngarrison: " + getTotalGarrison() + "\nresources:" + production.size() + "\n";
 		for(java.util.Map.Entry<String, Double> e : production.entrySet()){
-			ret+= "\t" + e.getKey() + " " + e.getValue() + "%\n";
+			ret+= "\t" + e.getKey() + " " + e.getValue().intValue() + "%\n";
 		}
 		ret+= "stockpiled:\n";
 		for(java.util.Map.Entry<String, Double> e : stockpile.entrySet()){
-			ret+= "\t" + e.getKey() + " " + e.getValue() + "\n";
+			ret+= "\t" + e.getKey() + " " + e.getValue().intValue() + "\n";
 		}
 		return ret;
 	}

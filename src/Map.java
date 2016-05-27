@@ -29,14 +29,14 @@ public class Map extends JPanel{
 	public Map() {
 		//procedural generation possible later
 		//or maybe just a set map
-		prices.put("iron", .01);
-		prices.put("stone", .01);
-		prices.put("gold", .10);
-		prices.put("meat", .01);
-		prices.put("fish", .01);
-		prices.put("grain", .01);
-		prices.put("wood", .01);
-		prices.put("soldiers", .01);
+		prices.put("iron", .1);
+		prices.put("stone", .1);
+		prices.put("gold", 1.0);
+		prices.put("meat", .1);
+		prices.put("fish", .1);
+		prices.put("grain", .1);
+		prices.put("wood", .1);
+		prices.put("soldiers", .1);
 		formContinents();
 		formTerrain();
 		stockResources();
@@ -44,35 +44,35 @@ public class Map extends JPanel{
 	}
 	
 	public void stockResources(){
-		for(String[][] s1: mapResources){
-			for(String[] s2: s1){
+		for(int i = 0; i < mapResources.length; i++){
+			for(int j = 0; j < mapResources[i].length; j++){
 				double value = Math.random();
-				if(value > (335/336.0)){
+				if(value > (300/301.0)){
 					
-					s2 = new String[3];
-					s2[0] = NATURAL[r.nextInt(NATURAL.length)];
-					s2[1] = NATURAL[r.nextInt(NATURAL.length)];
-					while(s2[0] == s2[1])
-						s2[1] = NATURAL[r.nextInt(NATURAL.length)];
-					s2[2] = NATURAL[r.nextInt(NATURAL.length)];
-					while(s2[0] == s2[2] || s2[1] == s2[2])
-						s2[2] = NATURAL[r.nextInt(NATURAL.length)];
+					mapResources[i][j] = new String[3];
+					mapResources[i][j][0] = NATURAL[r.nextInt(NATURAL.length)];
+					mapResources[i][j][1] = NATURAL[r.nextInt(NATURAL.length)];
+					while(mapResources[i][j][0] == mapResources[i][j][1])
+						mapResources[i][j][1] = NATURAL[r.nextInt(NATURAL.length)];
+					mapResources[i][j][2] = NATURAL[r.nextInt(NATURAL.length)];
+					while(mapResources[i][j][0] == mapResources[i][j][2] || mapResources[i][j][1] == mapResources[i][j][2])
+						mapResources[i][j][2] = NATURAL[r.nextInt(NATURAL.length)];
 				}
-				else if(value > (48/49.0)){
+				else if(value > (50/51.0)){
 					System.out.println("2");
-					s2 = new String[2];
-					s2[0] = NATURAL[r.nextInt(NATURAL.length)];
-					s2[1] = NATURAL[r.nextInt(NATURAL.length)];
-					while(s2[0] == s2[1])
-						s2[1] = NATURAL[r.nextInt(NATURAL.length)];
+					mapResources[i][j] = new String[2];
+					mapResources[i][j][0] = NATURAL[r.nextInt(NATURAL.length)];
+					mapResources[i][j][1] = NATURAL[r.nextInt(NATURAL.length)];
+					while(mapResources[i][j][0] == mapResources[i][j][1])
+						mapResources[i][j][1] = NATURAL[r.nextInt(NATURAL.length)];
 				}
-				else if(value>(7/10.0)){
+				else if(value>(15/16.0)){
 					System.out.println("1");
-					s2 = new String[1]; 
-					s2[0] = NATURAL[r.nextInt(NATURAL.length)];
+					mapResources[i][j] = new String[1]; 
+					mapResources[i][j][0] = NATURAL[r.nextInt(NATURAL.length)];
 				}
 				else
-					s2 = new String[0];
+					mapResources[i][j] = new String[0];
 				
 			}
 		}
@@ -245,13 +245,15 @@ public class Map extends JPanel{
 			ret.add("meat");
 		for(int i = -2; i<=2; i++){
 			for(int j = -2; j<=2; j++){
-				if(mapTerrain[lattitude+i][longitude+j] == 4 && !ret.contains("wood"))
-					ret.add("wood");
-				if(lattitude+i > 0 && longitude+j > 0 && lattitude+i < Map.MAPSIZE && longitude+j < Map.MAPSIZE && mapResources[lattitude+i][longitude+j] != null){
-					for(String s: mapResources[lattitude+i][longitude+j]){
-						if(!ret.contains(s))
-							ret.add(s);
-					}
+				if(lattitude+i > 0 && longitude+j > 0 && lattitude+i < Map.MAPSIZE && longitude+j < Map.MAPSIZE){
+					System.out.println(mapResources[lattitude+i][longitude+j]);
+
+					if(mapTerrain[lattitude+i][longitude+j] == 4 && !ret.contains("wood"))
+						ret.add("wood");
+						for(String s: mapResources[lattitude+i][longitude+j]){
+							if(!ret.contains(s))
+								ret.add(s);
+						}
 				}
 			}
 		}

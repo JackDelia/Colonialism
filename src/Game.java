@@ -1,7 +1,9 @@
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -9,6 +11,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -16,15 +19,20 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 
 
 public class Game extends JFrame{
 	private boolean exploreClicked;
 	private boolean foundClicked;
+	private boolean moving;
 	private boolean paused;
 	private Player pc;
 	private Map gameMap;
 	private JPanel buttonPanel;
+	private JPanel moveButtonPanel;
+	public JPanel uiPanel;
 	private JEditorPane messages;
 	private String currentMessage = "";
 	private int day;
@@ -46,10 +54,41 @@ public class Game extends JFrame{
 		pc = new Player("Jack", gameMap);
 		gameMap.player = pc;
 		
+		uiPanel = new JPanel();
+		uiPanel.setBackground(new Color(255,0,0));
+		uiPanel.setPreferredSize(new Dimension(-250,-250));
+		uiPanel.setLayout(new BoxLayout(uiPanel, BoxLayout.X_AXIS));
+		
+		moveButtonPanel = new JPanel();
+		JButton positionMoveButton = new JButton("Move to Position");
+		positionMoveButton.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e){
+				moving = true;
+				currentMessage = "Click where you want to move on the map.";
+			}
+			
+		});
+		
+		JButton cancelMoveButton = new JButton("Cancel");
+		cancelMoveButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				currentMessage = "";
+				uiPanel.remove(moveButtonPanel);
+				uiPanel.add(buttonPanel);
+				moving = false;
+			}
+		});
+		
+		moveButtonPanel.add(positionMoveButton);
+		moveButtonPanel.add(cancelMoveButton);
+
+		moveButtonPanel.setLayout(new BoxLayout(moveButtonPanel, BoxLayout.PAGE_AXIS));
+		
 		buttonPanel = new JPanel();
-		buttonPanel.setBackground(new Color(255,0,255));
-		buttonPanel.setPreferredSize(new Dimension(-450,-450));
-		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
+		buttonPanel.setAutoscrolls(true);
+		
 		JButton exploreButton = new JButton("Explore");
 		exploreButton.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e){
@@ -82,25 +121,42 @@ public class Game extends JFrame{
 		JButton pause = new JButton("pause");
 		pause.addActionListener(new ActionListener(){
 
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				paused = !paused;
 			}
 			
 		});
 		
+		JButton moveButton = new JButton("Move");
+		moveButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				showMoveMenu();
+			}
+		});
+		
+		
 		buttonPanel.add(foundButton);
 		buttonPanel.add(pause);
+		buttonPanel.add(moveButton);
+		
 		messages = new JEditorPane();
 		messages.setEditable(false);
-		messages.setBounds(0,0,250, 450);
+		messages.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
+		messages.setMargin(new Insets(50,50,50,50));
+		messages.setForeground(Color.BLUE);
+		messages.setBounds(0,50,250, 450);
+		messages.setBackground(new Color(255,255,255));
+		messages.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 		JPanel messagesHolder = new JPanel();
 		messagesHolder.setLayout(null);
 		messagesHolder.setPreferredSize(new Dimension(1,1));
 		messagesHolder.add(messages);
 		messagesHolder.setBounds(0,0,50,50);
-		messagesHolder.setBackground(new Color(255,0,255));
-		buttonPanel.add(messagesHolder);
+		messagesHolder.setBackground(new Color(0,255,255));
+		uiPanel.add(messagesHolder);
+		
+		uiPanel.add(buttonPanel);
+
 		
 		gameMap.addMouseListener(new MouseListener(){
 
@@ -136,15 +192,23 @@ public class Game extends JFrame{
 		});
 		
 		JPanel container = new JPanel();
-		setSize(1000, 600);
-		container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
+		setSize(1200, 600);
 		container.setSize(700,700);
 		container.add(gameMap);
-		container.add(buttonPanel);
+		container.add(uiPanel);
+		BoxLayout b = new BoxLayout(container, BoxLayout.LINE_AXIS);
+		container.setLayout(b);
 		container.setBackground(new Color(255,0,255));
 		add(container);
 		setVisible(true);
 		pc.ships.add(new Ship(pc.yloc,pc.xloc,pc,1));
+	}
+	
+	private void showMoveMenu(){
+		currentMessage = "Move to Where?";
+		uiPanel.remove(buttonPanel);
+		uiPanel.add(moveButtonPanel);
+		
 	}
 
 	private void foundCity(int x, int y) {
@@ -167,7 +231,19 @@ public class Game extends JFrame{
 			}
 			
 		});
+		
+		JButton moveToCityButton = new JButton(cityName);
+		moveToCityButton.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				pc.location = c;
+			}
+			
+		});
+		
 		buttonPanel.add(cityButton);
+		moveButtonPanel.add(moveToCityButton);
 		currentMessage = cityName + " founded.";
 		repaint();
 	}

@@ -11,7 +11,7 @@ public class City {
 	public int xpos;
 	public int ypos;
 	public int size = 50;
-	public double funding = 0;
+	public double funding = 1;
 	public Player controller;
 	public boolean discovered = false;
 	public int terrain = 5;
@@ -49,7 +49,7 @@ public class City {
 	}
 	
 	public double getProductionPower(){
-		return (size/10)*production.size();
+		return funding*(size/10);
 	}
 	
 	public void update(int days){
@@ -58,7 +58,7 @@ public class City {
 			if(add > 10)
 				size+= 10;
 			else 
-				size+= 10;
+				size+= add;
 			controller.money-=funding;
 			}
 		for(java.util.Map.Entry<String, Double> entry : production.entrySet()){
@@ -131,7 +131,7 @@ public class City {
 		}
 		ret+= "stockpiled:\n";
 		for(java.util.Map.Entry<String, Double> e : stockpile.entrySet()){
-			ret+= "\t" + e.getKey() + " " + e.getValue().intValue() + "\n";
+			ret+= "\t" + e.getKey() + " " + e.getValue() + "\n";
 		}
 		return ret;
 	}

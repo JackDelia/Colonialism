@@ -47,7 +47,7 @@ public class Map extends JPanel{
 		for(int i = 0; i < mapResources.length; i++){
 			for(int j = 0; j < mapResources[i].length; j++){
 				double value = Math.random();
-				if(value > (300/301.0)){
+				if(value > (7/8.0)){
 					
 					mapResources[i][j] = new String[3];
 					mapResources[i][j][0] = NATURAL[r.nextInt(NATURAL.length)];
@@ -58,7 +58,7 @@ public class Map extends JPanel{
 					while(mapResources[i][j][0] == mapResources[i][j][2] || mapResources[i][j][1] == mapResources[i][j][2])
 						mapResources[i][j][2] = NATURAL[r.nextInt(NATURAL.length)];
 				}
-				else if(value > (50/51.0)){
+				else if(value > (1/2.0)){
 					System.out.println("2");
 					mapResources[i][j] = new String[2];
 					mapResources[i][j][0] = NATURAL[r.nextInt(NATURAL.length)];
@@ -66,7 +66,7 @@ public class Map extends JPanel{
 					while(mapResources[i][j][0] == mapResources[i][j][1])
 						mapResources[i][j][1] = NATURAL[r.nextInt(NATURAL.length)];
 				}
-				else if(value>(15/16.0)){
+				else if(value>(1/10.0)){
 					System.out.println("1");
 					mapResources[i][j] = new String[1]; 
 					mapResources[i][j][0] = NATURAL[r.nextInt(NATURAL.length)];
@@ -243,24 +243,27 @@ public class Map extends JPanel{
 		ArrayList<String> ret = new ArrayList<String>();
 		if(Math.random() > .5)
 			ret.add("meat");
+		
+		for(String s: mapResources[lattitude][longitude]){
+			if(!ret.contains(s))
+				ret.add(s);
+		}
+		
 		for(int i = -2; i<=2; i++){
 			for(int j = -2; j<=2; j++){
 				if(lattitude+i > 0 && longitude+j > 0 && lattitude+i < Map.MAPSIZE && longitude+j < Map.MAPSIZE){
-					System.out.println(mapResources[lattitude+i][longitude+j]);
 
 					if(mapTerrain[lattitude+i][longitude+j] == 4 && !ret.contains("wood"))
 						ret.add("wood");
-						for(String s: mapResources[lattitude+i][longitude+j]){
-							if(!ret.contains(s))
-								ret.add(s);
-						}
+					if(mapTerrain[lattitude+1][longitude+1] == 3 && !ret.contains("cotton"))
+						ret.add("cotton");
 				}
 			}
 		}
 		
 		if(Math.random() > .5 || ret.size() == 0)
 			ret.add("grain");
-		
+		System.out.println(ret.size());
 		return ret;
 	}
 

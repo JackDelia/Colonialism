@@ -65,6 +65,8 @@ public class Game extends JFrame{
 
 			public void actionPerformed(ActionEvent e){
 				moving = true;
+				exploreClicked = false;
+				foundClicked = false;
 				currentMessage = "Click where you want to move on the map.";
 			}
 			
@@ -99,6 +101,7 @@ public class Game extends JFrame{
 					}
 					exploreClicked = true;
 					foundClicked = false;
+					moving = false;
 					currentMessage = "Explore Where?";
 				}
 		});
@@ -113,6 +116,7 @@ public class Game extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				foundClicked = true;
 				exploreClicked = false;
+				moving = false;
 				currentMessage = "Pick a Location";
 			}
 			
@@ -175,6 +179,11 @@ public class Game extends JFrame{
 				}
 				else if(foundClicked)
 					foundCity(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
+				else if(moving){
+					pc.location = null;
+					pc.xloc = e.getX()/Map.PIXELSTEP;
+					pc.yloc = e.getY()/Map.PIXELSTEP;
+				}
 			}
 
 			public void mousePressed(MouseEvent e) {

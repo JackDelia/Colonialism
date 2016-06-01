@@ -25,7 +25,7 @@ public class City {
 	//1: sent back %
 	//2: sold %
 	//3-x: transfer to city x %
-	public HashMap<String, ArrayList<Double>> instructions = new HashMap<String, ArrayList<Double>>();
+	public HashMap<String, HashMap<String, Double>> instructions = new HashMap<String, HashMap<String, Double>>();
 	public HashMap<String, Double> production = new HashMap<String, Double>();
 	
 	public City(String name, int xpos, int ypos, Player controller, Map map) {
@@ -63,35 +63,37 @@ public class City {
 			}
 		for(java.util.Map.Entry<String, Double> entry : production.entrySet()){
 			String k = entry.getKey();
+			double produce = entry.getValue();
+			double stockpiled = stockpile.get(k);
+			HashMap<String, Double> kInstr = instructions.get(k);
+			
 			stockpile.put(k, 
-						(stockpile.get(k) + (entry.getValue()/100.0)*days*getProductionPower()));	
-			stockpile.put(k, (entry.getValue()/100.0)*days*getProductionPower());
-			if(stockpile.get(k) > instructions.get(k).get(0)){
-				double excess = stockpile.get(k)-instructions.get(k).get(0);
+						(stockpiled + (produce/100.0)*days*getProductionPower()));	
+			
+			double toStockpile = kInstr.get("stockpile"); 
+			if(stockpiled > toStockpile){
+				double excess = stockpiled-toStockpile;
 				
-				stockpile.put(k, stockpile.get(k)-(excess*(instructions.get(k).get(1)/100)));
-				controller.influence+= excess*(instructions.get(k).get(1)/100);
+				double sendBack = kInstr.get("return");
+				stockpile.put(k, stockpiled-(excess*(sendBack/100.0)));
+				controller.influence+= excess*(sendBack/100.0);
 		
-				stockpile.put(k, stockpile.get(k)-(excess*(instructions.get(k).get(2)/100)));
-				controller.money+= (excess*instructions.get(k).get(2))*map.prices.get(k);
+				stockpile.put(k, stockpiled-(excess*(kInstr.get("sell")/100)));
+				controller.money+= (excess*kInstr.get("sell"))*map.prices.get(k);
 				
-				for(int i = 3; i<instructions.get(k).size(); i++){
-					stockpile.put(k, stockpile.get(k)-(excess*(instructions.get(k).get(i)/100)));
-					controller.cities.get(i-3).stockpile.put(k, 
-							controller.cities.get(i-3).stockpile.get(k)+(excess*(instructions.get(k).get(i)/100)));
-				}
 			}
 		}
 		
 				
 		if(size >= 100*(production.size()+1)){
+			funding++;
 			String r = availableResources.get(((int)(Math.random()*100))%availableResources.size());
 			production.put(r, 0.0);
 			stockpile.put(r, 0.0);
-			ArrayList<Double> inst = new ArrayList<Double>();
-			inst.add(0, 20.0);
-			inst.add(1, 50.0);
-			inst.add(2,50.0);
+			HashMap<String, Double> inst = new HashMap<String, Double>();
+			inst.put("stockpile", 0.0);
+			inst.put("return", 0.0);
+			inst.put("sell", 100.0);
 			instructions.put(r, inst);
 			
 			balanceProduction();

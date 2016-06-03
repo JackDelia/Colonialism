@@ -86,7 +86,6 @@ public class City {
 		
 				
 		if(size >= 100*(production.size()+1)){
-			funding++;
 			String r = availableResources.get(((int)(Math.random()*100))%availableResources.size());
 			production.put(r, 0.0);
 			stockpile.put(r, 0.0);

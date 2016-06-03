@@ -14,7 +14,7 @@ Todo:
 Combat System - unclaimed
 Better Exploration - unclaimed
 AI players - unclaimed
-City overview screen - unclaimed
+City overview screen - Claimed By Jack
 Random events - unclaimed
 intra-empire trading - unclaimed
 advanced resources (iron to make weapons, etc) - unclaimed

@@ -14,12 +14,14 @@ Todo:
 Combat System - unclaimed
 Better Exploration - unclaimed
 AI players - unclaimed
-City overview screen - Complete
 Better City Overview Screen - unclaimed 
 Random events - unclaimed
 intra-empire trading - unclaimed
-advanced resources (iron to make weapons, etc) - unclaimed
+advanced resources (iron to make weapons, etc) - Claimed By Jack
 touch up map generation - unclaimed
 
 REFACTORING - claimed by everyone
 REBALANCE EVERYTHING - claimed by everyone
+
+Complete:
+Basic City Overview Screen - completed by Jack

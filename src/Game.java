@@ -236,7 +236,8 @@ public class Game extends JFrame{
 		cityButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e) {
-				currentMessage = c.toString();	
+//				currentMessage = c.toString();	
+				showCity(c);
 			}
 			
 		});
@@ -255,6 +256,22 @@ public class Game extends JFrame{
 		moveButtonPanel.add(moveToCityButton);
 		currentMessage = cityName + " founded.";
 		repaint();
+	}
+	
+	private void showCity(City c) {
+		CityPanel cpan = new CityPanel(c);
+		JButton back = new JButton("Back");
+		back.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				uiPanel.remove(cpan);
+				uiPanel.add(buttonPanel);
+			}
+			
+		});
+		cpan.add(back);
+		uiPanel.remove(buttonPanel);
+		uiPanel.add(cpan);
 	}
 	
 

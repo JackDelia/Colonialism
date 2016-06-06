@@ -49,7 +49,7 @@ public class City {
 	}
 	
 	public double getProductionPower(){
-		return funding*(size/10);
+		return funding*(size/10)*.01;
 	}
 	
 	public void update(int days){
@@ -86,7 +86,6 @@ public class City {
 		
 				
 		if(size >= 100*(production.size()+1)){
-			funding++;
 			String r = availableResources.get(((int)(Math.random()*100))%availableResources.size());
 			production.put(r, 0.0);
 			stockpile.put(r, 0.0);
@@ -133,7 +132,7 @@ public class City {
 		}
 		ret+= "stockpiled:\n";
 		for(java.util.Map.Entry<String, Double> e : stockpile.entrySet()){
-			ret+= "\t" + e.getKey() + " " + e.getValue() + "\n";
+			ret+= "\t" + e.getKey() + " " + e.getValue().intValue() + "\n";
 		}
 		return ret;
 	}

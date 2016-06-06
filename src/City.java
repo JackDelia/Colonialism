@@ -49,7 +49,7 @@ public class City {
 	}
 	
 	public double getProductionPower(){
-		return funding*(size/10);
+		return funding*(size/10)*.01;
 	}
 	
 	public void update(int days){

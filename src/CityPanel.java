@@ -25,7 +25,7 @@ public class CityPanel extends JPanel {
 		setMaximumSize(new Dimension(200,100000));
 		
 		
-		JSlider fundingSlider = new JSlider(0, 100);
+		JSlider fundingSlider = new JSlider(1, 100);
 		fundingSlider.setMaximumSize(new Dimension(170,20));
 		fundingSlider.setValue((int)city.funding);
 		fundingSlider.addChangeListener(new ChangeListener(){
@@ -40,6 +40,7 @@ public class CityPanel extends JPanel {
 			
 		});
 		cityText = new JTextArea(city.toString());
+		add(new JLabel("Funding:"));
 		add(fundingSlider);
 		add(cityText);
 	}

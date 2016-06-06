@@ -132,7 +132,7 @@ public class City {
 		}
 		ret+= "stockpiled:\n";
 		for(java.util.Map.Entry<String, Double> e : stockpile.entrySet()){
-			ret+= "\t" + e.getKey() + " " + e.getValue() + "\n";
+			ret+= "\t" + e.getKey() + " " + e.getValue().intValue() + "\n";
 		}
 		return ret;
 	}

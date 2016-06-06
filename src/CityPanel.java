@@ -44,6 +44,10 @@ public class CityPanel extends JPanel {
 		add(cityText);
 	}
 	
+	public void paintComponent(Graphics g){
+		update();
+	}
+	
 	public void update(){
 		cityText.setText(String.valueOf(city.toString()));
 	}

@@ -52,23 +52,49 @@ public class City {
 		return funding*(size/10)*.01;
 	}
 	
+	private void addPopulation(){
+		
+		int add = (int)(funding * 100.0/size); 
+		if(add > 10)
+			size+= 10;
+		else if(add == 0 && Math.random() > .75)
+			size += 1;
+		else
+			size+= add;
+		controller.money-=funding;
+	}
+	
+	private void addToStockpile(String k, int days){
+		double produce = production.get(k);
+		double stockpiled = stockpile.get(k);
+		
+		double baseAmount = (stockpiled + (produce/100.0)*days*getProductionPower());
+		if(Game.ADVANCED.get(k) != null){
+			String baseRes = Game.ADVANCED.get(k);
+			if(stockpile.get(baseRes) < baseAmount)
+				baseAmount = stockpile.get(baseRes);
+			stockpile.put(baseRes, stockpile.get(baseRes)-baseAmount);
+		}
+		
+		stockpile.put(k, 
+					(stockpiled + (produce/100.0)*days*getProductionPower()));	
+		
+	}
+	
 	public void update(int days){
+		if(controller.money < funding)
+			funding = controller.money;
+		
 		for (int i = 0; i < days; i++){
-			int add = (int)(funding * 100.0/size); 
-			if(add > 10)
-				size+= 10;
-			else 
-				size+= add;
-			controller.money-=funding;
-			}
+			addPopulation();
+		}
+		
 		for(java.util.Map.Entry<String, Double> entry : production.entrySet()){
 			String k = entry.getKey();
-			double produce = entry.getValue();
-			double stockpiled = stockpile.get(k);
 			HashMap<String, Double> kInstr = instructions.get(k);
+			double stockpiled = stockpile.get(k);
 			
-			stockpile.put(k, 
-						(stockpiled + (produce/100.0)*days*getProductionPower()));	
+			addToStockpile(k, days);
 			
 			double toStockpile = kInstr.get("stockpile"); 
 			if(stockpiled > toStockpile){

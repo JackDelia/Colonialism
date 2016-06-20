@@ -39,16 +39,25 @@ public class Game extends JFrame{
 	private int day;
 	private long lastUpdate;
 	
-	public static final String[] ADVANCED = {"weapons", "soldiers", "tools", "clothing", "jewelry"};
+	public static final HashMap<String,String> ADVANCED = new HashMap<String,String>();
+	static{
+		ADVANCED.put("weapons", "iron");
+		ADVANCED.put("soldiers", "weapons");
+		ADVANCED.put("tools", "stone");
+		ADVANCED.put("clothing", "cotton");
+		ADVANCED.put("jewelry", "gold");
+	}
+	
 	public static final HashMap<String, Double> prices = new HashMap<String, Double>();
 	static {
+		prices.put("cotton", .09);
 		prices.put("iron", .1);
 		prices.put("stone", .1);
 		prices.put("gold", 1.0);
 		prices.put("jewelry", 1.2);
 		prices.put("meat", .1);
-		prices.put("fish", .1);
-		prices.put("grain", .1);
+		prices.put("fish", .08);
+		prices.put("grain", .07);
 		prices.put("wood", .1);
 		prices.put("weapons", .2);
 		prices.put("clothing", .15);

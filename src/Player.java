@@ -48,6 +48,9 @@ public class Player {
 				yloc = longitude;
 				capitol = n;
 				this.location = n;
+				for(Explorer e: explorers){
+					e.setOrigin(new Point(xloc, yloc));
+				}
 			}
 			return n;
 		}

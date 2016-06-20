@@ -9,7 +9,7 @@ public class Explorer{
 	
 	private String name;
 	private HashSet<Point> knowledge = new HashSet<Point>();
-	private int speed = 1;
+	private int speed = 4;
 	private int vision = 3;
 	private Point location;
 	private Point origin;
@@ -82,15 +82,15 @@ public class Explorer{
 				if(target.equals(location)){
 					if(target.equals(origin)){
 						exploring = false;
-						return true;
+						
 					} else {
 						target = origin;
 					}
 				} else{
 					moveTowardTarget();
-					return true;
 				}
 			}
+			return true;
 		}
 
 		return false;

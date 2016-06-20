@@ -155,6 +155,10 @@ public class Game extends JFrame{
 
 			public void actionPerformed(ActionEvent e) {
 				paused = !paused;
+				if(paused)
+					pause.setText("unpause");
+				else
+					pause.setText("pause");
 			}
 			
 		});
@@ -320,7 +324,16 @@ public class Game extends JFrame{
 			if(System.currentTimeMillis() - lastUpdate > 500){
 				day++;
 				lastUpdate = System.currentTimeMillis();
-				messages.setText("Day " + day + "\n" + "Money: " + (int)pc.money + "G\n" + currentMessage);
+				String explorerStati = "";
+				for(Explorer e: pc.explorers){
+					explorerStati += e.getName();
+					if(e.isExploring())
+						explorerStati += ": Exploring\n";
+					else
+						explorerStati += ": Free\n";
+				}
+				messages.setText("Day " + day + "\n" + "Money: " + (int)pc.money + "G\n" + "Explorers:\n" +  
+						explorerStati + currentMessage);
 				pc.Update(1);
 			}
 		}

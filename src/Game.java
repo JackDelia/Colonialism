@@ -237,7 +237,6 @@ public class Game extends JFrame{
 		container.setBackground(new Color(255,0,255));
 		add(container);
 		setVisible(true);
-		pc.ships.add(new Ship(pc.yloc,pc.xloc,pc,1));
 	}
 	
 	private void showMoveMenu(){

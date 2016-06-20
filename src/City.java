@@ -16,8 +16,6 @@ public class City {
 	public boolean discovered = false;
 	public int terrain = 5;
 	public boolean coastal;
-	public ArrayList<Soldier> garrison = new ArrayList<Soldier>();
-	public ArrayList<Ship> fleet = new ArrayList<Ship>();
 	public Map map;
 	public ArrayList<String> availableResources = new ArrayList<String>();
 	public HashMap<String, Double> stockpile = new HashMap<String, Double>();
@@ -167,17 +165,10 @@ public class City {
 		production.put(s, d);
 	}
 	
-	public int getTotalGarrison(){
-		int totalGarrison = 0;
-		for(int i = 0; i<garrison.size(); i++)
-			totalGarrison += garrison.get(i).number;
-		return totalGarrison;
-	}
-	
 
 	public String toString(){
 		String ret = "City Name: " + name + "\nPopulation: " + size + "\nfunding:  " + funding + 
-				"\ngarrison: " + getTotalGarrison() + "\nresources:" + production.size() + "\n";
+				"\nproduction:" + "\n";
 		for(java.util.Map.Entry<String, Double> e : production.entrySet()){
 			ret+= "\t" + e.getKey() + " " + e.getValue().intValue() + "%\n";
 		}

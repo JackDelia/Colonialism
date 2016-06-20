@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -37,6 +38,32 @@ public class Game extends JFrame{
 	private String currentMessage = "";
 	private int day;
 	private long lastUpdate;
+	
+	public static final HashMap<String,String> ADVANCED = new HashMap<String,String>();
+	static{
+		ADVANCED.put("weapons", "iron");
+		ADVANCED.put("soldiers", "weapons");
+		ADVANCED.put("tools", "stone");
+		ADVANCED.put("clothing", "cotton");
+		ADVANCED.put("jewelry", "gold");
+	}
+	
+	public static final HashMap<String, Double> prices = new HashMap<String, Double>();
+	static {
+		prices.put("cotton", .09);
+		prices.put("iron", .1);
+		prices.put("stone", .1);
+		prices.put("gold", 1.0);
+		prices.put("jewelry", 1.2);
+		prices.put("meat", .1);
+		prices.put("fish", .08);
+		prices.put("grain", .07);
+		prices.put("wood", .1);
+		prices.put("weapons", .2);
+		prices.put("clothing", .15);
+		prices.put("tools", .18);
+		prices.put("soldiers", .4);
+    }
 	
 	public Game(){
 		super("Colonialism!");

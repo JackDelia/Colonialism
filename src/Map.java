@@ -32,11 +32,15 @@ public class Map extends JPanel{
 		prices.put("iron", .1);
 		prices.put("stone", .1);
 		prices.put("gold", 1.0);
+		prices.put("jewelry", 1.2);
 		prices.put("meat", .1);
 		prices.put("fish", .1);
 		prices.put("grain", .1);
 		prices.put("wood", .1);
-		prices.put("soldiers", .1);
+		prices.put("weapons", .2);
+		prices.put("clothing", .15);
+		prices.put("tools", .18);
+		prices.put("soldiers", .4);
 		formContinents();
 		formTerrain();
 		stockResources();

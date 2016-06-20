@@ -52,23 +52,49 @@ public class City {
 		return funding*(size/10)*.01;
 	}
 	
+	private void addPopulation(){
+		
+		int add = (int)(funding * 100.0/size); 
+		if(add > 10)
+			size+= 10;
+		else if(add == 0 && Math.random() > .75)
+			size += 1;
+		else
+			size+= add;
+		controller.money-=funding;
+	}
+	
+	private void addToStockpile(String k, int days){
+		double produce = production.get(k);
+		double stockpiled = stockpile.get(k);
+		
+		double baseAmount = (stockpiled + (produce/100.0)*days*getProductionPower());
+		if(Game.ADVANCED.get(k) != null){
+			String baseRes = Game.ADVANCED.get(k);
+			if(stockpile.get(baseRes) < baseAmount)
+				baseAmount = stockpile.get(baseRes);
+			stockpile.put(baseRes, stockpile.get(baseRes)-baseAmount);
+		}
+		
+		stockpile.put(k, 
+					(stockpiled + (produce/100.0)*days*getProductionPower()));	
+		
+	}
+	
 	public void update(int days){
+		if(controller.money < funding)
+			funding = controller.money;
+		
 		for (int i = 0; i < days; i++){
-			int add = (int)(funding * 100.0/size); 
-			if(add > 10)
-				size+= 10;
-			else 
-				size+= add;
-			controller.money-=funding;
-			}
+			addPopulation();
+		}
+		
 		for(java.util.Map.Entry<String, Double> entry : production.entrySet()){
 			String k = entry.getKey();
-			double produce = entry.getValue();
-			double stockpiled = stockpile.get(k);
 			HashMap<String, Double> kInstr = instructions.get(k);
+			double stockpiled = stockpile.get(k);
 			
-			stockpile.put(k, 
-						(stockpiled + (produce/100.0)*days*getProductionPower()));	
+			addToStockpile(k, days);
 			
 			double toStockpile = kInstr.get("stockpile"); 
 			if(stockpiled > toStockpile){
@@ -79,7 +105,7 @@ public class City {
 				controller.influence+= excess*(sendBack/100.0);
 		
 				stockpile.put(k, stockpiled-(excess*(kInstr.get("sell")/100)));
-				controller.money+= (excess*kInstr.get("sell"))*map.prices.get(k);
+				controller.money+= (excess*kInstr.get("sell"))*Game.prices.get(k);
 				
 			}
 		}
@@ -87,10 +113,19 @@ public class City {
 				
 		if(size >= 100*(production.size()+1)){
 			String r = availableResources.get(((int)(Math.random()*100))%availableResources.size());
+			if(production.get(r) != null){
+				ArrayList<String> adv = advancedResources();
+				if(adv.size() > 0)
+					r = adv.get(((int)(Math.random()*100))%adv.size());
+			}
+			
+			if(production.get(r) != null)
+				return;
+			
 			production.put(r, 0.0);
 			stockpile.put(r, 0.0);
 			HashMap<String, Double> inst = new HashMap<String, Double>();
-			inst.put("stockpile", 0.0);
+			inst.put("stockpile", 10.0);
 			inst.put("return", 0.0);
 			inst.put("sell", 100.0);
 			instructions.put(r, inst);
@@ -99,6 +134,22 @@ public class City {
 		}
 	}
 	
+	private ArrayList<String> advancedResources() {
+		ArrayList<String> res = new ArrayList<String>();
+		if(stockpile.get("iron") != null && stockpile.get("iron") > 0)
+			res.add("weapons");
+		if(stockpile.get("cotton") != null && stockpile.get("cotton") > 0)
+			res.add("clothing");
+		if(stockpile.get("stone") != null && stockpile.get("stone") > 0)
+			res.add("tools");
+		if(stockpile.get("gold") != null && stockpile.get("gold") > 0)
+			res.add("jewelry");
+		if(stockpile.get("weapons") != null && stockpile.get("weapons") > 0)
+			res.add("soldiers");
+		
+		return res;
+	}
+
 	public void balanceProduction() {
 		for(java.util.Map.Entry<String, Double> e : production.entrySet()){
 			production.put(e.getKey(), 100.0/production.size());

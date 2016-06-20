@@ -4,7 +4,7 @@ public class Player {
 
 	public String name;
 	public Map map;
-	public double money = 100;
+	public double money = 1000;
 	public Player liege;
 	public double influence = 50;
 	public ArrayList<Player> vassals = new ArrayList<Player>();

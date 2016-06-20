@@ -1,4 +1,6 @@
+import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Player {
 
@@ -8,9 +10,8 @@ public class Player {
 	public Player liege;
 	public double influence = 50;
 	public ArrayList<Player> vassals = new ArrayList<Player>();
-	public ArrayList<Soldier> troops = new ArrayList<Soldier>();
-	public ArrayList<Ship> ships = new ArrayList<Ship>();
 	public ArrayList<City> cities = new ArrayList<City>();
+	public ArrayList<Explorer> explorers = new ArrayList<Explorer>();
 	public City capitol;
 	public boolean[][] visible = new boolean[Map.MAPSIZE][Map.MAPSIZE];
 	public int xloc = Map.MAPSIZE-1;
@@ -22,6 +23,7 @@ public class Player {
 	public Player(String name, Map map) {
 		this.name = name;
 		this.map = map;
+		explorers.add(new Explorer(new Point(xloc, yloc)));
 		for(boolean[] b1 : visible)
 			for(boolean b2 : b1)
 				b2 = false;
@@ -31,8 +33,9 @@ public class Player {
 					visible[Map.MAPSIZE-1-i][j] = true;
 	}
 	
-	public void gainExploreKnowledge(ArrayList<Integer> knowledge){
-		
+	public void gainExploreKnowledge(HashSet<Point> knowledge){
+		for(Point p: knowledge)
+			visible[p.x][p.y] = true;
 	}
 	
 	public City foundCity(String name, int lattitude, int longitude){
@@ -45,8 +48,9 @@ public class Player {
 				yloc = longitude;
 				capitol = n;
 				this.location = n;
-				for (int i = 0; i < troops.size(); i++)
-					n.garrison.add(troops.get(i));
+				for(Explorer e: explorers){
+					e.setOrigin(new Point(xloc, yloc));
+				}
 			}
 			return n;
 		}
@@ -61,6 +65,10 @@ public class Player {
 		}
 		for(City c : cities){
 			c.update(days);
+		}
+		for(Explorer e : explorers){
+			if(e.update())
+				gainExploreKnowledge(e.getKnowledge());
 		}
 		
 	}

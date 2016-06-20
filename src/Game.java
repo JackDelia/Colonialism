@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -193,15 +194,6 @@ public class Game extends JFrame{
 
 			public void mouseClicked(MouseEvent e) {
 				if(exploreClicked){
-					if(!pc.inRange(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP)){
-						currentMessage += "\nToo far away";
-						return;
-					}
-					if(pc.money < 20){
-						currentMessage += "\nNot Enough Money.";
-						return;
-					}
-					pc.money -= 20;
 					explore(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
 				}
 				else if(foundClicked)
@@ -274,6 +266,12 @@ public class Game extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				pc.location = c;
+				for(Explorer ex: pc.explorers){
+					ex.setOrigin(new Point(c.xpos, c.ypos));
+					if(!ex.isExploring()){
+						ex.setLocation(new Point(c.xpos, c.ypos));
+					}
+				}
 			}
 			
 		});
@@ -302,12 +300,15 @@ public class Game extends JFrame{
 	
 
 	private void explore(int i, int j) {
-		for(int x = -6; x <= 6; x++)
-			for(int y = -6; y <= 6; y++)
-				if(x+i >= 0 && x+i < Map.MAPSIZE && y+j >= 0 && y+j < Map.MAPSIZE && Math.sqrt(Math.pow(x,2)+Math.pow(y,2)) <= 6)
-					pc.visible[i+x][j+y] = true;
-		
-		repaint();
+		for(Explorer e: pc.explorers){
+			if(!e.isExploring()){
+				e.setTarget(new Point(i,j));
+				currentMessage = "Explorer Sent.";
+				exploreClicked = false;
+				return;
+			}
+		}
+		currentMessage = "No Explorers Left";
 	}
 
 	public void run() {	

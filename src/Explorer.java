@@ -20,26 +20,45 @@ public class Explorer{
 	public Explorer(Point start){
 		name = NAMES[(int)(Math.random()*NAMES.length)];
 		location = start;
+		origin = (Point) start.clone();
+	}
+	
+	public void setOrigin(Point o){
+		origin = o;
+		if(!exploring){
+			location = o;
+		}
+	}
+	
+	public boolean isExploring(){
+		return exploring;
 	}
 	
 	public String getName(){
 		return name;
 	}
 	
+	public void setTarget(Point p){
+		exploring = true;
+		target = p;
+	}
+	
+	public void setLocation(Point p){
+		location = p;
+	}
+	
 	private void moveTowardTarget(){
 		int[] direction ={0,0};
-		int xdir = (target.x-location.x)/Math.abs(target.x-location.x);
-		int ydir = (target.y-location.y)/Math.abs(target.y-location.y);
 		
 		if(target.x != location.x && target.y != location.y){
 			if(Math.random() > .5)
-				direction[0] = xdir;
+				direction[0] = (target.x-location.x)/Math.abs(target.x-location.x);
 			else
-				direction[1] = ydir;
+				direction[1] = (target.y-location.y)/Math.abs(target.y-location.y);
 		} else if(target.x != location.x)
-			direction[0] = xdir;
+			direction[0] = (target.x-location.x)/Math.abs(target.x-location.x);
 		else
-			direction[1] = ydir;
+			direction[1] = (target.y-location.y)/Math.abs(target.y-location.y);
 		
 		location.translate(direction[0], direction[1]);
 		gainKnowledge();
@@ -48,9 +67,10 @@ public class Explorer{
 	private void gainKnowledge(){
 		for(int i = -vision; i < vision; i++){
 			for(int j = -vision; j < vision; j++){
-				Point seen = location;
+				Point seen = (Point)location.clone();
 				seen.translate(i, j);
-				knowledge.add(seen);
+				if(seen.x >= 0 && seen.x < Map.MAPSIZE && seen.y >= 0 && seen.y < Map.MAPSIZE && seen.distance(location) <= vision)
+					knowledge.add(seen);
 			}
 		}
 	}
@@ -68,9 +88,11 @@ public class Explorer{
 					}
 				} else{
 					moveTowardTarget();
+					return true;
 				}
 			}
 		}
+
 		return false;
 	}
 	

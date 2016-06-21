@@ -30,6 +30,7 @@ public class Game extends JFrame{
 	private boolean foundClicked;
 	private boolean moving;
 	private boolean paused;
+	private boolean menu;
 	private Player pc;
 	private Map gameMap;
 	private JPanel buttonPanel;
@@ -87,34 +88,42 @@ public class Game extends JFrame{
 		uiPanel.setPreferredSize(new Dimension(-250,-250));
 		uiPanel.setLayout(new BoxLayout(uiPanel, BoxLayout.X_AXIS));
 		
-		moveButtonPanel = new JPanel();
-		JButton positionMoveButton = new JButton("Move to Position");
-		positionMoveButton.addActionListener(new ActionListener(){
+//		setup();
+		setVisible(true);
+	}
+	
+	private void setupMouseListener(){
+		gameMap.addMouseListener(new MouseListener(){
 
-			public void actionPerformed(ActionEvent e){
-				moving = true;
-				exploreClicked = false;
-				foundClicked = false;
-				currentMessage = "Click where you want to move on the map.";
+			public void mouseClicked(MouseEvent e) {
+				if(exploreClicked){
+					explore(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
+				}
+				else if(foundClicked)
+					foundCity(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
+				else if(moving){
+					pc.location = null;
+					pc.xloc = e.getX()/Map.PIXELSTEP;
+					pc.yloc = e.getY()/Map.PIXELSTEP;
+				}
+			}
+
+			public void mousePressed(MouseEvent e) {
+			}
+
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			public void mouseExited(MouseEvent e) {
 			}
 			
 		});
-		
-		JButton cancelMoveButton = new JButton("Cancel");
-		cancelMoveButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				currentMessage = "";
-				uiPanel.remove(moveButtonPanel);
-				uiPanel.add(buttonPanel);
-				moving = false;
-			}
-		});
-		
-		moveButtonPanel.add(positionMoveButton);
-		moveButtonPanel.add(cancelMoveButton);
-
-		moveButtonPanel.setLayout(new BoxLayout(moveButtonPanel, BoxLayout.PAGE_AXIS));
-		
+	}
+	
+	private void setupButtonPanel(){
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
 		buttonPanel.setAutoscrolls(true);
@@ -174,7 +183,59 @@ public class Game extends JFrame{
 		buttonPanel.add(foundButton);
 		buttonPanel.add(pause);
 		buttonPanel.add(moveButton);
+	}
+	
+	private void setupMoveButtonPanel(){
+		moveButtonPanel = new JPanel();
+		JButton positionMoveButton = new JButton("Move to Position");
+		positionMoveButton.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e){
+				moving = true;
+				exploreClicked = false;
+				foundClicked = false;
+				currentMessage = "Click where you want to move on the map.";
+			}
+			
+		});
 		
+		JButton cancelMoveButton = new JButton("Cancel");
+		cancelMoveButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				currentMessage = "";
+				uiPanel.remove(moveButtonPanel);
+				uiPanel.add(buttonPanel);
+				moving = false;
+			}
+		});
+		
+		moveButtonPanel.add(positionMoveButton);
+		moveButtonPanel.add(cancelMoveButton);
+
+		moveButtonPanel.setLayout(new BoxLayout(moveButtonPanel, BoxLayout.PAGE_AXIS));
+	}
+	
+	private void setup(){
+		removeAll();
+
+		setupMoveButtonPanel();
+		setupButtonPanel();
+		uiPanel.add(createMessageBox());
+		uiPanel.add(buttonPanel);
+		setupMouseListener();
+		
+		JPanel container = new JPanel();
+		setSize(1200, 600);
+		container.setSize(700,700);
+		container.add(gameMap);
+		container.add(uiPanel);
+		BoxLayout b = new BoxLayout(container, BoxLayout.LINE_AXIS);
+		container.setLayout(b);
+		container.setBackground(new Color(255,0,255));
+		add(container);
+	}
+	
+	private JPanel createMessageBox(){
 		messages = new JEditorPane();
 		messages.setEditable(false);
 		messages.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
@@ -189,50 +250,7 @@ public class Game extends JFrame{
 		messagesHolder.add(messages);
 		messagesHolder.setBounds(0,0,50,50);
 		messagesHolder.setBackground(new Color(0,255,255));
-		uiPanel.add(messagesHolder);
-		
-		uiPanel.add(buttonPanel);
-
-		
-		gameMap.addMouseListener(new MouseListener(){
-
-			public void mouseClicked(MouseEvent e) {
-				if(exploreClicked){
-					explore(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
-				}
-				else if(foundClicked)
-					foundCity(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
-				else if(moving){
-					pc.location = null;
-					pc.xloc = e.getX()/Map.PIXELSTEP;
-					pc.yloc = e.getY()/Map.PIXELSTEP;
-				}
-			}
-
-			public void mousePressed(MouseEvent e) {
-			}
-
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			public void mouseExited(MouseEvent e) {
-			}
-			
-		});
-		
-		JPanel container = new JPanel();
-		setSize(1200, 600);
-		container.setSize(700,700);
-		container.add(gameMap);
-		container.add(uiPanel);
-		BoxLayout b = new BoxLayout(container, BoxLayout.LINE_AXIS);
-		container.setLayout(b);
-		container.setBackground(new Color(255,0,255));
-		add(container);
-		setVisible(true);
+		return messagesHolder;
 	}
 	
 	private void showMoveMenu(){
@@ -314,8 +332,32 @@ public class Game extends JFrame{
 		}
 		currentMessage = "No Explorers Left";
 	}
+	
+	private void showMenu(){
+		menu = true;
+		JPanel container = new JPanel();
+//		container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
+		JButton startButton = new JButton("Start!");
+		startButton.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				menu = false;
+				setup();	
+			}
+			
+		});
+		container.add(startButton);
+		container.setBackground(Color.BLUE);
+		add(container);
+		while(menu || messages == null){
+			repaint();
+		}
+		remove(container);
+	}
 
 	public void run() {	
+		showMenu();
+		
 		while (true){
 			repaint();
 			gameMap.repaint();
@@ -332,7 +374,8 @@ public class Game extends JFrame{
 					else
 						explorerStati += ": Free\n";
 				}
-				messages.setText("Day " + day + "\n" + "Money: " + (int)pc.money + "G\n" + "Explorers:\n" +  
+				messages.setText("Day " + day + "\n" + "Money: " + 
+				(int)pc.money + "G\n" + "Explorers:\n" +  
 						explorerStati + currentMessage);
 				pc.Update(1);
 			}

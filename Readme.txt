@@ -12,12 +12,12 @@ Cities grow and produce resources that can be sold for more money.
 Todo: 
 
 Combat System - unclaimed
-Better Exploration - claimed By Jack
 AI players - unclaimed
 Better City Overview Screen - unclaimed 
 Random events - unclaimed
 intra-empire trading - unclaimed
 touch up map generation - unclaimed
+menu/instructions - claimed by Jack
 
 REFACTORING - claimed by everyone
 REBALANCE EVERYTHING - claimed by everyone
@@ -25,3 +25,4 @@ REBALANCE EVERYTHING - claimed by everyone
 Complete:
 Advanced Resources - completed by Jack
 Basic City Overview Screen - completed by Jack
+Better Exploration - completed By Jack

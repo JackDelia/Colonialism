@@ -69,6 +69,7 @@ public class Game extends JFrame{
 	
 	public Game(){
 		super("Colonialism!");
+		setSize(1200, 600);
 		this.getContentPane().setBackground(new Color(255,0,255));
 		this.addWindowListener(new WindowAdapter() {
 	         public void windowClosing(WindowEvent windowEvent){
@@ -88,7 +89,6 @@ public class Game extends JFrame{
 		uiPanel.setPreferredSize(new Dimension(-250,-250));
 		uiPanel.setLayout(new BoxLayout(uiPanel, BoxLayout.X_AXIS));
 		
-//		setup();
 		setVisible(true);
 	}
 	
@@ -216,7 +216,7 @@ public class Game extends JFrame{
 	}
 	
 	private void setup(){
-		removeAll();
+		setSize(1200, 600);
 
 		setupMoveButtonPanel();
 		setupButtonPanel();
@@ -225,7 +225,6 @@ public class Game extends JFrame{
 		setupMouseListener();
 		
 		JPanel container = new JPanel();
-		setSize(1200, 600);
 		container.setSize(700,700);
 		container.add(gameMap);
 		container.add(uiPanel);
@@ -342,14 +341,14 @@ public class Game extends JFrame{
 
 			public void actionPerformed(ActionEvent e) {
 				menu = false;
-				setup();	
 			}
 			
 		});
 		container.add(startButton);
 		container.setBackground(Color.BLUE);
 		add(container);
-		while(menu || messages == null){
+		setSize(500, 500);
+		while(menu){
 			repaint();
 		}
 		remove(container);
@@ -357,7 +356,7 @@ public class Game extends JFrame{
 
 	public void run() {	
 		showMenu();
-		
+		setup();
 		while (true){
 			repaint();
 			gameMap.repaint();

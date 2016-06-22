@@ -47,7 +47,7 @@ public class City {
 	}
 	
 	public double getProductionPower(){
-		return funding*(size/10)*.01;
+		return (((int)funding/10)+1)*(size/10)*.01;
 	}
 	
 	private void addPopulation(){

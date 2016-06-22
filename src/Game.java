@@ -20,6 +20,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
@@ -30,7 +31,7 @@ public class Game extends JFrame{
 	private boolean foundClicked;
 	private boolean moving;
 	private boolean paused;
-	private boolean menu;
+	private int menu;
 	private Player pc;
 	private Map gameMap;
 	private JPanel buttonPanel;
@@ -77,12 +78,9 @@ public class Game extends JFrame{
 	         }        
 	      });    
 		
-		lastUpdate = System.currentTimeMillis();
+		
 		exploreClicked = false;
 		foundClicked = false;
-		gameMap = new Map();
-		pc = new Player("Jack", gameMap);
-		gameMap.player = pc;
 		
 		uiPanel = new JPanel();
 		uiPanel.setBackground(new Color(255,0,0));
@@ -215,8 +213,13 @@ public class Game extends JFrame{
 		moveButtonPanel.setLayout(new BoxLayout(moveButtonPanel, BoxLayout.PAGE_AXIS));
 	}
 	
-	private void setup(){
+	private void setup(String name){
 		setSize(1200, 600);
+		
+		lastUpdate = System.currentTimeMillis();
+		gameMap = new Map();
+		pc = new Player(name, gameMap);
+		gameMap.player = pc;
 
 		setupMoveButtonPanel();
 		setupButtonPanel();
@@ -332,31 +335,73 @@ public class Game extends JFrame{
 		currentMessage = "No Explorers Left";
 	}
 	
-	private void showMenu(){
-		menu = true;
+	private String showMenu(){
+		menu = 0;
+		JPanel container = setupMenu();
+		add(container);
+		setSize(500, 500);
+		while(menu != 1){
+			repaint();
+			container.repaint();
+			if(menu == 2){
+				container.removeAll();
+				JButton backButton = new JButton("Back");
+				backButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						menu = 3;
+					}
+				});
+				JPanel instructions = createMessageBox();
+				messages.setText("Colonialism!\n\nExplore the map and found cities to \nmake money!");
+				container.add(backButton);
+				container.add(instructions);
+				container.validate();
+				menu = 0;
+			}
+			if(menu == 3){
+				remove(container);
+				container = setupMenu();
+				add(container);
+				validate();
+				menu = 0;
+			}
+		}
+		
+		String name = JOptionPane.showInputDialog("Enter Name");
+		if(name == null)
+			name = "Jack Delia";
+		
+		remove(container);
+		return name;
+	}
+	
+	private JPanel setupMenu(){
 		JPanel container = new JPanel();
-//		container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
+		container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
 		JButton startButton = new JButton("Start!");
 		startButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e) {
-				menu = false;
+				menu = 1;
 			}
 			
 		});
+		
+		JButton instructionsButton = new JButton("Instructions");
+		instructionsButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				menu = 2;
+			}
+		});
+		
 		container.add(startButton);
+		container.add(instructionsButton);
 		container.setBackground(Color.BLUE);
-		add(container);
-		setSize(500, 500);
-		while(menu){
-			repaint();
-		}
-		remove(container);
+		return container;
 	}
 
 	public void run() {	
-		showMenu();
-		setup();
+		setup(showMenu());
 		while (true){
 			repaint();
 			gameMap.repaint();
@@ -373,7 +418,7 @@ public class Game extends JFrame{
 					else
 						explorerStati += ": Free\n";
 				}
-				messages.setText("Day " + day + "\n" + "Money: " + 
+				messages.setText(pc.name + "\nDay " + day + "\n" + "Money: " + 
 				(int)pc.money + "G\n" + "Explorers:\n" +  
 						explorerStati + currentMessage);
 				pc.Update(1);

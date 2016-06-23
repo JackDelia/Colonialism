@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -33,6 +34,7 @@ public class Game extends JFrame{
 	private boolean paused;
 	private int menu;
 	private Player pc;
+	private ArrayList<Player> players = new ArrayList<Player>();
 	private Map gameMap;
 	private JPanel buttonPanel;
 	private JPanel moveButtonPanel;
@@ -218,6 +220,8 @@ public class Game extends JFrame{
 		lastUpdate = System.currentTimeMillis();
 		gameMap = new Map();
 		pc = new Player(name, gameMap);
+		players.add(pc);
+		players.add(new ComputerPlayer("ROBOT", gameMap));
 		gameMap.player = pc;
 
 		setupMoveButtonPanel();
@@ -317,15 +321,13 @@ public class Game extends JFrame{
 	
 
 	private void explore(int i, int j) {
-		for(Explorer e: pc.getExplorers()){
-			if(!e.isExploring()){
-				e.setTarget(new Point(i,j));
-				currentMessage = "Explorer Sent.";
-				exploreClicked = false;
-				return;
-			}
+		if(pc.canExplore()){
+			pc.explore(new Point(i,j));
+			currentMessage = "Explorer Sent.";
+			exploreClicked = false;
+		} else{
+			currentMessage = "No Explorers Left";
 		}
-		currentMessage = "No Explorers Left";
 	}
 	
 	private String showMenu(){
@@ -422,7 +424,9 @@ public class Game extends JFrame{
 				messages.setText(pc.getName() + "\nDay " + day + "\n" + "Money: " + 
 				(int)pc.getMoney() + "G\n" + "Explorers:\n" +  
 						explorerStati + currentMessage);
-				pc.Update(1);
+				for(Player p: players){
+					p.update(1);
+				}
 			}
 		}
 	}

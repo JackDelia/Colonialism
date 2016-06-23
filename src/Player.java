@@ -5,7 +5,7 @@ import java.util.HashSet;
 public class Player {
 
 	private String name;
-	private Map map;
+	protected Map map;
 	private double money = 1000;
 	private int influence = 50;
 	private ArrayList<Player> vassals = new ArrayList<Player>();
@@ -27,6 +27,24 @@ public class Player {
 			for(int j = 0; j< 8; j++)
 				if(i+j < 8)
 					visible[Map.MAPSIZE-1-i][j] = true;
+	}
+	
+	public boolean canExplore(){
+		for(Explorer e: explorers){
+			if(!e.isExploring()){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void explore(Point target){
+		for(Explorer e: explorers){
+			if(!e.isExploring()){
+				e.setTarget(target);
+				return;
+			}
+		}
 	}
 	
 	public void gainExploreKnowledge(HashSet<Point> knowledge){
@@ -54,10 +72,7 @@ public class Player {
 		return null;
 	}
 	
-	public void Update(int days){
-		for(Player p: vassals){
-			p.Update(days);
-		}
+	public void update(int days){
 		for(City c : cities){
 			c.update(days);
 		}

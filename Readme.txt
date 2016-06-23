@@ -12,7 +12,7 @@ Cities grow and produce resources that can be sold for more money.
 Todo: 
 
 Combat System - unclaimed
-AI players - unclaimed
+AI players - claimed by Jack
 Better City Overview Screen - unclaimed 
 Random events - unclaimed
 intra-empire trading - unclaimed

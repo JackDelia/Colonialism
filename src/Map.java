@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 
 public class Map extends JPanel{
 
-	public int[][] mapTerrain = new int[MAPSIZE][MAPSIZE];
+	public Terrain[][] mapTerrain = new Terrain[MAPSIZE][MAPSIZE];
 	public String[][][] mapResources = new String[MAPSIZE][MAPSIZE][];
 	public ArrayList<City> cities = new ArrayList<City>();
 	public HashMap<String, Double> prices = new HashMap<String,Double>();
@@ -25,6 +25,16 @@ public class Map extends JPanel{
 	public static final String[] NATURAL = {"gold", "stone", "iron"};
 	public Player player;
 	private int age = 0;
+	
+	private static final HashMap<Terrain, Color> colors = new HashMap<Terrain, Color>();
+	static{
+		colors.put(Terrain.OCEAN, Color.BLUE);
+		colors.put(Terrain.PLAINS, new Color(255, 225, 79));
+		colors.put(Terrain.HILLS, Color.ORANGE);
+		colors.put(Terrain.MOUNTAINS, Color.BLACK);
+		colors.put(Terrain.DESERT, Color.YELLOW);
+		colors.put(Terrain.FORREST, Color.GREEN);
+	}
 	
 	public Map() {
 		//procedural generation possible later
@@ -86,23 +96,8 @@ public class Map extends JPanel{
 	public void paintComponent(Graphics g){
 		for(int i = 0; i< MAPSIZE; i++){
 			for(int j = 0; j< MAPSIZE; j++){
-				switch (mapTerrain[i][j]){
-				case 0: g.setColor(Color.BLUE);
-					break;
-				case 1: g.setColor(Color.ORANGE);
-					break;
-				case 2: g.setColor(Color.BLACK);
-					break;
-				case 3: g.setColor(Color.YELLOW);
-					break;
-				case 4: g.setColor(Color.GREEN);
-					break;
-				case 5: g.setColor(Color.CYAN);
-					break;
-				default: g.setColor(Color.RED);
-					break;
-				}
-				if(player != null && !player.visible[i][j])
+				g.setColor(colors.get(mapTerrain[i][j]));
+				if(player != null && !player.visible[i][j] && !player.name.equals("god"))
 					g.setColor(Color.WHITE);
 				if(player != null && player.location == null && player.xloc == i && player.yloc == j && !(age%7000 < 3500))
 					g.setColor(Color.RED);
@@ -123,54 +118,63 @@ public class Map extends JPanel{
 	
 	public void formTerrain(){
 		for(int i = 2; i<=4; i++){
+			Terrain t = Terrain.PLAINS;
+			switch(i){
+			case 2: t = Terrain.MOUNTAINS;
+				break;
+			case 3: t = Terrain.DESERT;
+				break;
+			case 4: t = Terrain.FORREST;
+			
+			}
 			int count = r.nextInt((int) (Math.pow(MAPSIZE, 2)/1000))+18;
 			System.out.println(i + "  " + count);
 			while (count > 0){
 				int x = r.nextInt(MAPSIZE-2)+1;
 				int y = r.nextInt(MAPSIZE-2)+1;
-				if(mapTerrain[x][y] == 5){
-					mapTerrain[x][y] = i;
+				if(mapTerrain[x][y] == Terrain.PLAINS){
+					mapTerrain[x][y] = t;
 					int dirCount = 1;
 					while(Math.random()<.75 && dirCount<x){
-						if(mapTerrain[x-dirCount][y] == 5){
-							mapTerrain[x-dirCount][y] = i;
-							if(mapTerrain[x-dirCount][y+1] ==5 && Math.random()>=.5)
-								mapTerrain[x-dirCount][y+1] = i;
-							if(mapTerrain[x-dirCount][y+1] ==5 && Math.random()>=.5)
-								mapTerrain[x-dirCount][y-1] = i;
+						if(mapTerrain[x-dirCount][y] == Terrain.PLAINS){
+							mapTerrain[x-dirCount][y] = t;
+							if(mapTerrain[x-dirCount][y+1] == Terrain.PLAINS && Math.random()>=.5)
+								mapTerrain[x-dirCount][y+1] = t;
+							if(mapTerrain[x-dirCount][y+1] == Terrain.PLAINS && Math.random()>=.5)
+								mapTerrain[x-dirCount][y-1] = t;
 						}
 						dirCount++;
 					}
 					dirCount = 1;
 					while(Math.random()<.75 && dirCount+x<MAPSIZE){
-						if(mapTerrain[x+dirCount][y] == 5){
-							mapTerrain[x+dirCount][y] = i;
-							if(mapTerrain[x+dirCount][y+1] ==5 && Math.random()>=.5)
-								mapTerrain[x+dirCount][y+1] = i;
-							if(mapTerrain[x+dirCount][y+1] ==5 && Math.random()>=.5)
-								mapTerrain[x+dirCount][y-1] = i;
+						if(mapTerrain[x+dirCount][y] == Terrain.PLAINS){
+							mapTerrain[x+dirCount][y] = t;
+							if(mapTerrain[x+dirCount][y+1] == Terrain.PLAINS && Math.random()>=.5)
+								mapTerrain[x+dirCount][y+1] = t;
+							if(mapTerrain[x+dirCount][y+1] == Terrain.PLAINS && Math.random()>=.5)
+								mapTerrain[x+dirCount][y-1] = t;
 						}
 						dirCount++;
 					}
 					dirCount = 1;
 					while(Math.random()<.75&& dirCount<y){
-						if(mapTerrain[x][y-dirCount] == 5){
-							mapTerrain[x][y-dirCount] = i;
-							if(mapTerrain[x+1][y-dirCount] ==5 && Math.random()>=.5)
-								mapTerrain[x+1][y-dirCount] = i;
-							if(mapTerrain[x-1][y-dirCount] ==5 && Math.random()>=.5)
-								mapTerrain[x-1][y-dirCount] = i;
+						if(mapTerrain[x][y-dirCount] == Terrain.PLAINS){
+							mapTerrain[x][y-dirCount] = t;
+							if(mapTerrain[x+1][y-dirCount] == Terrain.PLAINS && Math.random()>=.5)
+								mapTerrain[x+1][y-dirCount] = t;
+							if(mapTerrain[x-1][y-dirCount] == Terrain.PLAINS && Math.random()>=.5)
+								mapTerrain[x-1][y-dirCount] = t;
 						}
 						dirCount++;
 					}
 					dirCount = 1;
 					while(Math.random()<.75 && dirCount+y < MAPSIZE){
-						if(mapTerrain[x][y+dirCount] == 5){
-							mapTerrain[x][y+dirCount] = i;
-							if(mapTerrain[x+1][y+dirCount] ==5 && Math.random()>=.5)
-								mapTerrain[x+1][y+dirCount] = i;
-							if(mapTerrain[x-1][y+dirCount] ==5 && Math.random()>=.5)
-								mapTerrain[x-1][y+dirCount] = i;
+						if(mapTerrain[x][y+dirCount] == Terrain.PLAINS){
+							mapTerrain[x][y+dirCount] = t;
+							if(mapTerrain[x+1][y+dirCount] == Terrain.PLAINS && Math.random()>=.5)
+								mapTerrain[x+1][y+dirCount] = t;
+							if(mapTerrain[x-1][y+dirCount] == Terrain.PLAINS && Math.random()>=.5)
+								mapTerrain[x-1][y+dirCount] = t;
 						}
 						dirCount++;
 					}
@@ -180,8 +184,8 @@ public class Map extends JPanel{
 		}
 		for(int w = 0; w< MAPSIZE; w++)
 			for(int z = 0; z< MAPSIZE; z++)
-				if(mapTerrain[w][z] == 5 && Math.random()>.75)
-					mapTerrain[w][z] = 1;
+				if(mapTerrain[w][z] == Terrain.PLAINS && Math.random()>.75)
+					mapTerrain[w][z] = Terrain.HILLS;
 		System.out.println("Terrain formed.");
 		
 	}
@@ -198,9 +202,9 @@ public class Map extends JPanel{
 		for(int i = 0; i< MAPSIZE; i++){
 			for(int j = 0; j< MAPSIZE; j++){
 				if(j<=lt || j>=rt)
-					mapTerrain[j][i] = 0;
+					mapTerrain[j][i] = Terrain.OCEAN;
 				else{
-					mapTerrain[j][i] = 5;
+					mapTerrain[j][i] = Terrain.PLAINS;
 					mass++;
 				}
 			}
@@ -235,9 +239,9 @@ public class Map extends JPanel{
 	//3-desert
 	//4-woods
 	//5-plains
-	public int getTerrain(int lattitude, int longitude){
+	public Terrain getTerrain(int lattitude, int longitude){
 		if(lattitude >= MAPSIZE || longitude >= MAPSIZE || lattitude < 0 || longitude < 0)
-			return -1;
+			return Terrain.INVALID;
 		return mapTerrain[lattitude][longitude];
 	}
 
@@ -257,9 +261,9 @@ public class Map extends JPanel{
 			for(int j = -2; j<=2; j++){
 				if(lattitude+i > 0 && longitude+j > 0 && lattitude+i < Map.MAPSIZE && longitude+j < Map.MAPSIZE){
 
-					if(mapTerrain[lattitude+i][longitude+j] == 4 && !ret.contains("wood"))
+					if(mapTerrain[lattitude+i][longitude+j] == Terrain.FORREST && !ret.contains("wood"))
 						ret.add("wood");
-					if(mapTerrain[lattitude+1][longitude+1] == 3 && !ret.contains("cotton"))
+					if(mapTerrain[lattitude+1][longitude+1] == Terrain.DESERT && !ret.contains("cotton"))
 						ret.add("cotton");
 				}
 			}
@@ -272,7 +276,7 @@ public class Map extends JPanel{
 	}
 
 	public boolean valid(int xpos, int ypos) {
-		if(mapTerrain[xpos][ypos] == 0)
+		if(mapTerrain[xpos][ypos] == Terrain.OCEAN)
 			return false;
 		for(City c : cities)
 			if(((Math.pow((c.xpos-xpos),2))+ (Math.pow((c.ypos-ypos),2)))<10)

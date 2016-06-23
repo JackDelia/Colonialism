@@ -394,8 +394,16 @@ public class Game extends JFrame{
 			}
 		});
 		
+		JButton exitButton = new JButton("Quit");
+		exitButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				System.exit(0);
+			}
+		});
+		
 		container.add(startButton);
 		container.add(instructionsButton);
+		container.add(exitButton);
 		container.setBackground(Color.BLUE);
 		return container;
 	}

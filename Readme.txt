@@ -17,12 +17,13 @@ Better City Overview Screen - unclaimed
 Random events - unclaimed
 intra-empire trading - unclaimed
 touch up map generation - unclaimed
-menu/instructions - claimed by Jack
 
 REFACTORING - claimed by everyone
 REBALANCE EVERYTHING - claimed by everyone
+PRETTY THINGS UP - claimed by everyone
 
 Complete:
 Advanced Resources - completed by Jack
 Basic City Overview Screen - completed by Jack
 Better Exploration - completed By Jack
+menu/instructions - completed by Jack

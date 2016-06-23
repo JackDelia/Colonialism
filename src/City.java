@@ -14,7 +14,7 @@ public class City {
 	public double funding = 1;
 	public Player controller;
 	public boolean discovered = false;
-	public int terrain = 5;
+	public Terrain terrain = Terrain.PLAINS;
 	public boolean coastal;
 	public Map map;
 	public ArrayList<String> availableResources = new ArrayList<String>();
@@ -35,9 +35,9 @@ public class City {
 		this.cityId = controller.cities.size();
 		this.terrain = map.getTerrain(xpos, ypos);
 		for(int i = -2; i<=2; i++){
-			if((map.getTerrain(xpos+i, ypos+i) == 0) 
-					|| (map.getTerrain(xpos+i, ypos) == 0)
-					|| (map.getTerrain(xpos, ypos+i) == 0))
+			if((map.getTerrain(xpos+i, ypos+i) == Terrain.OCEAN) 
+					|| (map.getTerrain(xpos+i, ypos) == Terrain.OCEAN)
+					|| (map.getTerrain(xpos, ypos+i) == Terrain.OCEAN))
 				this.coastal = true;
 		}
 		map.cities.add(this);

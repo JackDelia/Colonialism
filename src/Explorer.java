@@ -19,8 +19,8 @@ public class Explorer{
 	
 	public Explorer(Point start){
 		name = NAMES[(int)(Math.random()*NAMES.length)];
-		location = start;
-		origin = (Point) start.clone();
+		location = (Point) start.clone();
+		origin = start;
 	}
 	
 	public void setOrigin(Point o){

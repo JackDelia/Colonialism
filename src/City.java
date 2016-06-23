@@ -32,7 +32,7 @@ public class City {
 		this.ypos = ypos;
 		this.controller = controller;
 		this.map = map;
-		this.cityId = controller.cities.size();
+		this.cityId = controller.getCities().size();
 		this.terrain = map.getTerrain(xpos, ypos);
 		for(int i = -2; i<=2; i++){
 			if((map.getTerrain(xpos+i, ypos+i) == Terrain.OCEAN) 
@@ -59,7 +59,7 @@ public class City {
 			size += 1;
 		else
 			size+= add;
-		controller.money-=funding;
+		controller.incrementMoney(-funding);
 	}
 	
 	private void addToStockpile(String k, int days){
@@ -80,8 +80,8 @@ public class City {
 	}
 	
 	public void update(int days){
-		if(controller.money < funding)
-			funding = controller.money;
+		if(controller.getMoney() < funding)
+			funding = controller.getMoney();
 		
 		for (int i = 0; i < days; i++){
 			addPopulation();
@@ -100,10 +100,10 @@ public class City {
 				
 				double sendBack = kInstr.get("return");
 				stockpile.put(k, stockpiled-(excess*(sendBack/100.0)));
-				controller.influence+= excess*(sendBack/100.0);
+				controller.addInfluence((int)(excess*(sendBack/100.0)));
 		
 				stockpile.put(k, stockpiled-(excess*(kInstr.get("sell")/100)));
-				controller.money+= (excess*kInstr.get("sell"))*Game.prices.get(k);
+				controller.incrementMoney((excess*kInstr.get("sell"))*Game.prices.get(k));
 				
 			}
 		}

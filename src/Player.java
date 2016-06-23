@@ -4,26 +4,22 @@ import java.util.HashSet;
 
 public class Player {
 
-	public String name;
-	public Map map;
-	public double money = 1000;
-	public Player liege;
-	public double influence = 50;
-	public ArrayList<Player> vassals = new ArrayList<Player>();
-	public ArrayList<City> cities = new ArrayList<City>();
-	public ArrayList<Explorer> explorers = new ArrayList<Explorer>();
-	public City capitol;
-	public boolean[][] visible = new boolean[Map.MAPSIZE][Map.MAPSIZE];
-	public int xloc = Map.MAPSIZE-1;
-	public int yloc = 0;
-	public City location = null;
-	public boolean inOldWorld = false;
-	public double exploreRange = 20;
+	private String name;
+	private Map map;
+	private double money = 1000;
+	private int influence = 50;
+	private ArrayList<Player> vassals = new ArrayList<Player>();
+	private ArrayList<City> cities = new ArrayList<City>();
+	private ArrayList<Explorer> explorers = new ArrayList<Explorer>();
+	private City capitol;
+	private boolean[][] visible = new boolean[Map.MAPSIZE][Map.MAPSIZE];
+	private Point position = new Point(Map.MAPSIZE-1, 0);
+	private City location = null;
 	
 	public Player(String name, Map map) {
 		this.name = name;
 		this.map = map;
-		explorers.add(new Explorer(new Point(xloc, yloc)));
+		explorers.add(new Explorer(position));
 		for(boolean[] b1 : visible)
 			for(boolean b2 : b1)
 				b2 = false;
@@ -44,12 +40,11 @@ public class Player {
 			cities.add(n);
 			System.out.println("City " + name + " founded.");
 			if(cities.size() == 1){
-				xloc = lattitude;
-				yloc = longitude;
+				position = new Point(lattitude, longitude);
 				capitol = n;
 				this.location = n;
 				for(Explorer e: explorers){
-					e.setOrigin(new Point(xloc, yloc));
+					e.setOrigin(position);
 				}
 			}
 			return n;
@@ -73,38 +68,91 @@ public class Player {
 		
 	}
 	
-	public boolean inRange(int x, int y)
-	{
-		double dis;
-		if(cities.size() == 0){
-			int dx = xloc - x;
-			int dy = this.yloc - y;
-			dis = Math.sqrt(dx*dx+dy*dy);
-			System.out.println(dis);
-			if(dis < exploreRange*2)
-				return true;
-		}
-		for(City c: cities){
-			int dx = c.xpos - x;
-			int dy = c.ypos - y;
-			dis = Math.sqrt(dx*dx+dy*dy);
-			if(dis < exploreRange)
-				return true;
-		}
-		return false;
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Map getMap() {
+		return map;
+	}
+
+	public void setMap(Map map) {
+		this.map = map;
+	}
+
+	public double getMoney() {
+		return money;
+	}
+
+	public void incrementMoney(double money) {
+		this.money += money;
 	}
 	
+
+	public ArrayList<City> getCities() {
+		return cities;
+	}
+	
+	public void addCity(City c){
+		cities.add(c);
+	}
+
+	public ArrayList<Explorer> getExplorers() {
+		return explorers;
+	}
+	
+	public void addExplorer(Explorer e){
+		explorers.add(e);
+	}
+	
+	public void addInfluence(int i){
+		influence += i;
+	}
+
+	public Point getPosition() {
+		return position;
+	}
+
+	public void setPosition(Point position) {
+		this.position = position;
+		for(Explorer e: explorers){
+			e.setOrigin(position);
+			if(!e.isExploring()){
+				e.setLocation(position);
+			}
+		}
+	}
+
+	public City getLocation() {
+		return location;
+	}
+
+	public void setLocation(City location) {
+		this.location = location;
+		if(location != null)
+			setPosition(new Point(location.xpos, location.ypos));
+	}
+
 	public String toString(){
 		String ret = "name: " + name + "\nMoney: " + money + "\nlocation: ";
 		if(location!= null)
 			ret+= location.name;
 		else
-			ret+=xloc + ", "+ yloc;		
+			ret+= position;		
 		ret+= "\nCities:\n";
 		for(City c : cities){
 			ret += c.toString() + "\n";
 		}
 		return ret + "\n";
+	}
+
+	public boolean canSee(int i, int j) {
+		return visible[i][j];
 	}
 
 }

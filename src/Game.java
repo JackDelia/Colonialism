@@ -100,9 +100,8 @@ public class Game extends JFrame{
 				else if(foundClicked)
 					foundCity(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
 				else if(moving){
-					pc.location = null;
-					pc.xloc = e.getX()/Map.PIXELSTEP;
-					pc.yloc = e.getY()/Map.PIXELSTEP;
+					pc.setLocation(null);
+					pc.setPosition(new Point(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP));
 				}
 			}
 
@@ -289,13 +288,7 @@ public class Game extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				pc.location = c;
-				for(Explorer ex: pc.explorers){
-					ex.setOrigin(new Point(c.xpos, c.ypos));
-					if(!ex.isExploring()){
-						ex.setLocation(new Point(c.xpos, c.ypos));
-					}
-				}
+				pc.setLocation(c);
 			}
 			
 		});
@@ -324,7 +317,7 @@ public class Game extends JFrame{
 	
 
 	private void explore(int i, int j) {
-		for(Explorer e: pc.explorers){
+		for(Explorer e: pc.getExplorers()){
 			if(!e.isExploring()){
 				e.setTarget(new Point(i,j));
 				currentMessage = "Explorer Sent.";
@@ -419,15 +412,15 @@ public class Game extends JFrame{
 				day++;
 				lastUpdate = System.currentTimeMillis();
 				String explorerStati = "";
-				for(Explorer e: pc.explorers){
+				for(Explorer e: pc.getExplorers()){
 					explorerStati += e.getName();
 					if(e.isExploring())
 						explorerStati += ": Exploring\n";
 					else
 						explorerStati += ": Free\n";
 				}
-				messages.setText(pc.name + "\nDay " + day + "\n" + "Money: " + 
-				(int)pc.money + "G\n" + "Explorers:\n" +  
+				messages.setText(pc.getName() + "\nDay " + day + "\n" + "Money: " + 
+				(int)pc.getMoney() + "G\n" + "Explorers:\n" +  
 						explorerStati + currentMessage);
 				pc.Update(1);
 			}

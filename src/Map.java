@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -105,11 +106,11 @@ public class Map extends JPanel{
 			}
 			
 			for(City c : cities){
-				if(!(player.getLocation() == c && age%7000 < 3500) && c.controller == player || player.canSee(c.xpos, c.ypos)){
+				if(!(player.getLocation() == c && age%7000 < 3500) && c.getController() == player || player.canSee(c.getPosition())){
 					g.setColor(Color.RED);
-					int ovalSize = 7 + c.size/2000;
-					g.fillOval(c.xpos*6 - ovalSize/2, c.ypos * 6-ovalSize/2, ovalSize , ovalSize);
-					g.drawString(c.name, c.xpos*6, c.ypos*6-10);
+					int ovalSize = 7 + c.getSize()/2000;
+					g.fillOval(c.getPosition().x*6 - ovalSize/2, c.getPosition().y * 6-ovalSize/2, ovalSize , ovalSize);
+					g.drawString(c.getName(), c.getPosition().x * 6, c.getPosition().y * 6-10);
 				}
 			}
 			age++;
@@ -279,7 +280,7 @@ public class Map extends JPanel{
 		if(mapTerrain[xpos][ypos] == Terrain.OCEAN)
 			return false;
 		for(City c : cities)
-			if(((Math.pow((c.xpos-xpos),2))+ (Math.pow((c.ypos-ypos),2)))<10)
+			if(c.getPosition().distance(new Point(xpos,ypos))<10)
 				return false;
 		return true;
 	}

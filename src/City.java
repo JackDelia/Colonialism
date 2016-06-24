@@ -1,3 +1,4 @@
+import java.awt.Point;
 import java.security.KeyStore.Entry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,30 +7,23 @@ import java.util.HashMap;
 //A city is created at certain coordinates on the map.
 public class City {
 
-	public String name;
-	public int cityId;
-	public int xpos;
-	public int ypos;
-	public int size = 50;
-	public double funding = 1;
-	public Player controller;
-	public boolean discovered = false;
-	public Terrain terrain = Terrain.PLAINS;
-	public boolean coastal;
-	public Map map;
-	public ArrayList<String> availableResources = new ArrayList<String>();
-	public HashMap<String, Double> stockpile = new HashMap<String, Double>();
-	//0: stockpiled
-	//1: sent back %
-	//2: sold %
-	//3-x: transfer to city x %
-	public HashMap<String, HashMap<String, Double>> instructions = new HashMap<String, HashMap<String, Double>>();
-	public HashMap<String, Double> production = new HashMap<String, Double>();
+	private String name;
+	private int cityId;
+	private Point position;
+	private int size = 50;
+	private double funding = 1;
+	private Player controller;
+	private Terrain terrain = Terrain.PLAINS;
+	private boolean coastal;
+	private Map map;
+	private ArrayList<String> availableResources = new ArrayList<String>();
+	private HashMap<String, Double> stockpile = new HashMap<String, Double>();
+	private HashMap<String, HashMap<String, Double>> instructions = new HashMap<String, HashMap<String, Double>>();
+	private HashMap<String, Double> production = new HashMap<String, Double>();
 	
 	public City(String name, int xpos, int ypos, Player controller, Map map) {
 		this.name = name;
-		this.xpos = xpos;
-		this.ypos = ypos;
+		this.position = new Point(xpos, ypos);
 		this.controller = controller;
 		this.map = map;
 		this.cityId = controller.getCities().size();
@@ -178,5 +172,70 @@ public class City {
 		}
 		return ret;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getCityId() {
+		return cityId;
+	}
+
+	public Point getPosition() {
+		return position;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public double getFunding() {
+		return funding;
+	}
+
+	public void setFunding(double funding) {
+		this.funding = funding;
+	}
+	
+	public void incrementFunding(double add){
+		this.funding += add;
+	}
+
+	public Player getController() {
+		return controller;
+	}
+
+	public void setController(Player controller) {
+		this.controller = controller;
+	}
+
+	public Terrain getTerrain() {
+		return terrain;
+	}
+
+	public boolean isCoastal() {
+		return coastal;
+	}
+
+	public HashMap<String, Double> getStockpile() {
+		return stockpile;
+	}
+
+	public void setInstructions(
+			HashMap<String, HashMap<String, Double>> instructions) {
+		this.instructions = instructions;
+	}
+	
+	
+	
+	
 
 }

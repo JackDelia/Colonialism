@@ -219,7 +219,7 @@ public class Game extends JFrame{
 		
 		lastUpdate = System.currentTimeMillis();
 		gameMap = new Map();
-		pc = new ComputerPlayer(name, gameMap);
+		pc = new Player(name, gameMap);
 		players.add(pc);
 		players.add(new ComputerPlayer("ROBOT", gameMap));
 		gameMap.player = pc;

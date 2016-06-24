@@ -27,13 +27,13 @@ public class CityPanel extends JPanel {
 		
 		JSlider fundingSlider = new JSlider(1, 100);
 		fundingSlider.setMaximumSize(new Dimension(170,20));
-		fundingSlider.setValue((int)city.funding);
+		fundingSlider.setValue((int)city.getFunding());
 		fundingSlider.addChangeListener(new ChangeListener(){
 
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider)e.getSource();
 		        if (!source.getValueIsAdjusting()) {
-		        	city.funding = source.getValue();
+		        	city.setFunding(source.getValue());
 		        }
 		        update();
 			}

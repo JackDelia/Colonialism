@@ -150,13 +150,13 @@ public class Player {
 	public void setLocation(City location) {
 		this.location = location;
 		if(location != null)
-			setPosition(new Point(location.xpos, location.ypos));
+			setPosition(location.getPosition().getLocation());
 	}
 
 	public String toString(){
 		String ret = "name: " + name + "\nMoney: " + money + "\nlocation: ";
 		if(location!= null)
-			ret+= location.name;
+			ret+= location.getName();
 		else
 			ret+= position;		
 		ret+= "\nCities:\n";
@@ -168,6 +168,10 @@ public class Player {
 
 	public boolean canSee(int i, int j) {
 		return visible[i][j];
+	}
+	
+	public boolean canSee(Point p){
+		return visible[p.x][p.y];
 	}
 
 }

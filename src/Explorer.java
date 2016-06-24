@@ -24,7 +24,7 @@ public class Explorer{
 	}
 	
 	public void setOrigin(Point o){
-		origin = o;
+		origin = o.getLocation();
 		if(!exploring){
 			location = o.getLocation();
 		}
@@ -40,11 +40,11 @@ public class Explorer{
 	
 	public void setTarget(Point p){
 		exploring = true;
-		target = p;
+		target = p.getLocation();
 	}
 	
 	public void setLocation(Point p){
-		location = p;
+		location = p.getLocation();
 	}
 	
 	private void moveTowardTarget(){

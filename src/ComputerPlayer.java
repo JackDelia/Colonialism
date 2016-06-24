@@ -45,12 +45,12 @@ public class ComputerPlayer extends Player {
 		}
 		
 		for(City c: getCities()){
-			if(c.size/90 > c.funding && getMoney() > getTotalExpenses()*1.2){
-				c.funding++;
+			if(c.getSize()/90 > c.getFunding() && getMoney() > getTotalExpenses()*1.2){
+				c.incrementFunding(1);
 			}
 			
 			if(getMoney() > getTotalExpenses()*4){
-				c.funding ++;
+				c.incrementFunding(1);
 			}
 		}
 		
@@ -65,7 +65,7 @@ public class ComputerPlayer extends Player {
 	private double getTotalExpenses(){
 		double total = 0;
 		for(City c: getCities()){
-			total += c.funding;
+			total += c.getFunding();
 		}
 		return total;
 	}

@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -33,6 +34,7 @@ public class Game extends JFrame{
 	private boolean paused;
 	private int menu;
 	private Player pc;
+	private ArrayList<Player> players = new ArrayList<Player>();
 	private Map gameMap;
 	private JPanel buttonPanel;
 	private JPanel moveButtonPanel;
@@ -55,7 +57,7 @@ public class Game extends JFrame{
 	static {
 		prices.put("cotton", .09);
 		prices.put("iron", .1);
-		prices.put("stone", .1);
+		prices.put("stone", .08);
 		prices.put("gold", 1.0);
 		prices.put("jewelry", 1.2);
 		prices.put("meat", .1);
@@ -100,9 +102,8 @@ public class Game extends JFrame{
 				else if(foundClicked)
 					foundCity(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
 				else if(moving){
-					pc.location = null;
-					pc.xloc = e.getX()/Map.PIXELSTEP;
-					pc.yloc = e.getY()/Map.PIXELSTEP;
+					pc.setLocation(null);
+					pc.setPosition(new Point(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP));
 				}
 			}
 
@@ -218,7 +219,9 @@ public class Game extends JFrame{
 		
 		lastUpdate = System.currentTimeMillis();
 		gameMap = new Map();
-		pc = new Player(name, gameMap);
+		pc = new ComputerPlayer(name, gameMap);
+		players.add(pc);
+		players.add(new ComputerPlayer("ROBOT", gameMap));
 		gameMap.player = pc;
 
 		setupMoveButtonPanel();
@@ -289,13 +292,7 @@ public class Game extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				pc.location = c;
-				for(Explorer ex: pc.explorers){
-					ex.setOrigin(new Point(c.xpos, c.ypos));
-					if(!ex.isExploring()){
-						ex.setLocation(new Point(c.xpos, c.ypos));
-					}
-				}
+				pc.setLocation(c);
 			}
 			
 		});
@@ -324,15 +321,13 @@ public class Game extends JFrame{
 	
 
 	private void explore(int i, int j) {
-		for(Explorer e: pc.explorers){
-			if(!e.isExploring()){
-				e.setTarget(new Point(i,j));
-				currentMessage = "Explorer Sent.";
-				exploreClicked = false;
-				return;
-			}
+		if(pc.canExplore()){
+			pc.explore(new Point(i,j));
+			currentMessage = "Explorer Sent.";
+			exploreClicked = false;
+		} else{
+			currentMessage = "No Explorers Left";
 		}
-		currentMessage = "No Explorers Left";
 	}
 	
 	private String showMenu(){
@@ -419,17 +414,19 @@ public class Game extends JFrame{
 				day++;
 				lastUpdate = System.currentTimeMillis();
 				String explorerStati = "";
-				for(Explorer e: pc.explorers){
+				for(Explorer e: pc.getExplorers()){
 					explorerStati += e.getName();
 					if(e.isExploring())
 						explorerStati += ": Exploring\n";
 					else
 						explorerStati += ": Free\n";
 				}
-				messages.setText(pc.name + "\nDay " + day + "\n" + "Money: " + 
-				(int)pc.money + "G\n" + "Explorers:\n" +  
+				messages.setText(pc.getName() + "\nDay " + day + "\n" + "Money: " + 
+				(int)pc.getMoney() + "G\n" + "Explorers:\n" +  
 						explorerStati + currentMessage);
-				pc.Update(1);
+				for(Player p: players){
+					p.update(1);
+				}
 			}
 		}
 	}

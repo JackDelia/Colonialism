@@ -97,7 +97,7 @@ public class Map extends JPanel{
 		for(int i = 0; i< MAPSIZE; i++){
 			for(int j = 0; j< MAPSIZE; j++){
 				g.setColor(colors.get(mapTerrain[i][j]));
-				if(player != null && !player.canSee(i,j) && !player.getName().equals("god"))
+				if(player != null && !player.canSee(i,j) && !player.getName().equals("_—l"))
 					g.setColor(Color.WHITE);
 				if(player != null && player.getLocation() == null && player.getPosition().x == i && player.getPosition().y == j && !(age%7000 < 3500))
 					g.setColor(Color.RED);
@@ -105,7 +105,7 @@ public class Map extends JPanel{
 			}
 			
 			for(City c : cities){
-				if(!(player.getLocation() == c && age%7000 < 3500)){
+				if(!(player.getLocation() == c && age%7000 < 3500) && c.controller == player || player.canSee(c.xpos, c.ypos)){
 					g.setColor(Color.RED);
 					int ovalSize = 7 + c.size/2000;
 					g.fillOval(c.xpos*6 - ovalSize/2, c.ypos * 6-ovalSize/2, ovalSize , ovalSize);

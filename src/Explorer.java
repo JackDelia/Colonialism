@@ -26,7 +26,7 @@ public class Explorer{
 	public void setOrigin(Point o){
 		origin = o;
 		if(!exploring){
-			location = o;
+			location = o.getLocation();
 		}
 	}
 	

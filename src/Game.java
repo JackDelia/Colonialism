@@ -57,7 +57,7 @@ public class Game extends JFrame{
 	static {
 		prices.put("cotton", .09);
 		prices.put("iron", .1);
-		prices.put("stone", .1);
+		prices.put("stone", .08);
 		prices.put("gold", 1.0);
 		prices.put("jewelry", 1.2);
 		prices.put("meat", .1);
@@ -219,7 +219,7 @@ public class Game extends JFrame{
 		
 		lastUpdate = System.currentTimeMillis();
 		gameMap = new Map();
-		pc = new Player(name, gameMap);
+		pc = new ComputerPlayer(name, gameMap);
 		players.add(pc);
 		players.add(new ComputerPlayer("ROBOT", gameMap));
 		gameMap.player = pc;

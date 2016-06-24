@@ -44,12 +44,30 @@ public class ComputerPlayer extends Player {
 			explore(new Point((int)(Math.random()*Map.MAPSIZE),(int)(Math.random()*Map.MAPSIZE)));
 		}
 		
+		for(City c: getCities()){
+			if(c.size/90 > c.funding && getMoney() > getTotalExpenses()*1.2){
+				c.funding++;
+			}
+			
+			if(getMoney() > getTotalExpenses()*4){
+				c.funding ++;
+			}
+		}
+		
 		ArrayList<Point> possible = possibleLocations();
 		if(possible.size() > 0 && System.currentTimeMillis() - lastCityTime > 50000){
 			lastCityTime = System.currentTimeMillis();
 			Point loc = new Point(possibleLocations().get((int)(Math.random()*possible.size())));
 			foundCity(randomCityName(), loc.x, loc.y);
 		}
+	}
+	
+	private double getTotalExpenses(){
+		double total = 0;
+		for(City c: getCities()){
+			total += c.funding;
+		}
+		return total;
 	}
 	
 	private String randomCityName(){

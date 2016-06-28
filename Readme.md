@@ -3,6 +3,8 @@ Colonialism
 Developed by Jack Delia
 
 
+[Download](https://www.dropbox.com/s/5mcc2fr6n26zcds/Colonialism.jar?dl=0)
+
 Colonialism is a game written in Java that procedurally generates a map and allows players to explore and colonize that map. 
 Cities grow and produce resources that can be sold for more money. It is currently still in development.
 

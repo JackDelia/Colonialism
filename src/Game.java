@@ -73,7 +73,7 @@ public class Game extends JFrame{
 	public Game(){
 		super("Colonialism!");
 		setSize(1200, 600);
-		this.getContentPane().setBackground(new Color(255,0,255));
+		this.getContentPane().setBackground(Color.YELLOW);
 		this.addWindowListener(new WindowAdapter() {
 	         public void windowClosing(WindowEvent windowEvent){
 	            System.exit(0);
@@ -85,7 +85,7 @@ public class Game extends JFrame{
 		foundClicked = false;
 		
 		uiPanel = new JPanel();
-		uiPanel.setBackground(new Color(255,0,0));
+		uiPanel.setBackground(Color.YELLOW);
 		uiPanel.setPreferredSize(new Dimension(-250,-250));
 		uiPanel.setLayout(new BoxLayout(uiPanel, BoxLayout.X_AXIS));
 		
@@ -221,7 +221,7 @@ public class Game extends JFrame{
 		gameMap = new Map();
 		pc = new Player(name, gameMap);
 		players.add(pc);
-		players.add(new ComputerPlayer("ROBOT", gameMap));
+//		players.add(new ComputerPlayer("ROBOT", gameMap));
 		gameMap.player = pc;
 
 		setupMoveButtonPanel();
@@ -236,7 +236,7 @@ public class Game extends JFrame{
 		container.add(uiPanel);
 		BoxLayout b = new BoxLayout(container, BoxLayout.LINE_AXIS);
 		container.setLayout(b);
-		container.setBackground(new Color(255,0,255));
+		container.setBackground(Color.YELLOW);
 		add(container);
 	}
 	
@@ -247,14 +247,14 @@ public class Game extends JFrame{
 		messages.setMargin(new Insets(50,50,50,50));
 		messages.setForeground(Color.BLUE);
 		messages.setBounds(0,50,250, 450);
-		messages.setBackground(new Color(255,255,255));
+		messages.setBackground(Color.WHITE);
 		messages.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 		JPanel messagesHolder = new JPanel();
 		messagesHolder.setLayout(null);
 		messagesHolder.setPreferredSize(new Dimension(1,1));
 		messagesHolder.add(messages);
 		messagesHolder.setBounds(0,0,50,50);
-		messagesHolder.setBackground(new Color(0,255,255));
+		messagesHolder.setBackground(Color.YELLOW);
 		return messagesHolder;
 	}
 	
@@ -399,7 +399,7 @@ public class Game extends JFrame{
 		container.add(startButton);
 		container.add(instructionsButton);
 		container.add(exitButton);
-		container.setBackground(Color.BLUE);
+		container.setBackground(Color.YELLOW);
 		return container;
 	}
 

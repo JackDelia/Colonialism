@@ -1,7 +1,5 @@
 import java.awt.Point;
-import java.security.KeyStore.Entry;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 //A city is created at certain coordinates on the map.
@@ -69,7 +67,7 @@ public class City {
 		}
 		
 		stockpile.put(k, 
-					(stockpiled + (produce/100.0)*days*getProductionPower()));	
+					(stockpiled + baseAmount));	
 		
 	}
 	
@@ -150,13 +148,28 @@ public class City {
 		}
 	}
 	public void balanceProduction(String s, double d){
-		if(d>100){
-			System.out.println("invalid");
+		if(d>100 || d < 0){
 			return;
 		}
 		double increase = d-production.get(s);
+		double distribute = increase/(production.size()-1);
+		ArrayList<String> ignore = new ArrayList<String>();
+		ignore.add(s);
 		for(java.util.Map.Entry<String, Double> e : production.entrySet()){
-			production.put(e.getKey(), e.getValue()-(increase/(production.size()-1)));
+			String key = e.getKey();
+			double val = e.getValue();
+				if(val < distribute && !key.equals(s)){
+					increase -= val;
+					ignore.add(key);
+					production.put(key, 0.0);
+				}
+		}
+		
+		distribute = increase/(production.size()-ignore.size());
+		
+		for(java.util.Map.Entry<String, Double> e : production.entrySet()){
+			if(!ignore.contains(e.getKey()))
+				production.put(e.getKey(), e.getValue()-distribute);
 		}
 		production.put(s, d);
 	}
@@ -204,7 +217,7 @@ public class City {
 	}
 
 	public double getFunding() {
-		return funding;
+		return trim(funding);
 	}
 
 	public void setFunding(double funding) {
@@ -263,7 +276,9 @@ public class City {
 	}
 	
 	
-	private double trim(double d){
+	private static double trim(double d){
+		if(Math.abs(d-((int) d)) < .01)
+			d = (int) d;
 		return ((int)(d*10))/10.0;
 	}
 	

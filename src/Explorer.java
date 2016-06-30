@@ -82,7 +82,7 @@ public class Explorer{
 				if(target.equals(location)){
 					if(target.equals(origin)){
 						exploring = false;
-						
+						resetKnowledge();
 					} else {
 						target = origin;
 					}
@@ -98,6 +98,10 @@ public class Explorer{
 	
 	public HashSet<Point> getKnowledge(){
 		return knowledge;
+	}
+	
+	private void resetKnowledge(){
+		knowledge.clear();
 	}
 	
 	

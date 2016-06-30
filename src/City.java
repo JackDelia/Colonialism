@@ -60,7 +60,7 @@ public class City {
 		double produce = production.get(k);
 		double stockpiled = stockpile.get(k);
 		
-		double baseAmount = (stockpiled + (produce/100.0)*days*getProductionPower());
+		double baseAmount = ((produce/100.0)*days*getProductionPower());
 		if(Game.ADVANCED.get(k) != null){
 			String baseRes = Game.ADVANCED.get(k);
 			if(stockpile.get(baseRes) < baseAmount)
@@ -115,6 +115,8 @@ public class City {
 				return;
 			
 			production.put(r, 0.0);
+			if(production.size() == 1)
+				production.put(r, 100.0);
 			stockpile.put(r, 0.0);
 			HashMap<String, Double> inst = new HashMap<String, Double>();
 			inst.put("stockpile", 10.0);
@@ -122,7 +124,7 @@ public class City {
 			inst.put("sell", 100.0);
 			instructions.put(r, inst);
 			
-			balanceProduction();
+//			balanceProduction();
 		}
 	}
 	
@@ -157,6 +159,10 @@ public class City {
 			production.put(e.getKey(), e.getValue()-(increase/(production.size()-1)));
 		}
 		production.put(s, d);
+	}
+	
+	public void incrementProduction(String s, double d){
+		balanceProduction(s, production.get(s)+d);
 	}
 	
 
@@ -207,6 +213,20 @@ public class City {
 	
 	public void incrementFunding(double add){
 		this.funding += add;
+		if(this.funding < 0)
+			this.funding = 0;
+	}
+
+	public double getProduction(String type) {
+		return trim(production.get(type));
+	}
+	
+	public ArrayList<String> getProductionTypes(){
+		ArrayList<String> ret = new ArrayList<String>();
+		for(java.util.Map.Entry<String, Double> e : production.entrySet()){
+			ret.add(e.getKey());
+		}
+		return ret;
 	}
 
 	public Player getController() {
@@ -225,8 +245,16 @@ public class City {
 		return coastal;
 	}
 
-	public HashMap<String, Double> getStockpile() {
-		return stockpile;
+	public double getStockpile(String type) {
+		return trim(stockpile.get(type));
+	}
+	
+	public ArrayList<String> getStockpileTypes(){
+		ArrayList<String> ret = new ArrayList<String>();
+		for(java.util.Map.Entry<String, Double> e : stockpile.entrySet()){
+			ret.add(e.getKey());
+		}
+		return ret;
 	}
 
 	public void setInstructions(
@@ -235,7 +263,9 @@ public class City {
 	}
 	
 	
-	
+	private double trim(double d){
+		return ((int)(d*10))/10.0;
+	}
 	
 
 }

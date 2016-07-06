@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -108,9 +109,14 @@ public class Game extends JFrame{
 			}
 
 			public void mouseEntered(MouseEvent e) {
+				if(exploreClicked)
+					setCursor(Cursor.CROSSHAIR_CURSOR);
+				else if(foundClicked)
+					setCursor(Cursor.HAND_CURSOR);
 			}
 
 			public void mouseExited(MouseEvent e) {
+				setCursor(Cursor.DEFAULT_CURSOR);
 			}
 			
 		});

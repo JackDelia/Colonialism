@@ -14,6 +14,7 @@ public class Explorer{
 	private Point origin;
 	private boolean exploring = false;
 	private int travelled = 0;
+	private int range = 25;
 	private Point target;
 	
 	public Explorer(Point start){
@@ -78,15 +79,18 @@ public class Explorer{
 	public boolean update(){
 		if(exploring){
 			for(int i = 0; i < speed; i++){
-				if(target.equals(location)){
+				if(target.equals(location) || 
+						(travelled > range + (Math.random()*(range/2)) && !target.equals(origin))){
 					if(target.equals(origin)){
 						exploring = false;
+						travelled = 0;
 						resetKnowledge();
 					} else {
 						target = origin;
 					}
 				} else{
 					moveTowardTarget();
+					travelled++;
 				}
 			}
 			return true;

@@ -1,23 +1,29 @@
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 
 public class CityPanel extends JPanel {
 
 	private City city;
 	private JLabel popLabel;
-	private ArrayList<JLabel> productionLabels = new ArrayList<JLabel>();
+	private HashMap<String, JEditorPane> productionLabels = new HashMap<String, JEditorPane>();
 	private JPanel productionPanel;
-	private ArrayList<JLabel> stockpileLabels = new ArrayList<JLabel>();
+	private ArrayList<JEditorPane> stockpileLabels = new ArrayList<JEditorPane>();
 	private JPanel stockpilePanel;
 	
 	public CityPanel(City city) {
@@ -39,16 +45,19 @@ public class CityPanel extends JPanel {
 		
 		ArrayList<String> stockTypes = city.getStockpileTypes();
 		stockpilePanel = new JPanel();
-		stockpilePanel.setLayout(new BoxLayout(stockpilePanel, BoxLayout.PAGE_AXIS));
+		stockpilePanel.setLayout(new BoxLayout(stockpilePanel, BoxLayout.Y_AXIS));
 		if(stockTypes.size() > 0){
 			stockpilePanel.add(new JLabel("Stockpiled: "));
 			for(String type: stockTypes){
-				JLabel stockLabel = new JLabel(type + ": " + city.getStockpile(type));
+				JEditorPane stockLabel = new JEditorPane();
+				stockLabel.setText(type + ": " + city.getStockpile(type));
+				stockLabel.setMaximumSize(new Dimension(3000, 20));
 				stockpileLabels.add(stockLabel);
 				stockpilePanel.add(stockLabel);
 			}
-			add(stockpilePanel);
 		}
+		
+		add(stockpilePanel);
 		
 		ArrayList<String> productTypes = city.getProductionTypes();
 		productionPanel = new JPanel();
@@ -71,8 +80,14 @@ public class CityPanel extends JPanel {
 	
 	private JPanel buildProductionPanel(String type) {
 		JPanel product = new JPanel();
-		JLabel productionLabel = new JLabel(type + ": " + city.getProduction(type));
-		productionLabels.add(productionLabel);
+		product.add(new JLabel(type+": "));
+		JEditorPane productionLabel = new JEditorPane();
+		productionLabel.setText(""+city.getProduction(type));
+		productionLabel.setMaximumSize(new Dimension(300,20));
+		productionLabel.setEditable(true);
+		
+		productionLabels.put(type, productionLabel);
+		productionLabel.setBackground(Color.GRAY);
 		JButton increaseProduction = new JButton("^");
 		increaseProduction.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -137,9 +152,13 @@ public class CityPanel extends JPanel {
 			for(int i = 0; i < stockpileLabels.size(); i++){
 				labelTypes.add(stockpileLabels.get(i).getText().split(":")[0]);
 			}
+			if(labelTypes.size() == 0)
+				stockpilePanel.add(new JLabel("Stockpiled: "));
 			for(String s : types){
 				if(!labelTypes.contains(s)){
-					JLabel stockLabel = new JLabel(s + ": " + city.getStockpile(s));
+					JEditorPane stockLabel = new JEditorPane();
+					stockLabel.setText(s + ": " + city.getStockpile(s));
+					stockLabel.setMaximumSize(new Dimension(3000, 20));
 					stockpileLabels.add(stockLabel);
 					stockpilePanel.add(stockLabel);
 				}
@@ -148,26 +167,30 @@ public class CityPanel extends JPanel {
 		
 		types = city.getProductionTypes();
 		if(types.size() > productionLabels.size()){
-			ArrayList<String> labelTypes = new ArrayList<String>();
-			for(int i = 0; i < productionLabels.size(); i++){
-				labelTypes.add(productionLabels.get(i).getText().split(":")[0]);
-			}
+//			ArrayList<String> labelTypes = new ArrayList<String>();
+//			for(int i = 0; i < productionLabels.size(); i++){
+//				labelTypes.add(productionLabels.get(i).getText().split(":")[0]);
+//			}
 			for(String s : types){
-				if(!labelTypes.contains(s)){
+				if(productionLabels.get(s) == null){
+					if(productionLabels.size() == 0)
+						productionPanel.add(new JLabel("Production: "));
 					productionPanel.add(this.buildProductionPanel(s));
 				}
 			}
 		}
 		
-		for(JLabel label: stockpileLabels){
+		for(JEditorPane label: stockpileLabels){
 			String type = label.getText().split(":")[0];
 			double amount = city.getStockpile(type);
 			label.setText(type + ": " + amount); 
 		}
-		for(JLabel label: productionLabels){
-			String type = label.getText().split(":")[0];
+		for(Entry<String, JEditorPane> label: productionLabels.entrySet()){
+			String type = label.getKey();
+			JEditorPane pane = label.getValue();
 			double amount = city.getProduction(type);
-			label.setText(type + ": " + amount); 
+			if(!pane.getText().equals(""+amount))
+				pane.setText(""+amount); 
 		}
 	}
 

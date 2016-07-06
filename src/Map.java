@@ -102,7 +102,9 @@ public class Map extends JPanel{
 			
 			for(City c : cities){
 				if(!(player.getLocation() == c && age%7000 < 3500) && c.getController() == player || player.canSee(c.getPosition())){
-					g.setColor(Color.RED);
+					g.setColor(new Color(181,80,137));
+					if(player.getLocation() == c)
+						g.setColor(Color.red);
 					int ovalSize = 7 + c.getSize()/2000;
 					g.fillOval(c.getPosition().x*6 - ovalSize/2, c.getPosition().y * 6-ovalSize/2, ovalSize , ovalSize);
 					g.drawString(c.getName(), c.getPosition().x * 6, c.getPosition().y * 6-10);

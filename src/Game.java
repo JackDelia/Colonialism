@@ -363,7 +363,7 @@ public class Game extends JFrame{
 		}
 		
 		String name = JOptionPane.showInputDialog("Enter Name");
-		if(name == null)
+		if(name == null || name.equals(""))
 			name = "Jack Delia";
 		
 		remove(container);
@@ -405,7 +405,7 @@ public class Game extends JFrame{
 
 	public void run() {	
 		setup(showMenu());
-		while (true){
+		while (pc.getMoney() >= 1){
 			repaint();
 			gameMap.repaint();
 			if(paused)
@@ -429,6 +429,11 @@ public class Game extends JFrame{
 				}
 			}
 		}
+		
+		JOptionPane.showMessageDialog(null, "You ran out of money. Game Over.");
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		dispose();
+		new Game().run();
 	}
 
 }

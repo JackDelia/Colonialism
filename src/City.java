@@ -39,7 +39,7 @@ public class City {
 	}
 	
 	public double getProductionPower(){
-		return (((int)funding/10)+1)*(size/10)*.01;
+		return trim((((int)funding/10)+1)*(size/10)*.01);
 	}
 	
 	private void addPopulation(){
@@ -270,12 +270,15 @@ public class City {
 		return ret;
 	}
 
-	public void setInstructions(
-			HashMap<String, HashMap<String, Double>> instructions) {
-		this.instructions = instructions;
+	public void setInstruction(String type, String inst, double val) {
+		this.instructions.get(type).put(inst, val);
 	}
 	
 	
+	public Double getInstruction(String type, String inst) {
+		return instructions.get(type).get(inst);
+	}
+
 	private static double trim(double d){
 		if(Math.abs(d-((int) d)) < .01)
 			d = (int) d;

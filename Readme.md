@@ -3,8 +3,8 @@ Colonialism
 Developed by Jack Delia
 
 Download:
-[v0.1](https://www.dropbox.com/s/5mcc2fr6n26zcds/Colonialism.jar?dl=0)
-[v0.2](https://www.dropbox.com/s/cuxo5eu68v257k9/Colonialismv0.2.jar?dl=0)
+[v0.1](https://www.dropbox.com/s/5mcc2fr6n26zcds/Colonialism.jar?dl=0)|
+[v0.2](https://www.dropbox.com/s/cuxo5eu68v257k9/Colonialismv0.2.jar?dl=0)|
 [v0.3](https://www.dropbox.com/s/75zhbloebpvi636/Colonialismv0.3.jar?dl=0)
 
 

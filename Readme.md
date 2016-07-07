@@ -5,6 +5,7 @@ Developed by Jack Delia
 Download:
 [v0.1](https://www.dropbox.com/s/5mcc2fr6n26zcds/Colonialism.jar?dl=0)
 [v0.2](https://www.dropbox.com/s/cuxo5eu68v257k9/Colonialismv0.2.jar?dl=0)
+[v0.3](https://www.dropbox.com/s/75zhbloebpvi636/Colonialismv0.3.jar?dl=0)
 
 
 Colonialism is a game written in Java that procedurally generates a map and allows players to explore and colonize that map. 
@@ -17,9 +18,9 @@ The player starts with no vision, but then sends out explorers to explore the ma
 
 ![Explore](http://i.imgur.com/w4azkQn.png)
 
-The player can then found cities which expand and produce and sell resources
+The player can then found cities which expand and produce and sell resources. The player can choose how much to fund those cities, which increases growth proportionally. The player can also choose how much production to put toward each resource, and how much of each resource to stockpile.
 
-![City](http://i.imgur.com/lm9Hf2u.png?1)
+![City](http://i.imgur.com/Faea7My.png)
 
 
 

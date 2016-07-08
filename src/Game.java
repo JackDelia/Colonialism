@@ -347,7 +347,10 @@ public class Game extends JFrame{
 					}
 				});
 				JPanel instructions = createMessageBox();
-				messages.setText("Colonialism!\n\nExplore the map and found cities to \nmake money!");
+				messages.setText("Colonialism!\n\nExplore the map and found cities to \nmake money!\n\n"
+						+ "TIPS:\n\n You lose if you run out of money, so be careful!\n\n"
+						+ "Your explorers can be a bit lazy. You may have to move yourself a bit to get them to explore what you want\n\n"
+						+ "You've gotta spend money to make money!");
 				container.add(backButton);
 				container.add(instructions);
 				container.validate();

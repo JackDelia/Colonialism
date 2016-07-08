@@ -11,15 +11,9 @@ public class GameRunner {
 	public static void main(String[] args) throws IOException {
 		Game g = new Game();
 		InputStream in = new FileInputStream("df.wav");
-
-		// Create an AudioStream object from the input stream.
-		AudioStream as = new AudioStream(in);         
-
-		// Use the static class member "player" from class AudioPlayer to play
-		// clip.
+		AudioStream as = new AudioStream(in);
 		AudioPlayer.player.start(as);
 		g.run();
-
 	}
 
 }

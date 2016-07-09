@@ -77,8 +77,13 @@ public class Player {
 			c.update(days);
 		}
 		for(Explorer e : explorers){
+			if(e.isExploring())
+				this.money -= e.getFunding();
 			if(e.update())
 				gainExploreKnowledge(e.getKnowledge());
+		}
+		if(explorers.size() > cities.size() && explorers.size() > 1){
+			money-= explorers.size();
 		}
 		
 	}

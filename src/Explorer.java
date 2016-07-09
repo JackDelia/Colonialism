@@ -15,6 +15,7 @@ public class Explorer{
 	private boolean exploring = false;
 	private int travelled = 0;
 	private int range = 25;
+	private int funding = 1;
 	private Point target;
 	
 	public Explorer(Point start){
@@ -47,6 +48,18 @@ public class Explorer{
 		location = p.getLocation();
 	}
 	
+	public int getFunding() {
+		return funding;
+	}
+
+	public void incrementFunding(int amnt) {
+		funding += amnt;
+		if(funding <= 0)
+			funding = 1;
+		range = 25 + (funding-1)* 6;
+		vision = 3 + (funding-1)/5;
+	}
+
 	private void moveTowardTarget(){
 		int[] direction ={0,0};
 		
@@ -105,6 +118,16 @@ public class Explorer{
 	
 	private void resetKnowledge(){
 		knowledge.clear();
+	}
+	
+	public String toString(){
+		String ret = name + ": \t";
+		if(exploring)
+			ret+= "Exploring";
+		else
+			ret+= " Free";
+		ret += "\t Funding: \t"+ funding;
+		return ret;
 	}
 	
 	

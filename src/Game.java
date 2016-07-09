@@ -18,6 +18,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -227,6 +228,12 @@ public class Game extends JFrame{
 		setupMoveButtonPanel();
 		setupButtonPanel();
 		uiPanel.add(createMessageBox());
+		JPanel basicsPanel = new JPanel();
+		basicsPanel.setLayout(new BoxLayout(basicsPanel, BoxLayout.PAGE_AXIS));
+		basicsPanel.add(new JLabel(pc.getName()));
+		
+		uiPanel.add(basicsPanel);
+		basicsPanel.add(new ExplorationPanel(pc));
 		uiPanel.add(buttonPanel);
 		setupMouseListener();
 		
@@ -409,6 +416,7 @@ public class Game extends JFrame{
 	public void run() {	
 		setup(showMenu());
 		while (pc.getMoney() >= 1){
+			validate();
 			repaint();
 			gameMap.repaint();
 			if(paused)
@@ -424,9 +432,9 @@ public class Game extends JFrame{
 					else
 						explorerStati += ": Free\n";
 				}
-				messages.setText(pc.getName() + "\nDay " + day + "\n" + "Money: " + 
-				(int)pc.getMoney() + "G\n" + "Explorers:\n" +  
-						explorerStati + currentMessage);
+//				messages.setText(pc.getName() + "\nDay " + day + "\n" + "Money: " + 
+//				(int)pc.getMoney() + "G\n" + "Explorers:\n" +  
+//						explorerStati + currentMessage);
 				for(Player p: players){
 					p.update(1);
 				}

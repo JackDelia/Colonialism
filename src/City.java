@@ -14,6 +14,7 @@ public class City {
 	private Terrain terrain = Terrain.PLAINS;
 	private boolean coastal;
 	private Map map;
+	private int soldiers = 0;
 	private ArrayList<String> availableResources = new ArrayList<String>();
 	private HashMap<String, Double> stockpile = new HashMap<String, Double>();
 	private HashMap<String, HashMap<String, Double>> instructions = new HashMap<String, HashMap<String, Double>>();
@@ -39,12 +40,27 @@ public class City {
 	}
 	
 	public double getProductionPower(){
-		return trim((((int)funding/10)+1)*(size/10)*.01);
+		return Game.trim((((int)funding/10)+1)*(size/10)*.01);
+	}
+	
+	private double getProductionOf(String res){
+		return Game.trim(getProductionPower()*(production.get(res)/100));
 	}
 	
 	private void addPopulation(){
 		
 		int add = (int)(funding * 100.0/size); 
+		add += getProductionOf("grain");
+		add += getProductionOf("meat")/2;
+		switch(terrain){
+			case MOUNTAINS:
+				add /= 2;
+			case DESERT:
+				add /= 2;
+			case FORREST:
+				add -= 1;
+		}
+		
 		if(add > 10)
 			size+= 10;
 		else if(add == 0 && Math.random() > .75)
@@ -81,22 +97,32 @@ public class City {
 		
 		for(java.util.Map.Entry<String, Double> entry : production.entrySet()){
 			String k = entry.getKey();
-			HashMap<String, Double> kInstr = instructions.get(k);
-			double stockpiled = stockpile.get(k);
-			
-			addToStockpile(k, days);
-			
-			double toStockpile = kInstr.get("stockpile"); 
-			if(stockpiled > toStockpile){
-				double excess = stockpiled-toStockpile;
+			if(k.equals("soldiers")){
+				int base = (int)((entry.getValue()/100.0)*days*getProductionPower());
+				double weapons = stockpile.get("weapons");
+				if(base > size-50 || base > weapons);
+					base = Math.min(size-50, (int) weapons);
+				size -= base;
+				stockpile.put("weapons", stockpile.get("weapons")-base);
+				soldiers += base;
+			}else{
+				HashMap<String, Double> kInstr = instructions.get(k);
+				double stockpiled = stockpile.get(k);
 				
-				double sendBack = kInstr.get("return");
-				stockpile.put(k, stockpiled-(excess*(sendBack/100.0)));
-				controller.addInfluence((int)(excess*(sendBack/100.0)));
-		
-				stockpile.put(k, stockpiled-(excess*(kInstr.get("sell")/100)));
-				controller.incrementMoney((excess*kInstr.get("sell"))*Game.prices.get(k));
+				addToStockpile(k, days);
 				
+				double toStockpile = kInstr.get("stockpile"); 
+				if(stockpiled > toStockpile){
+					double excess = stockpiled-toStockpile;
+					
+					double sendBack = kInstr.get("return");
+					stockpile.put(k, stockpiled-(excess*(sendBack/100.0)));
+					controller.addInfluence((int)(excess*(sendBack/100.0)));
+			
+					stockpile.put(k, stockpiled-(excess*(kInstr.get("sell")/100)));
+					controller.incrementMoney((excess*kInstr.get("sell"))*Game.prices.get(k));
+					
+				}
 			}
 		}
 		
@@ -113,9 +139,11 @@ public class City {
 				return;
 			
 			production.put(r, 0.0);
-			if(production.size() == 1)
-				production.put(r, 100.0);
-			stockpile.put(r, 0.0);
+			if(!r.equals("soldiers")){
+				if(production.size() == 1)
+					production.put(r, 100.0);
+				stockpile.put(r, 0.0);
+			}
 			HashMap<String, Double> inst = new HashMap<String, Double>();
 			inst.put("stockpile", 10.0);
 			inst.put("return", 0.0);
@@ -217,7 +245,7 @@ public class City {
 	}
 
 	public double getFunding() {
-		return trim(funding);
+		return Game.trim(funding);
 	}
 
 	public void setFunding(double funding) {
@@ -231,7 +259,7 @@ public class City {
 	}
 
 	public double getProduction(String type) {
-		return trim(production.get(type));
+		return Game.trim(production.get(type));
 	}
 	
 	public ArrayList<String> getProductionTypes(){
@@ -259,7 +287,7 @@ public class City {
 	}
 
 	public double getStockpile(String type) {
-		return trim(stockpile.get(type));
+		return Game.trim(stockpile.get(type));
 	}
 	
 	public ArrayList<String> getStockpileTypes(){
@@ -279,11 +307,14 @@ public class City {
 		return instructions.get(type).get(inst);
 	}
 
-	private static double trim(double d){
-		if(Math.abs(d-((int) d)) < .01)
-			d = (int) d;
-		return ((int)(d*10))/10.0;
+	public int getSoldiers() {
+		return soldiers;
 	}
+
+	public void incrementSoldiers(int soldiers) {
+		this.soldiers += soldiers;
+	}
+
 	
 
 }

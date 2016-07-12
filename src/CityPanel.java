@@ -21,6 +21,7 @@ public class CityPanel extends JPanel {
 
 	private City city;
 	private JLabel popLabel;
+	private JLabel soldierLabel;
 	private HashMap<String, JEditorPane> productionLabels = new HashMap<String, JEditorPane>();
 	private JPanel productionPanel;
 	private HashMap<String, JEditorPane> stockpileLabels = new HashMap<String, JEditorPane>();
@@ -40,7 +41,9 @@ public class CityPanel extends JPanel {
 		
 		add(nameLabel);
 		popLabel = new JLabel("Population: " + city.getSize());
+		soldierLabel = new JLabel("Soldiers: " + city.getSoldiers());
 		add(popLabel);
+		add(soldierLabel);
 		add(fundingPanel());
 		
 		ArrayList<String> stockTypes = city.getStockpileTypes();
@@ -173,6 +176,7 @@ public class CityPanel extends JPanel {
 	
 	public void update(){
 		popLabel.setText("Population: " + city.getSize());
+		soldierLabel.setText("Soldiers: " + city.getSoldiers());
 		ArrayList<String> types = city.getStockpileTypes();
 		if(types.size() > stockpileLabels.size()){
 			for(String s : types){
@@ -206,7 +210,7 @@ public class CityPanel extends JPanel {
 			String type = label.getKey();
 			JEditorPane pane = label.getValue();
 			double amount = city.getProduction(type);
-			String productionString = (amount*city.getProductionPower()) + " (" + amount + "%)";
+			String productionString = (Game.trim(amount*city.getProductionPower())) + " (" + amount + "%)";
 			if(!pane.getText().equals(productionString))
 				pane.setText(productionString); 
 		}

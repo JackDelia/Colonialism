@@ -88,6 +88,13 @@ public class Game extends JFrame{
 		setVisible(true);
 	}
 	
+	public static double trim(double d){
+		if(Math.abs(d-((int) d)) < .01)
+			d = (int) d;
+		return ((int)(d*10))/10.0;
+	}
+	
+	
 	private void setupMouseListener(){
 		gameMap.addMouseListener(new MouseListener(){
 
@@ -227,13 +234,8 @@ public class Game extends JFrame{
 
 		setupMoveButtonPanel();
 		setupButtonPanel();
-		uiPanel.add(createMessageBox());
-		JPanel basicsPanel = new JPanel();
-		basicsPanel.setLayout(new BoxLayout(basicsPanel, BoxLayout.PAGE_AXIS));
-		basicsPanel.add(new JLabel(pc.getName()));
-		
+		JPanel basicsPanel = new BasicsPanel(pc);
 		uiPanel.add(basicsPanel);
-		basicsPanel.add(new ExplorationPanel(pc));
 		uiPanel.add(buttonPanel);
 		setupMouseListener();
 		

@@ -57,7 +57,7 @@ public class Map extends JPanel{
 		for(int i = 0; i < mapResources.length; i++){
 			for(int j = 0; j < mapResources[i].length; j++){
 				double value = Math.random();
-				if(value > (7/8.0)){
+				if(value > (7/8.0) && mapTerrain[i][j] != Terrain.MOUNTAINS){
 					
 					mapResources[i][j] = new String[3];
 					mapResources[i][j][0] = NATURAL[r.nextInt(NATURAL.length)];
@@ -71,19 +71,31 @@ public class Map extends JPanel{
 				else if(value > (1/2.0)){
 					System.out.println("2");
 					mapResources[i][j] = new String[2];
-					mapResources[i][j][0] = NATURAL[r.nextInt(NATURAL.length)];
-					mapResources[i][j][1] = NATURAL[r.nextInt(NATURAL.length)];
+					String res1 = NATURAL[r.nextInt(NATURAL.length)];
+					String res2 = NATURAL[r.nextInt(NATURAL.length)];
+					if(res1 != "iron" && res2 != "iron"){
+						res1 = NATURAL[r.nextInt(NATURAL.length)];
+						res2 = NATURAL[r.nextInt(NATURAL.length)];
+					}
+					mapResources[i][j][0] = res1;
+					mapResources[i][j][1] = res2;
 					while(mapResources[i][j][0] == mapResources[i][j][1])
 						mapResources[i][j][1] = NATURAL[r.nextInt(NATURAL.length)];
 				}
 				else if(value>(1/10.0)){
 					System.out.println("1");
 					mapResources[i][j] = new String[1]; 
-					mapResources[i][j][0] = NATURAL[r.nextInt(NATURAL.length)];
+					String res = NATURAL[r.nextInt(NATURAL.length)];
+					if(res != "iron")
+						res = NATURAL[r.nextInt(NATURAL.length)];
+					mapResources[i][j][0] = res;
 				}
-				else
-					mapResources[i][j] = new String[0];
-				
+				else{
+					if(mapTerrain[i][j] == Terrain.MOUNTAINS)
+						mapResources[i][j] = new String[]{"stone"};
+					else
+						mapResources[i][j] = new String[0];
+				}
 			}
 		}
 		

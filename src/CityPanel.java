@@ -22,9 +22,9 @@ public class CityPanel extends JPanel {
 	private City city;
 	private JLabel popLabel;
 	private JLabel soldierLabel;
-	private HashMap<String, JEditorPane> productionLabels = new HashMap<String, JEditorPane>();
+	private HashMap<Resource, JEditorPane> productionLabels = new HashMap<Resource, JEditorPane>();
 	private JPanel productionPanel;
-	private HashMap<String, JEditorPane> stockpileLabels = new HashMap<String, JEditorPane>();
+	private HashMap<Resource, JEditorPane> stockpileLabels = new HashMap<Resource, JEditorPane>();
 	private JPanel stockpilePanel;
 	
 	public CityPanel(City city) {
@@ -46,19 +46,19 @@ public class CityPanel extends JPanel {
 		add(soldierLabel);
 		add(fundingPanel());
 		
-		ArrayList<String> stockTypes = city.getStockpileTypes();
+		ArrayList<Resource> stockTypes = city.getStockpileTypes();
 		stockpilePanel = new JPanel();
 		stockpilePanel.setLayout(new BoxLayout(stockpilePanel, BoxLayout.Y_AXIS));
 		if(stockTypes.size() > 0){
 			stockpilePanel.add(new JLabel("Stockpiled: "));
-			for(String type: stockTypes){
+			for(Resource type: stockTypes){
 				stockpilePanel.add(buildStockpilePanel(type));
 			}
 		}
 		
 		add(stockpilePanel);
 		
-		ArrayList<String> productTypes = city.getProductionTypes();
+		ArrayList<Resource> productTypes = city.getProductionTypes();
 		productionPanel = new JPanel();
 		productionPanel.setLayout(new BoxLayout(productionPanel, BoxLayout.PAGE_AXIS));
 		if(productTypes.size() > 0){
@@ -69,16 +69,16 @@ public class CityPanel extends JPanel {
 				}
 			});
 			productionPanel.add(new JLabel("Production: "));
-			for(String type: productTypes){
+			for(Resource type: productTypes){
 				productionPanel.add(buildProductionPanel(type));
 			}
 		}
 		add(productionPanel);
 	}
 	
-	private JPanel buildStockpilePanel(String type){
+	private JPanel buildStockpilePanel(Resource type){
 		JPanel stock = new JPanel();
-		stock.add(new JLabel(type+": "));
+		stock.add(new JLabel(type.toString()+": "));
 		JEditorPane stockLabel = new JEditorPane();
 		stockLabel.setText(""+city.getStockpile(type));
 		stockLabel.setMaximumSize(new Dimension(300,20));
@@ -108,7 +108,7 @@ public class CityPanel extends JPanel {
 	}
 	
 	
-	private JPanel buildProductionPanel(String type) {
+	private JPanel buildProductionPanel(Resource type) {
 		JPanel product = new JPanel();
 		product.add(new JLabel(type+": "));
 		JEditorPane productionLabel = new JEditorPane();
@@ -177,9 +177,9 @@ public class CityPanel extends JPanel {
 	public void update(){
 		popLabel.setText("Population: " + city.getSize());
 		soldierLabel.setText("Soldiers: " + city.getSoldiers());
-		ArrayList<String> types = city.getStockpileTypes();
+		ArrayList<Resource> types = city.getStockpileTypes();
 		if(types.size() > stockpileLabels.size()){
-			for(String s : types){
+			for(Resource s : types){
 				if(stockpileLabels.get(s) == null){
 					if(stockpileLabels.size() == 0)
 						stockpilePanel.add(new JLabel("Stockpile: "));
@@ -190,7 +190,7 @@ public class CityPanel extends JPanel {
 		
 		types = city.getProductionTypes();
 		if(types.size() > productionLabels.size()){
-			for(String s : types){
+			for(Resource s : types){
 				if(productionLabels.get(s) == null){
 					if(productionLabels.size() == 0)
 						productionPanel.add(new JLabel("Production: "));
@@ -199,15 +199,15 @@ public class CityPanel extends JPanel {
 			}
 		}
 		
-		for(Entry<String, JEditorPane> label: stockpileLabels.entrySet()){
-			String type = label.getKey();
+		for(Entry<Resource, JEditorPane> label: stockpileLabels.entrySet()){
+			Resource type = label.getKey();
 			JEditorPane pane = label.getValue();
 			double amount = city.getStockpile(type);
 			pane.setText(type + ": " + amount + " (" + 
 					city.getInstruction(type, "stockpile") + ")"); 
 		}
-		for(Entry<String, JEditorPane> label: productionLabels.entrySet()){
-			String type = label.getKey();
+		for(Entry<Resource, JEditorPane> label: productionLabels.entrySet()){
+			Resource type = label.getKey();
 			JEditorPane pane = label.getValue();
 			double amount = city.getProduction(type);
 			String productionString = (Game.trim(amount*city.getProductionPower())) + " (" + amount + "%)";

@@ -40,30 +40,30 @@ public class Game extends JFrame{
 	private int day;
 	private long lastUpdate;
 	
-	public static final HashMap<String,String> ADVANCED = new HashMap<String,String>();
+	public static final HashMap<Resource,Resource> ADVANCED = new HashMap<Resource,Resource>();
 	static{
-		ADVANCED.put("weapons", "iron");
-		ADVANCED.put("soldiers", "weapons");
-		ADVANCED.put("tools", "stone");
-		ADVANCED.put("clothing", "cotton");
-		ADVANCED.put("jewelry", "gold");
+		ADVANCED.put(Resource.WEAPONS, Resource.IRON);
+		ADVANCED.put(Resource.SOLDIERS, Resource.WEAPONS);
+		ADVANCED.put(Resource.TOOLS, Resource.STONE);
+		ADVANCED.put(Resource.CLOTHING, Resource.COTTON);
+		ADVANCED.put(Resource.JEWELRY, Resource.GOLD);
 	}
 	
-	public static final HashMap<String, Double> prices = new HashMap<String, Double>();
+	public static final HashMap<Resource, Double> prices = new HashMap<Resource, Double>();
 	static {
-		prices.put("cotton", .09);
-		prices.put("iron", .1);
-		prices.put("stone", .08);
-		prices.put("gold", 1.0);
-		prices.put("jewelry", 1.2);
-		prices.put("meat", .1);
-		prices.put("fish", .08);
-		prices.put("grain", .07);
-		prices.put("wood", .1);
-		prices.put("weapons", .2);
-		prices.put("clothing", .15);
-		prices.put("tools", .18);
-		prices.put("soldiers", .4);
+		prices.put(Resource.COTTON, .09);
+		prices.put(Resource.IRON, .1);
+		prices.put(Resource.STONE, .08);
+		prices.put(Resource.GOLD, 1.0);
+		prices.put(Resource.JEWELRY, 1.2);
+		prices.put(Resource.MEAT, .1);
+		prices.put(Resource.FISH, .08);
+		prices.put(Resource.GRAIN, .07);
+		prices.put(Resource.WOOD, .1);
+		prices.put(Resource.WEAPONS, .2);
+		prices.put(Resource.CLOTHING, .15);
+		prices.put(Resource.TOOLS, .18);
+		prices.put(Resource.SOLDIERS, .4);
     }
 	
 	public Game(){

@@ -12,13 +12,12 @@ import javax.swing.JPanel;
 public class Map extends JPanel{
 
 	public Terrain[][] mapTerrain = new Terrain[MAPSIZE][MAPSIZE];
-	public String[][][] mapResources = new String[MAPSIZE][MAPSIZE][];
+	public Resource[][][] mapResources = new Resource[MAPSIZE][MAPSIZE][];
 	public ArrayList<City> cities = new ArrayList<City>();
-	public HashMap<String, Double> prices = new HashMap<String,Double>();
 	public Random r = new Random();
 	public static final int MAPSIZE = 100;
 	public static final int PIXELSTEP = 6;
-	public static final String[] NATURAL = {"gold", "stone", "iron"};
+	public static final Resource[] NATURAL = {Resource.GOLD, Resource.STONE, Resource.IRON};
 	public Player player;
 	private int age = 0;
 	
@@ -35,18 +34,6 @@ public class Map extends JPanel{
 	public Map() {
 		//procedural generation possible later
 		//or maybe just a set map
-		prices.put("iron", .1);
-		prices.put("stone", .1);
-		prices.put("gold", 1.0);
-		prices.put("jewelry", 1.2);
-		prices.put("meat", .1);
-		prices.put("fish", .1);
-		prices.put("grain", .1);
-		prices.put("wood", .1);
-		prices.put("weapons", .2);
-		prices.put("clothing", .15);
-		prices.put("tools", .18);
-		prices.put("soldiers", .4);
 		formContinents();
 		formTerrain();
 		stockResources();
@@ -59,7 +46,7 @@ public class Map extends JPanel{
 				double value = Math.random();
 				if(value > (7/8.0) && mapTerrain[i][j] != Terrain.MOUNTAINS){
 					
-					mapResources[i][j] = new String[3];
+					mapResources[i][j] = new Resource[3];
 					mapResources[i][j][0] = NATURAL[r.nextInt(NATURAL.length)];
 					mapResources[i][j][1] = NATURAL[r.nextInt(NATURAL.length)];
 					while(mapResources[i][j][0] == mapResources[i][j][1])
@@ -70,10 +57,10 @@ public class Map extends JPanel{
 				}
 				else if(value > (1/2.0)){
 					System.out.println("2");
-					mapResources[i][j] = new String[2];
-					String res1 = NATURAL[r.nextInt(NATURAL.length)];
-					String res2 = NATURAL[r.nextInt(NATURAL.length)];
-					if(res1 != "iron" && res2 != "iron"){
+					mapResources[i][j] = new Resource[2];
+					Resource res1 = NATURAL[r.nextInt(NATURAL.length)];
+					Resource res2 = NATURAL[r.nextInt(NATURAL.length)];
+					if(res1 != Resource.IRON && res2 != Resource.IRON){
 						res1 = NATURAL[r.nextInt(NATURAL.length)];
 						res2 = NATURAL[r.nextInt(NATURAL.length)];
 					}
@@ -84,17 +71,17 @@ public class Map extends JPanel{
 				}
 				else if(value>(1/10.0)){
 					System.out.println("1");
-					mapResources[i][j] = new String[1]; 
-					String res = NATURAL[r.nextInt(NATURAL.length)];
-					if(res != "iron")
+					mapResources[i][j] = new Resource[1]; 
+					Resource res = NATURAL[r.nextInt(NATURAL.length)];
+					if(res != Resource.IRON)
 						res = NATURAL[r.nextInt(NATURAL.length)];
 					mapResources[i][j][0] = res;
 				}
 				else{
 					if(mapTerrain[i][j] == Terrain.MOUNTAINS)
-						mapResources[i][j] = new String[]{"stone"};
+						mapResources[i][j] = new Resource[]{Resource.STONE};
 					else
-						mapResources[i][j] = new String[0];
+						mapResources[i][j] = new Resource[0];
 				}
 			}
 		}
@@ -255,14 +242,14 @@ public class Map extends JPanel{
 		return mapTerrain[lattitude][longitude];
 	}
 
-	public ArrayList<String> getNearbyResources(int lattitude,
+	public ArrayList<Resource> getNearbyResources(int lattitude,
 			int longitude) {
 		
-		ArrayList<String> ret = new ArrayList<String>();
+		ArrayList<Resource> ret = new ArrayList<Resource>();
 		if(Math.random() > .5)
-			ret.add("meat");
+			ret.add(Resource.MEAT);
 		
-		for(String s: mapResources[lattitude][longitude]){
+		for(Resource s: mapResources[lattitude][longitude]){
 			if(!ret.contains(s))
 				ret.add(s);
 		}
@@ -271,16 +258,16 @@ public class Map extends JPanel{
 			for(int j = -2; j<=2; j++){
 				if(lattitude+i > 0 && longitude+j > 0 && lattitude+i < Map.MAPSIZE && longitude+j < Map.MAPSIZE){
 
-					if(mapTerrain[lattitude+i][longitude+j] == Terrain.FORREST && !ret.contains("wood"))
-						ret.add("wood");
-					if(mapTerrain[lattitude+1][longitude+1] == Terrain.DESERT && !ret.contains("cotton"))
-						ret.add("cotton");
+					if(mapTerrain[lattitude+i][longitude+j] == Terrain.FORREST && !ret.contains(Resource.WOOD))
+						ret.add(Resource.WOOD);
+					if(mapTerrain[lattitude+1][longitude+1] == Terrain.DESERT && !ret.contains(Resource.COTTON))
+						ret.add(Resource.COTTON);
 				}
 			}
 		}
 		
 		if(Math.random() > .5 || ret.size() == 0)
-			ret.add("grain");
+			ret.add(Resource.GRAIN);
 		System.out.println(ret.size());
 		return ret;
 	}

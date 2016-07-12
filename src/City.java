@@ -15,10 +15,10 @@ public class City {
 	private boolean coastal;
 	private Map map;
 	private int soldiers = 0;
-	private ArrayList<String> availableResources = new ArrayList<String>();
-	private HashMap<String, Double> stockpile = new HashMap<String, Double>();
-	private HashMap<String, HashMap<String, Double>> instructions = new HashMap<String, HashMap<String, Double>>();
-	private HashMap<String, Double> production = new HashMap<String, Double>();
+	private ArrayList<Resource> availableResources = new ArrayList<Resource>();
+	private HashMap<Resource, Double> stockpile = new HashMap<Resource, Double>();
+	private HashMap<Resource, HashMap<String, Double>> instructions = new HashMap<Resource, HashMap<String, Double>>();
+	private HashMap<Resource, Double> production = new HashMap<Resource, Double>();
 	
 	public City(String name, int xpos, int ypos, Player controller, Map map) {
 		this.name = name;
@@ -36,22 +36,25 @@ public class City {
 		map.cities.add(this);
 		this.availableResources = map.getNearbyResources(xpos,ypos);
 		if(coastal)
-			this.availableResources.add("fish");
+			this.availableResources.add(Resource.FISH);
 	}
 	
 	public double getProductionPower(){
 		return Game.trim((((int)funding/10)+1)*(size/10)*.01);
 	}
 	
-	private double getProductionOf(String res){
-		return Game.trim(getProductionPower()*(production.get(res)/100));
+	private double getProductionOf(Resource res){
+		Double prod = production.get(res);
+		if(prod == null)
+			return 0;
+		return Game.trim(getProductionPower()*(prod/100));
 	}
 	
 	private void addPopulation(){
 		
 		int add = (int)(funding * 100.0/size); 
-		add += getProductionOf("grain");
-		add += getProductionOf("meat")/2;
+		add += getProductionOf(Resource.GRAIN);
+		add += getProductionOf(Resource.MEAT)/2;
 		switch(terrain){
 			case MOUNTAINS:
 				add /= 2;
@@ -70,13 +73,13 @@ public class City {
 		controller.incrementMoney(-funding);
 	}
 	
-	private void addToStockpile(String k, int days){
+	private void addToStockpile(Resource k, int days){
 		double produce = production.get(k);
 		double stockpiled = stockpile.get(k);
 		
 		double baseAmount = ((produce/100.0)*days*getProductionPower());
 		if(Game.ADVANCED.get(k) != null){
-			String baseRes = Game.ADVANCED.get(k);
+			Resource baseRes = Game.ADVANCED.get(k);
 			if(stockpile.get(baseRes) < baseAmount)
 				baseAmount = stockpile.get(baseRes);
 			stockpile.put(baseRes, stockpile.get(baseRes)-baseAmount);
@@ -95,15 +98,15 @@ public class City {
 			addPopulation();
 		}
 		
-		for(java.util.Map.Entry<String, Double> entry : production.entrySet()){
-			String k = entry.getKey();
-			if(k.equals("soldiers")){
+		for(java.util.Map.Entry<Resource, Double> entry : production.entrySet()){
+			Resource k = entry.getKey();
+			if(k == Resource.SOLDIERS){
 				int base = (int)((entry.getValue()/100.0)*days*getProductionPower());
-				double weapons = stockpile.get("weapons");
+				double weapons = stockpile.get(Resource.WEAPONS);
 				if(base > size-50 || base > weapons);
 					base = Math.min(size-50, (int) weapons);
 				size -= base;
-				stockpile.put("weapons", stockpile.get("weapons")-base);
+				stockpile.put(Resource.WEAPONS, stockpile.get(Resource.WEAPONS)-base);
 				soldiers += base;
 			}else{
 				HashMap<String, Double> kInstr = instructions.get(k);
@@ -128,9 +131,9 @@ public class City {
 		
 				
 		if(size >= 100*(production.size()+1)){
-			String r = availableResources.get(((int)(Math.random()*100))%availableResources.size());
+			Resource r = availableResources.get(((int)(Math.random()*100))%availableResources.size());
 			if(production.get(r) != null){
-				ArrayList<String> adv = advancedResources();
+				ArrayList<Resource> adv = advancedResources();
 				if(adv.size() > 0)
 					r = adv.get(((int)(Math.random()*100))%adv.size());
 			}
@@ -139,7 +142,7 @@ public class City {
 				return;
 			
 			production.put(r, 0.0);
-			if(!r.equals("soldiers")){
+			if(!(r == Resource.SOLDIERS)){
 				if(production.size() == 1)
 					production.put(r, 100.0);
 				stockpile.put(r, 0.0);
@@ -154,37 +157,30 @@ public class City {
 		}
 	}
 	
-	private ArrayList<String> advancedResources() {
-		ArrayList<String> res = new ArrayList<String>();
-		if(stockpile.get("iron") != null && stockpile.get("iron") > 0)
-			res.add("weapons");
-		if(stockpile.get("cotton") != null && stockpile.get("cotton") > 0)
-			res.add("clothing");
-		if(stockpile.get("stone") != null && stockpile.get("stone") > 0)
-			res.add("tools");
-		if(stockpile.get("gold") != null && stockpile.get("gold") > 0)
-			res.add("jewelry");
-		if(stockpile.get("weapons") != null && stockpile.get("weapons") > 0)
-			res.add("soldiers");
-		
+	private ArrayList<Resource> advancedResources() {
+		ArrayList<Resource> res = new ArrayList<Resource>();
+		for(java.util.Map.Entry<Resource,Resource> e: Game.ADVANCED.entrySet()){
+			if(stockpile.get(e.getValue()) != null && stockpile.get(e.getValue()) > 0)
+				res.add(e.getKey());
+		}		
 		return res;
 	}
 
 	public void balanceProduction() {
-		for(java.util.Map.Entry<String, Double> e : production.entrySet()){
+		for(java.util.Map.Entry<Resource, Double> e : production.entrySet()){
 			production.put(e.getKey(), 100.0/production.size());
 		}
 	}
-	public void balanceProduction(String s, double d){
+	public void balanceProduction(Resource s, double d){
 		if(d>100 || d < 0){
 			return;
 		}
 		double increase = d-production.get(s);
 		double distribute = increase/(production.size()-1);
-		ArrayList<String> ignore = new ArrayList<String>();
+		ArrayList<Resource> ignore = new ArrayList<Resource>();
 		ignore.add(s);
-		for(java.util.Map.Entry<String, Double> e : production.entrySet()){
-			String key = e.getKey();
+		for(java.util.Map.Entry<Resource, Double> e : production.entrySet()){
+			Resource key = e.getKey();
 			double val = e.getValue();
 				if(val < distribute && !key.equals(s)){
 					increase -= val;
@@ -195,30 +191,30 @@ public class City {
 		
 		distribute = increase/(production.size()-ignore.size());
 		
-		for(java.util.Map.Entry<String, Double> e : production.entrySet()){
+		for(java.util.Map.Entry<Resource, Double> e : production.entrySet()){
 			if(!ignore.contains(e.getKey()))
 				production.put(e.getKey(), e.getValue()-distribute);
 		}
 		production.put(s, d);
 	}
 	
-	public void incrementProduction(String s, double d){
+	public void incrementProduction(Resource s, double d){
 		balanceProduction(s, production.get(s)+d);
 	}
 	
 
-	public String toString(){
-		String ret = "City Name: " + name + "\nPopulation: " + size + "\nfunding:  " + funding + 
-				"\nproduction:" + "\n";
-		for(java.util.Map.Entry<String, Double> e : production.entrySet()){
-			ret+= "\t" + e.getKey() + " " + e.getValue().intValue() + "%\n";
-		}
-		ret+= "stockpiled:\n";
-		for(java.util.Map.Entry<String, Double> e : stockpile.entrySet()){
-			ret+= "\t" + e.getKey() + " " + e.getValue().intValue() + "\n";
-		}
-		return ret;
-	}
+//	public String toString(){
+//		String ret = "City Name: " + name + "\nPopulation: " + size + "\nfunding:  " + funding + 
+//				"\nproduction:" + "\n";
+//		for(java.util.Map.Entry<String, Double> e : production.entrySet()){
+//			ret+= "\t" + e.getKey() + " " + e.getValue().intValue() + "%\n";
+//		}
+//		ret+= "stockpiled:\n";
+//		for(java.util.Map.Entry<String, Double> e : stockpile.entrySet()){
+//			ret+= "\t" + e.getKey() + " " + e.getValue().intValue() + "\n";
+//		}
+//		return ret;
+//	}
 
 	public String getName() {
 		return name;
@@ -258,13 +254,13 @@ public class City {
 			this.funding = 0;
 	}
 
-	public double getProduction(String type) {
+	public double getProduction(Resource type) {
 		return Game.trim(production.get(type));
 	}
 	
-	public ArrayList<String> getProductionTypes(){
-		ArrayList<String> ret = new ArrayList<String>();
-		for(java.util.Map.Entry<String, Double> e : production.entrySet()){
+	public ArrayList<Resource> getProductionTypes(){
+		ArrayList<Resource> ret = new ArrayList<Resource>();
+		for(java.util.Map.Entry<Resource, Double> e : production.entrySet()){
 			ret.add(e.getKey());
 		}
 		return ret;
@@ -286,24 +282,24 @@ public class City {
 		return coastal;
 	}
 
-	public double getStockpile(String type) {
+	public double getStockpile(Resource type) {
 		return Game.trim(stockpile.get(type));
 	}
 	
-	public ArrayList<String> getStockpileTypes(){
-		ArrayList<String> ret = new ArrayList<String>();
-		for(java.util.Map.Entry<String, Double> e : stockpile.entrySet()){
+	public ArrayList<Resource> getStockpileTypes(){
+		ArrayList<Resource> ret = new ArrayList<Resource>();
+		for(java.util.Map.Entry<Resource, Double> e : stockpile.entrySet()){
 			ret.add(e.getKey());
 		}
 		return ret;
 	}
 
-	public void setInstruction(String type, String inst, double val) {
+	public void setInstruction(Resource type, String inst, double val) {
 		this.instructions.get(type).put(inst, val);
 	}
 	
 	
-	public Double getInstruction(String type, String inst) {
+	public Double getInstruction(Resource type, String inst) {
 		return instructions.get(type).get(inst);
 	}
 

@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -10,9 +11,12 @@ import java.util.Map.Entry;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -74,6 +78,54 @@ public class CityPanel extends JPanel {
 			}
 		}
 		add(productionPanel);
+		JButton exportButton = new JButton("Export");
+		exportButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				showExportDialog();
+			}
+		});
+		add(exportButton);
+	}
+	
+	private void showExportDialog(){
+		ArrayList<Resource> resourceTypes = city.getProductionTypes();
+		String[] resources = new String[resourceTypes.size()];
+		int i = 0;
+		for(Resource r : resourceTypes){
+			resources[i] = r.toString();
+			i++;
+		}
+		
+		JComboBox resChoice = new JComboBox(resources);
+		
+		ArrayList<City> cityList = city.getController().getCities();
+		
+		String[] cities = new String[cityList.size()-1];
+		
+		i = 0;
+		for(City c : cityList){
+			if(c != city){
+				cities[i] = c.getName();
+				i++;
+			}
+		}
+		
+		JComboBox cityChoice = new JComboBox(cities);
+		
+		JTextField field1 = new JTextField();
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(resChoice);
+        panel.add(cityChoice);
+        panel.add(new JLabel("Percent of excess to be exported:"));
+        panel.add(field1);
+        
+        
+        int result = JOptionPane.showConfirmDialog(null, panel, "Test",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (result == JOptionPane.OK_OPTION) {
+            	city.addExport(cityChoice.getSelectedItem(), resChoice.getSelectedItem(), 
+            			Double.parseDouble(field1.getText()));
+            }  
 	}
 	
 	private JPanel buildStockpilePanel(Resource type){
@@ -203,14 +255,14 @@ public class CityPanel extends JPanel {
 			Resource type = label.getKey();
 			JEditorPane pane = label.getValue();
 			double amount = city.getStockpile(type);
-			pane.setText(type + ": " + amount + " (" + 
-					city.getInstruction(type, "stockpile") + ")"); 
+			pane.setText(Game.trim(amount) + " (" + 
+					Game.trim(city.getInstruction(type, "stockpile")) + ")"); 
 		}
 		for(Entry<Resource, JEditorPane> label: productionLabels.entrySet()){
 			Resource type = label.getKey();
 			JEditorPane pane = label.getValue();
 			double amount = city.getProduction(type);
-			String productionString = (Game.trim(amount*city.getProductionPower())) + " (" + amount + "%)";
+			String productionString = (Game.trim(amount*city.getProductionPower())) + " (" + Game.trim(amount) + "%)";
 			if(!pane.getText().equals(productionString))
 				pane.setText(productionString); 
 		}

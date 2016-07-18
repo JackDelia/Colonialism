@@ -126,6 +126,10 @@ public class Player {
 		return explorers;
 	}
 	
+	public void fireExplorer(Explorer e){
+		explorers.remove(e);
+	}
+	
 	public void addExplorer(Explorer e){
 		explorers.add(e);
 	}

@@ -40,14 +40,18 @@ public class City {
 	}
 	
 	public double getProductionPower(){
-		return Game.trim((((int)funding/10)+1)*(size/10)*.01);
+		double toolsMult = 1;
+		if(stockpile.get(Resource.TOOLS) != null){
+			toolsMult += stockpile.get(Resource.TOOLS)/5;
+		}
+		return (((int)funding/10)+1)*(size/10)*.01*toolsMult;
 	}
 	
 	private double getProductionOf(Resource res){
 		Double prod = production.get(res);
 		if(prod == null)
 			return 0;
-		return Game.trim(getProductionPower()*(prod/100));
+		return getProductionPower()*(prod/100);
 	}
 	
 	private void addPopulation(){
@@ -64,9 +68,38 @@ public class City {
 				add -= 1;
 		}
 		
+		
+		double food = 0;
+		Double grain = stockpile.get(Resource.GRAIN);
+		Double meat = stockpile.get(Resource.MEAT);
+		Double fish = stockpile.get(Resource.FISH);
+		
+		int foodTypes = 0;
+		
+		if(grain != null){
+			food+= grain;
+			foodTypes++;
+		}
+		if(meat != null){
+			food+= meat;
+			foodTypes++;
+		}
+		if(fish != null){
+			food+= fish;
+			foodTypes++;
+		}
+		
+		double foodMult = Math.max(.5, 10*food/size);
+//		if(foodTypes != 0){
+//			incrementStockpile(Resource.GRAIN, -size/(100*foodTypes));
+//			incrementStockpile(Resource.MEAT, -size/(100*foodTypes));
+//			incrementStockpile(Resource.FISH, -size/(100*foodTypes));
+//		}
+		add *= foodMult;
+		
 		if(add > 10)
 			size+= 10;
-		else if(add == 0 && Math.random() > .75)
+		else if(add <= 0 && Math.random() > .75)
 			size += 1;
 		else
 			size+= add;
@@ -241,7 +274,7 @@ public class City {
 	}
 
 	public double getFunding() {
-		return Game.trim(funding);
+		return funding;
 	}
 
 	public void setFunding(double funding) {
@@ -255,7 +288,7 @@ public class City {
 	}
 
 	public double getProduction(Resource type) {
-		return Game.trim(production.get(type));
+		return production.get(type);
 	}
 	
 	public ArrayList<Resource> getProductionTypes(){
@@ -283,7 +316,14 @@ public class City {
 	}
 
 	public double getStockpile(Resource type) {
-		return Game.trim(stockpile.get(type));
+		return stockpile.get(type);
+	}
+	
+	public void incrementStockpile(Resource type, double amount){
+		if(stockpile.get(type) == null)
+			return;
+		double result = Math.max(0, stockpile.get(type)+amount);
+		stockpile.put(type, result);
 	}
 	
 	public ArrayList<Resource> getStockpileTypes(){
@@ -309,6 +349,12 @@ public class City {
 
 	public void incrementSoldiers(int soldiers) {
 		this.soldiers += soldiers;
+	}
+
+	
+	public void addExport(Object selectedItem, Object selectedItem2,
+			double parseDouble) {
+		System.out.println(selectedItem + " " + selectedItem2 + " " + parseDouble);
 	}
 
 	

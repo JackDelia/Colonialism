@@ -234,7 +234,7 @@ public class Game extends JFrame{
 
 		setupMoveButtonPanel();
 		setupButtonPanel();
-		JPanel basicsPanel = new BasicsPanel(pc);
+		JPanel basicsPanel = new BasicsPanel(pc, this);
 		uiPanel.add(basicsPanel);
 		uiPanel.add(buttonPanel);
 		setupMouseListener();
@@ -447,6 +447,10 @@ public class Game extends JFrame{
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		dispose();
 		new Game().run();
+	}
+	
+	public int getDay(){
+		return day;
 	}
 
 }

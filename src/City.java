@@ -19,6 +19,7 @@ public class City {
 	private HashMap<Resource, Double> stockpile = new HashMap<Resource, Double>();
 	private HashMap<Resource, HashMap<String, Double>> instructions = new HashMap<Resource, HashMap<String, Double>>();
 	private HashMap<Resource, Double> production = new HashMap<Resource, Double>();
+	private HashMap<Resource, HashMap<City, Double>> exports = new HashMap<Resource, HashMap<City, Double>>();
 	
 	public City(String name, int xpos, int ypos, Player controller, Map map) {
 		this.name = name;
@@ -90,11 +91,11 @@ public class City {
 		}
 		
 		double foodMult = Math.max(.5, 10*food/size);
-//		if(foodTypes != 0){
-//			incrementStockpile(Resource.GRAIN, -size/(100*foodTypes));
-//			incrementStockpile(Resource.MEAT, -size/(100*foodTypes));
-//			incrementStockpile(Resource.FISH, -size/(100*foodTypes));
-//		}
+		if(foodTypes != 0){
+			incrementStockpile(Resource.GRAIN, -size/(1000*foodTypes));
+			incrementStockpile(Resource.MEAT, -size/(1000*foodTypes));
+			incrementStockpile(Resource.FISH, -size/(1000*foodTypes));
+		}
 		add *= foodMult;
 		
 		if(add > 10)
@@ -352,9 +353,12 @@ public class City {
 	}
 
 	
-	public void addExport(Object selectedItem, Object selectedItem2,
-			double parseDouble) {
-		System.out.println(selectedItem + " " + selectedItem2 + " " + parseDouble);
+	public void addExport(City city, Resource resource,
+			double percent) {
+		if(exports.get(resource) == null)
+			exports.put(resource, new HashMap<City, Double>());
+		exports.get(resource).put(city, percent);
+		System.out.println(city.getName() +" " + resource + " " + percent);
 	}
 
 	

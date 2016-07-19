@@ -123,7 +123,8 @@ public class CityPanel extends JPanel {
         int result = JOptionPane.showConfirmDialog(null, panel, "Test",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (result == JOptionPane.OK_OPTION) {
-            	city.addExport(cityChoice.getSelectedItem(), resChoice.getSelectedItem(), 
+            	City chosenCity = cityList.get(cityChoice.getSelectedIndex());
+            	city.addExport(chosenCity, Resource.valueOf(resChoice.getSelectedItem().toString()), 
             			Double.parseDouble(field1.getText()));
             }  
 	}

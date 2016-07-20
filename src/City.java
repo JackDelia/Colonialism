@@ -22,7 +22,10 @@ public class City {
 	private HashMap<Resource, HashMap<City, Double>> exports = new HashMap<Resource, HashMap<City, Double>>();
 	
 	public City(String name, int xpos, int ypos, Player controller, Map map) {
-		this.name = name;
+		if(name.equals(""))
+			name = "City "+ controller.getCities().size();
+		else
+			this.name = name;
 		this.position = new Point(xpos, ypos);
 		this.controller = controller;
 		this.map = map;

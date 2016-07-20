@@ -4,8 +4,8 @@ import java.util.HashSet;
 
 
 public class Explorer{
-	public static final String[] NAMES = {"Jack Delia", "D-Tru", "B-Cai", "Teja", "Kenneth"};
-	
+	public static final String[] FIRSTNAMES = {"Jack", "Devin", "Brandon", "James", "Kenneth", "Allen", "Joeseph", "Jonathon", "George", "Thomas", "Christopher"};
+	public static final String[] LASTNAMES = {"Delia", "Smith", "Jones", "Joestar", "Mitchell", "Davidson", "Johnson", "Jefferson", "Washington", "Colombus"};
 	private String name;
 	private HashSet<Point> knowledge = new HashSet<Point>();
 	private int speed = 4;
@@ -19,7 +19,8 @@ public class Explorer{
 	private Point target;
 	
 	public Explorer(Point start){
-		name = NAMES[(int)(Math.random()*NAMES.length)];
+		name = FIRSTNAMES[(int)(Math.random()*FIRSTNAMES.length)] + " " + 
+				LASTNAMES[(int)(Math.random()*LASTNAMES.length)];
 		location = (Point) start.clone();
 		origin = start;
 	}

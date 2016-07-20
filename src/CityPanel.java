@@ -84,7 +84,7 @@ public class CityPanel extends JPanel {
 				showExportDialog();
 			}
 		});
-		add(exportButton);
+//		add(exportButton);
 	}
 	
 	private void showExportDialog(){

@@ -37,7 +37,7 @@ public class GameRunner {
 		            
 		});
 		        
-		musicThread.start();
+		//musicThread.start();
 		
 		
 		g.run();

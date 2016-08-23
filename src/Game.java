@@ -100,6 +100,7 @@ public class Game extends JFrame{
 
 			public void mouseClicked(MouseEvent e) {
 				if(exploreClicked){
+					System.out.println(e.getX()/Map.PIXELSTEP);
 					explore(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
 				}
 				else if(foundClicked)

@@ -84,7 +84,7 @@ public class CityPanel extends JPanel {
 				showExportDialog();
 			}
 		});
-//		add(exportButton);
+		add(exportButton);
 	}
 	
 	private void showExportDialog(){
@@ -123,7 +123,7 @@ public class CityPanel extends JPanel {
         int result = JOptionPane.showConfirmDialog(null, panel, "Test",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (result == JOptionPane.OK_OPTION) {
-            	City chosenCity = cityList.get(cityChoice.getSelectedIndex());
+            	City chosenCity = city.getController().findCityByName(cityChoice.getSelectedItem().toString());
             	city.addExport(chosenCity, Resource.valueOf(resChoice.getSelectedItem().toString()), 
             			Double.parseDouble(field1.getText()));
             }  

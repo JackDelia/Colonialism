@@ -79,8 +79,9 @@ public class Player {
 		for(Explorer e : explorers){
 			if(e.isExploring())
 				this.money -= e.getFunding();
-			if(e.update())
+			if(e.update()){
 				gainExploreKnowledge(e.getKnowledge());
+			}
 		}
 		if(explorers.size() > cities.size() && explorers.size() > 1){
 			money-= explorers.size();
@@ -183,4 +184,21 @@ public class Player {
 		return visible[p.x][p.y];
 	}
 
+	public City findCityByName(String name) {
+		for(City c : cities)
+			if(c.getName().equals(name))
+				return c;
+		
+		return null;
+	}
+
+	private int numExplored(){
+		int count = 0;
+		for(boolean[] ba: visible)
+			for(boolean b: ba)
+				if(b)
+				count++;
+		return count;
+		
+	}
 }

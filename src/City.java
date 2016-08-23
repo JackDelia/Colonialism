@@ -127,6 +127,18 @@ public class City {
 		
 	}
 	
+	private void export(Resource res, double excess, int days){
+		for(java.util.Map.Entry<City, Double> export : exports.get(res).entrySet()){
+			City city = export.getKey();
+			double percent = export.getValue();
+			
+			double toExport = excess*(percent/100);
+			incrementStockpile(res, -toExport);
+			city.incrementStockpile(res, toExport);
+			
+		}
+	}
+	
 	public void update(int days){
 		if(controller.getMoney() < funding)
 			funding = controller.getMoney();
@@ -188,6 +200,7 @@ public class City {
 			inst.put("stockpile", 10.0);
 			inst.put("return", 0.0);
 			inst.put("sell", 100.0);
+			inst.put("export", 0.0);
 			instructions.put(r, inst);
 			
 //			balanceProduction();
@@ -325,7 +338,7 @@ public class City {
 	
 	public void incrementStockpile(Resource type, double amount){
 		if(stockpile.get(type) == null)
-			return;
+			stockpile.put(type, 0.0);
 		double result = Math.max(0, stockpile.get(type)+amount);
 		stockpile.put(type, result);
 	}
@@ -360,7 +373,18 @@ public class City {
 			double percent) {
 		if(exports.get(resource) == null)
 			exports.put(resource, new HashMap<City, Double>());
+		
+		double exportDelta = percent;
+		if(exports.get(resource).get(city) != null)
+			exportDelta = percent-exports.get(resource).get(city);
+		
 		exports.get(resource).put(city, percent);
+		
+		double currentExport = instructions.get(resource).get("export");
+		instructions.get(resource).put("export", exportDelta+currentExport);
+		
+		double currentSell = instructions.get(resource).get("sell");
+		instructions.get(resource).put("sell", currentSell-exportDelta);
 		System.out.println(city.getName() +" " + resource + " " + percent);
 	}
 

@@ -56,7 +56,6 @@ public class Map extends JPanel{
 						mapResources[i][j][2] = NATURAL[r.nextInt(NATURAL.length)];
 				}
 				else if(value > (1/2.0)){
-					System.out.println("2");
 					mapResources[i][j] = new Resource[2];
 					Resource res1 = NATURAL[r.nextInt(NATURAL.length)];
 					Resource res2 = NATURAL[r.nextInt(NATURAL.length)];
@@ -70,7 +69,6 @@ public class Map extends JPanel{
 						mapResources[i][j][1] = NATURAL[r.nextInt(NATURAL.length)];
 				}
 				else if(value>(1/10.0)){
-					System.out.println("1");
 					mapResources[i][j] = new Resource[1]; 
 					Resource res = NATURAL[r.nextInt(NATURAL.length)];
 					if(res != Resource.IRON)
@@ -96,7 +94,7 @@ public class Map extends JPanel{
 					g.setColor(Color.WHITE);
 				if(player != null && player.getLocation() == null && player.getPosition().x == i && player.getPosition().y == j && !(age%7000 < 3500))
 					g.setColor(Color.RED);
-				g.fillRect(i*6, j*6, 6, 6);
+				g.fillRect(i*PIXELSTEP, j*PIXELSTEP, PIXELSTEP, PIXELSTEP);
 			}
 			
 			for(City c : cities){
@@ -113,8 +111,67 @@ public class Map extends JPanel{
 		}
 	}
 	
+	public void formMountains(){
+		int count = r.nextInt((int) (Math.pow(MAPSIZE, 2)/1000))+18;
+		for(int i = 0; i < count; i++){
+			int rangeLength = r.nextInt(MAPSIZE/3);
+			int rangeWidth = r.nextInt(MAPSIZE/17) + 2;
+			boolean northSouth = r.nextBoolean();
+			boolean eastWest = r.nextBoolean();
+			if(northSouth && eastWest)
+				eastWest = false;
+
+			Point startPoint = new Point(r.nextInt(MAPSIZE), r.nextInt(MAPSIZE));
+			while(getTerrain(startPoint.x, startPoint.y) != Terrain.PLAINS){
+				startPoint = new Point(r.nextInt(MAPSIZE), r.nextInt(MAPSIZE));
+			}
+			
+			formMountainRange(rangeLength, rangeWidth, northSouth, eastWest, startPoint);
+		}
+	}
+	
+	private void setTerrain(int x, int y, Terrain t){
+		if(x > 0 && x < MAPSIZE && y > 0 && y < MAPSIZE && mapTerrain[x][y] != Terrain.OCEAN)
+			mapTerrain[x][y] = t;
+	}
+	
+	
+	private void formMountainRange(int rangeLength, int rangeWidth,
+			boolean northSouth, boolean eastWest, Point startPoint) {
+		
+		int dx = 0;
+		int dy = 0;
+		for(int i = 0; i <= rangeLength; i ++){
+			if(northSouth)
+				dy = i;
+			else
+				dy += r.nextInt(3)-1;
+			if(eastWest)
+				dx = i;
+			else
+				dx += r.nextInt(3)-1;
+			
+			int xpos = startPoint.x+dx;
+			int ypos = startPoint.y+dy;
+			setTerrain(xpos,ypos,Terrain.MOUNTAINS);
+			int effectiveWidth = (rangeWidth/2)-r.nextInt(3);
+			for(int j = 1; j <= effectiveWidth; j++)
+				if(northSouth){
+					setTerrain(xpos-j,ypos,Terrain.MOUNTAINS);
+					setTerrain(xpos+j,ypos,Terrain.MOUNTAINS);
+				} else{
+					setTerrain(xpos,ypos+j,Terrain.MOUNTAINS);
+					setTerrain(xpos,ypos-j,Terrain.MOUNTAINS);
+				}
+		}
+		
+	}
+
 	public void formTerrain(){
-		for(int i = 2; i<=4; i++){
+		formMountains();
+		formDeserts();
+		formForrests();
+		for(int i = 3; i<=4; i++){
 			Terrain t = Terrain.PLAINS;
 			switch(i){
 			case 2: t = Terrain.MOUNTAINS;
@@ -125,7 +182,6 @@ public class Map extends JPanel{
 			
 			}
 			int count = r.nextInt((int) (Math.pow(MAPSIZE, 2)/1000))+18;
-			System.out.println(i + "  " + count);
 			while (count > 0){
 				int x = r.nextInt(MAPSIZE-2)+1;
 				int y = r.nextInt(MAPSIZE-2)+1;
@@ -183,10 +239,20 @@ public class Map extends JPanel{
 			for(int z = 0; z< MAPSIZE; z++)
 				if(mapTerrain[w][z] == Terrain.PLAINS && Math.random()>.75)
 					mapTerrain[w][z] = Terrain.HILLS;
-		System.out.println("Terrain formed.");
+		
 		
 	}
 	
+	private void formForrests() {
+		
+		
+	}
+
+	private void formDeserts() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void formContinents(){
 		int rt = r.nextInt(MAPSIZE-7);
 		int lt = r.nextInt(MAPSIZE);
@@ -223,11 +289,10 @@ public class Map extends JPanel{
 				lt = 0;
 			
 		}
-		if(mass<5000){
+		if(mass < (MAPSIZE*MAPSIZE)/2){
 			formContinents();
 			return;
 		}
-		System.out.println("Continents formed.");
 	}
 	
 	//0-ocean
@@ -242,6 +307,7 @@ public class Map extends JPanel{
 		return mapTerrain[lattitude][longitude];
 	}
 
+	
 	public ArrayList<Resource> getNearbyResources(int lattitude,
 			int longitude) {
 		
@@ -268,7 +334,6 @@ public class Map extends JPanel{
 		
 		if(Math.random() > .5 || ret.size() == 0)
 			ret.add(Resource.GRAIN);
-		System.out.println(ret.size());
 		return ret;
 	}
 

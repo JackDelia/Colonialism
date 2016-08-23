@@ -21,6 +21,15 @@ public class City {
 	private HashMap<Resource, Double> production = new HashMap<Resource, Double>();
 	private HashMap<Resource, HashMap<City, Double>> exports = new HashMap<Resource, HashMap<City, Double>>();
 	
+	private static final HashMap<String,Double> DEFAULT_INSTRUCTIONS = new HashMap<String, Double>();
+	static{
+		DEFAULT_INSTRUCTIONS.put("stockpile", 10.0);
+		DEFAULT_INSTRUCTIONS.put("return", 0.0);
+		DEFAULT_INSTRUCTIONS.put("sell", 100.0);
+		DEFAULT_INSTRUCTIONS.put("export", 0.0);
+		
+	}
+	
 	public City(String name, int xpos, int ypos, Player controller, Map map) {
 		if(name.equals(""))
 			name = "City "+ controller.getCities().size();
@@ -336,9 +345,14 @@ public class City {
 		return stockpile.get(type);
 	}
 	
+	
 	public void incrementStockpile(Resource type, double amount){
-		if(stockpile.get(type) == null)
+		if(amount == 0)
+			return;
+		if(stockpile.get(type) == null){
 			stockpile.put(type, 0.0);
+			instructions.put(type, DEFAULT_INSTRUCTIONS);
+		}
 		double result = Math.max(0, stockpile.get(type)+amount);
 		stockpile.put(type, result);
 	}

@@ -90,7 +90,7 @@ public class Map extends JPanel{
 		for(int i = 0; i< MAPSIZE; i++){
 			for(int j = 0; j< MAPSIZE; j++){
 				g.setColor(colors.get(mapTerrain[i][j]));
-				if(player != null && !player.canSee(i,j) && !player.getName().equals("_—l"))
+				if(player != null && !player.canSee(i,j))
 					g.setColor(Color.WHITE);
 				if(player != null && player.getLocation() == null && player.getPosition().x == i && player.getPosition().y == j && !(age%7000 < 3500))
 					g.setColor(Color.RED);

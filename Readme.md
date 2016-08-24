@@ -6,22 +6,23 @@ Download:
 [v0.1](https://www.dropbox.com/s/5mcc2fr6n26zcds/Colonialism.jar?dl=0)|
 [v0.2](https://www.dropbox.com/s/cuxo5eu68v257k9/Colonialismv0.2.jar?dl=0)|
 [v0.3](https://www.dropbox.com/s/75zhbloebpvi636/Colonialismv0.3.jar?dl=0)|
-[v0.4](https://www.dropbox.com/s/kgrrpvbyau27id7/Colonialismv0.4.jar?dl=0)
+[v0.4](https://www.dropbox.com/s/kgrrpvbyau27id7/Colonialismv0.4.jar?dl=0)|
+[v0.5](https://www.dropbox.com/s/gjml1kaeqmrzuuc/Colonialismv0.5.jar?dl=0)
 
 
 Colonialism is a game written in Java that procedurally generates a map and allows players to explore and colonize that map. 
 Cities grow and produce resources that can be sold for more money. It is currently still in development.
 
 Maps in Colonialism are procedurally generated.
-![map](http://i.imgur.com/1zYfDfN.png)
+![map](http://i.imgur.com/ZLIk0TM.png)
 
 The player starts with no vision, but then sends out explorers to explore the map
 
-![Explore](http://i.imgur.com/w4azkQn.png)
+![Explore](http://i.imgur.com/uRJknsv.png)
 
 The player can then found cities which expand and produce and sell resources. The player can choose how much to fund those cities, which increases growth proportionally. The player can also choose how much production to put toward each resource, and how much of each resource to stockpile.
 
-![City](http://i.imgur.com/Faea7My.png)
+![City](http://i.imgur.com/6V2nMFF.png)
 
 
 

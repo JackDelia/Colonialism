@@ -85,6 +85,8 @@ public class Game extends JFrame{
 		uiPanel.setPreferredSize(new Dimension(-250,-250));
 		uiPanel.setLayout(new BoxLayout(uiPanel, BoxLayout.X_AXIS));
 		
+		setExtendedState(JFrame.MAXIMIZED_BOTH); 
+		setUndecorated(true);
 		setVisible(true);
 	}
 	
@@ -187,10 +189,18 @@ public class Game extends JFrame{
 			}
 		});
 		
+		JButton exitButton = new JButton("Quit");
+		exitButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				System.exit(0);
+			}
+		});
+		
 		
 		buttonPanel.add(foundButton);
 		buttonPanel.add(pause);
 		buttonPanel.add(moveButton);
+		buttonPanel.add(exitButton);
 	}
 	
 	private void setupMoveButtonPanel(){
@@ -207,7 +217,7 @@ public class Game extends JFrame{
 			
 		});
 		
-		JButton cancelMoveButton = new JButton("Cancel");
+		JButton cancelMoveButton = new JButton("Back");
 		cancelMoveButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				currentMessage = "";
@@ -224,7 +234,7 @@ public class Game extends JFrame{
 	}
 	
 	private void setup(String name){
-		setSize(1200, 600);
+		//setSize(1200, 600);
 		
 		lastUpdate = System.currentTimeMillis();
 		gameMap = new Map();
@@ -344,7 +354,7 @@ public class Game extends JFrame{
 		menu = 0;
 		JPanel container = setupMenu();
 		add(container);
-		setSize(500, 500);
+		//setSize(500, 500);
 		while(menu != 1){
 			repaint();
 			container.repaint();

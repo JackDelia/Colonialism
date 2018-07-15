@@ -1,5 +1,7 @@
 package com.jackdelia.colonialism;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import sun.audio.*;
@@ -7,18 +9,19 @@ import sun.audio.*;
 
 public class GameRunner {
 
-	public static void main(String[] args) {
-		Game gameManager = new Game();
+	public static void main(String[] args) throws IOException {
+		Game g = new Game();
 		
 		Thread musicThread = new Thread(new Runnable() {
 
 		    public void run() {
-		    	InputStream in;
+		    	InputStream in = null;
 		    	AudioStream as = null;
 				try {
-					in = GameRunner.class.getResourceAsStream("/audio/df.wav");
+					in = new FileInputStream("df.wav");
 					as = new AudioStream(in);
 				} catch (Exception e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
@@ -38,7 +41,7 @@ public class GameRunner {
 		musicThread.start();
 		
 		
-		gameManager.run();
+		g.run();
 	}
 
 }

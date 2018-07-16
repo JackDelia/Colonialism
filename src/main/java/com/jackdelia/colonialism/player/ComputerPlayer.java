@@ -28,14 +28,14 @@ public class ComputerPlayer extends Player {
 
 	public ComputerPlayer(String name, Map map) {
 		super(name, map);
-		setPosition(new Point(Map.MAPSIZE-1, 20));
+		setPosition(new Point(Map.MAP_SIZE -1, 20));
 	}
 	
 	private ArrayList<Point> possibleLocations(){
 		ArrayList<Point> possible = new ArrayList<Point>();
 
-		for(int i = 0; i < Map.MAPSIZE; i++){
-			for(int j = 0; j < Map.MAPSIZE; j++){
+		for(int i = 0; i < Map.MAP_SIZE; i++){
+			for(int j = 0; j < Map.MAP_SIZE; j++){
 				if(canSee(i,j) && map.valid(i, j))
 					possible.add(new Point(i,j));
 			}
@@ -47,7 +47,7 @@ public class ComputerPlayer extends Player {
 	public void update(int days){
 		super.update(days);
 		if(canExplore() && Math.random() > .6){
-			explore(new Point((int)(Math.random()*Map.MAPSIZE),(int)(Math.random()*Map.MAPSIZE)));
+			explore(new Point((int)(Math.random()*Map.MAP_SIZE),(int)(Math.random()*Map.MAP_SIZE)));
 		}
 		
 		for(City c: getCities()){

@@ -23,13 +23,14 @@ public class City {
 	private boolean coastal;
 	private Map map;
 	private int soldiers = 0;
-	private ArrayList<Resource> availableResources = new ArrayList<Resource>();
-	private HashMap<Resource, Double> stockpile = new HashMap<Resource, Double>();
-	private HashMap<Resource, HashMap<String, Double>> instructions = new HashMap<Resource, HashMap<String, Double>>();
-	private HashMap<Resource, Double> production = new HashMap<Resource, Double>();
-	private HashMap<Resource, HashMap<City, Double>> exports = new HashMap<Resource, HashMap<City, Double>>();
+	private ArrayList<Resource> availableResources;
+	private HashMap<Resource, Double> stockpile;
+	private HashMap<Resource, HashMap<String, Double>> instructions;
+	private HashMap<Resource, Double> production;
+	private HashMap<Resource, HashMap<City, Double>> exports;
 	
-	private static final HashMap<String,Double> DEFAULT_INSTRUCTIONS = new HashMap<String, Double>();
+	private static final HashMap<String,Double> DEFAULT_INSTRUCTIONS = new HashMap<>();
+
 	static{
 		DEFAULT_INSTRUCTIONS.put("stockpile", 10.0);
 		DEFAULT_INSTRUCTIONS.put("return", 0.0);
@@ -37,28 +38,50 @@ public class City {
 		DEFAULT_INSTRUCTIONS.put("export", 0.0);
 		
 	}
-	
-	public City(String name, int xpos, int ypos, Player controller, Map map) {
-		if(name.equals(""))
-			name = "City "+ controller.getCities().size();
-		else
+
+	/**
+	 * @param name the name of the City
+	 * @param xPosition the x coordinate of the city
+	 * @param yPosition the y coordinate of the city
+	 * @param controller the player that owns this city
+	 * @param map the game map
+	 */
+	public City(String name, int xPosition, int yPosition, Player controller, Map map) {
+
+        // initialize class attributes
+        this.stockpile = new HashMap<>();
+        this.instructions = new HashMap<>();
+        this.production = new HashMap<>();
+        this.exports = new HashMap<>();
+
+		if(name.equals("")) {
+			this.name = "City " + controller.getCities().size();
+		} else {
 			this.name = name;
-		this.position = new Point(xpos, ypos);
+		}
+
+		this.position = new Point(xPosition, yPosition);
 		this.controller = controller;
 		this.map = map;
 		this.cityId = controller.getCities().size();
-		this.terrain = map.getTerrain(xpos, ypos);
-		for(int i = -2; i<=2; i++){
-			if((map.getTerrain(xpos+i, ypos+i) == Terrain.OCEAN) 
-					|| (map.getTerrain(xpos+i, ypos) == Terrain.OCEAN)
-					|| (map.getTerrain(xpos, ypos+i) == Terrain.OCEAN))
+		this.terrain = map.getTerrain(xPosition, yPosition);
+
+		for(int i = -2; i<=2; i++) {
+			if((this.map.getTerrain(xPosition + i, yPosition + i) == Terrain.OCEAN)
+					|| (this.map.getTerrain(xPosition + i, yPosition) == Terrain.OCEAN)
+					|| (this.map.getTerrain(xPosition, yPosition + i) == Terrain.OCEAN)) {
 				this.coastal = true;
+			}
 		}
-		map.cities.add(this);
-		this.availableResources = map.getNearbyResources(xpos,ypos);
-		if(coastal)
-			this.availableResources.add(Resource.FISH);
-	}
+
+        this.map.cities.add(this);
+		this.availableResources = this.map.getNearbyResources(xPosition,yPosition);
+
+		if(this.coastal) {
+            this.availableResources.add(Resource.FISH);
+        }
+
+    }
 	
 	public double getProductionPower(){
 		double toolsMult = 1;

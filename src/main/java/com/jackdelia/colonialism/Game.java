@@ -98,8 +98,9 @@ public class Game extends JFrame{
 	}
 	
 	public static double trim(double d){
-		if(Math.abs(d-((int) d)) < .01)
+		if(Math.abs(d - ((int) d)) < .01) {
 			d = (int) d;
+		}
 		return ((int)(d*10))/10.0;
 	}
 	
@@ -109,14 +110,14 @@ public class Game extends JFrame{
 
 			public void mouseClicked(MouseEvent e) {
 				if(exploreClicked){
-					System.out.println(e.getX()/Map.PIXELSTEP);
-					explore(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
+					System.out.println(e.getX()/Map.PIXEL_STEP);
+					explore(e.getX()/Map.PIXEL_STEP, e.getY()/Map.PIXEL_STEP);
 				}
 				else if(foundClicked)
-					foundCity(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
+					foundCity(e.getX()/Map.PIXEL_STEP, e.getY()/Map.PIXEL_STEP);
 				else if(moving){
 					pc.setLocation(null);
-					pc.setPosition(new Point(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP));
+					pc.setPosition(new Point(e.getX()/Map.PIXEL_STEP, e.getY()/Map.PIXEL_STEP));
 				}
 			}
 

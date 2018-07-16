@@ -6,11 +6,13 @@ import java.awt.Point;
 import java.util.HashSet;
 
 public class Explorer{
-	public static final String[] FIRSTNAMES = {"Jack", "Devin", "Brandon", "James", "Kenneth", "Allen", "Joeseph", "Jonathon", "George", "Thomas", "Christopher"};
-	public static final String[] LASTNAMES = {"Delia", "Smith", "Jones", "Joestar", "Mitchell", "Davidson", "Johnson", "Jefferson", "Washington", "Colombus"};
+	private static final String[] FIRST_NAMES = {"Jack", "Devin", "Brandon", "James", "Kenneth", "Allen", "Joeseph", "Jonathon", "George", "Thomas", "Christopher"};
+	private static final String[] LAST_NAMES = {"Delia", "Smith", "Jones", "Joestar", "Mitchell", "Davidson", "Johnson", "Jefferson", "Washington", "Colombus"};
+
+	private static final int DEFAULT_SPEED = 4;
+
 	private String name;
-	private HashSet<Point> knowledge = new HashSet<Point>();
-	private int speed = 4;
+	private HashSet<Point> knowledge = new HashSet<>();
 	private int vision = 3;
 	private Point location;
 	private Point origin;
@@ -20,9 +22,9 @@ public class Explorer{
 	private int funding = 1;
 	private Point target;
 
-	public Explorer(Point start){
-		name = FIRSTNAMES[(int)(Math.random()*FIRSTNAMES.length)] + " " + 
-				LASTNAMES[(int)(Math.random()*LASTNAMES.length)];
+	public Explorer(Point start) {
+		name = FIRST_NAMES[(int)(Math.random()* FIRST_NAMES.length)] + " " +
+				LAST_NAMES[(int)(Math.random()* LAST_NAMES.length)];
 		location = (Point) start.clone();
 		origin = start;
 	}
@@ -55,26 +57,30 @@ public class Explorer{
 		return funding;
 	}
 
-	public void incrementFunding(int amnt) {
-		funding += amnt;
+	public void incrementFunding(int amount) {
+		funding += amount;
 		if(funding <= 0)
 			funding = 1;
 		range = 25 + (funding-1)* 6;
 		vision = 3 + (funding-1)/5;
 	}
 
-	private void moveTowardTarget(){
-		int[] direction ={0,0};
+	private void moveTowardTarget() {
+		int[] direction = {0,0};
 		
-		if(target.x != location.x && target.y != location.y){
-			if(Math.random() > .5)
-				direction[0] = (target.x-location.x)/Math.abs(target.x-location.x);
-			else
-				direction[1] = (target.y-location.y)/Math.abs(target.y-location.y);
-		} else if(target.x != location.x)
-			direction[0] = (target.x-location.x)/Math.abs(target.x-location.x);
-		else
-			direction[1] = (target.y-location.y)/Math.abs(target.y-location.y);
+		if(target.x != location.x && target.y != location.y) {
+
+			if(Math.random() > .5) {
+                direction[0] = (target.x - location.x) / Math.abs(target.x - location.x);
+            } else {
+                direction[1] = (target.y - location.y) / Math.abs(target.y - location.y);
+            }
+
+		} else if(target.x != location.x) {
+            direction[0] = (target.x - location.x) / Math.abs(target.x - location.x);
+        } else {
+            direction[1] = (target.y - location.y) / Math.abs(target.y - location.y);
+        }
 		
 		location.translate(direction[0], direction[1]);
 		gainKnowledge();
@@ -85,7 +91,7 @@ public class Explorer{
 			for(int j = -vision; j < vision; j++){
 				Point seen = (Point)location.clone();
 				seen.translate(i, j);
-				if(seen.x >= 0 && seen.x < Map.MAPSIZE && seen.y >= 0 && seen.y < Map.MAPSIZE && seen.distance(location) <= vision)
+				if(seen.x >= 0 && seen.x < Map.MAP_SIZE && seen.y >= 0 && seen.y < Map.MAP_SIZE && seen.distance(location) <= vision)
 					knowledge.add(seen);
 			}
 		}
@@ -93,8 +99,8 @@ public class Explorer{
 	
 	
 	public boolean update(){
-		if(exploring){
-			for(int i = 0; i < speed; i++){
+		if(this.exploring){
+            for(int i = 0; i < DEFAULT_SPEED; i++){
 				if(target.equals(location) || 
 						(travelled > range + (Math.random()*(range/2)) && !target.equals(origin))){
 					if(target.equals(origin)){

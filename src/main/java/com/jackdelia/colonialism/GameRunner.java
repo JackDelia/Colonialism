@@ -6,7 +6,6 @@ import java.io.InputStream;
 
 import sun.audio.*;
 
-
 public class GameRunner {
 
 	public static void main(String[] args) throws IOException {

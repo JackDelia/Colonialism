@@ -1,6 +1,10 @@
 package com.jackdelia.colonialism.map;
 
 import com.jackdelia.colonialism.city.City;
+import com.jackdelia.colonialism.empire.Empire;
+import com.jackdelia.colonialism.map.resource.Resource;
+import com.jackdelia.colonialism.map.resource.ResourceCollection;
+import com.jackdelia.colonialism.map.resource.ResourceFactory;
 import com.jackdelia.colonialism.math.RandomBooleanGenerator;
 import com.jackdelia.colonialism.math.RandomNumberGenerator;
 import com.jackdelia.colonialism.player.Player;
@@ -20,12 +24,14 @@ public class Map extends JPanel{
 
     private Terrain[][] mapTerrain;
     private Resource[][][] mapResources;
-    public ArrayList<City> cities;
+
     public static final int MAP_SIZE = 100;
     public static final int PIXEL_STEP = 6;
-    private static final Resource[] NATURAL = {Resource.GOLD, Resource.STONE, Resource.IRON};
+    private ResourceCollection naturalResources;
     public Player player;
+
     private MapAge mapAge;
+    private Empire empire;
 
     private static final HashMap<Terrain, Color> colors = new HashMap<>();
     static{
@@ -45,8 +51,10 @@ public class Map extends JPanel{
         this.setSize(500,500);
         this.mapTerrain = new Terrain[MAP_SIZE][MAP_SIZE];
         this.mapResources = new Resource[MAP_SIZE][MAP_SIZE][];
-        this.cities = new ArrayList<>();
+
+        this.empire = new Empire();
         this.mapAge = new MapAge();
+        this.naturalResources = ResourceFactory.getInstance().getNaturalResources();
 
         //procedural generation possible later
         //or maybe just a set map
@@ -67,42 +75,42 @@ public class Map extends JPanel{
                 if(getRandomDouble() > (7/8.0) && this.mapTerrain[i][j] != Terrain.MOUNTAINS) {
 
                     this.mapResources[i][j] = new Resource[3];
-                    this.mapResources[i][j][0] = NATURAL[getRandomInt(NATURAL.length)];
-                    this.mapResources[i][j][1] = NATURAL[getRandomInt(NATURAL.length)];
+                    this.mapResources[i][j][0] = this.naturalResources.getRandomResource();
+                    this.mapResources[i][j][1] = this.naturalResources.getRandomResource();
 
                     while(this.mapResources[i][j][0] == this.mapResources[i][j][1]) {
-                        this.mapResources[i][j][1] = NATURAL[getRandomInt(NATURAL.length)];
+                        this.mapResources[i][j][1] = this.naturalResources.getRandomResource();
                     }
 
-                    this.mapResources[i][j][2] = NATURAL[getRandomInt(NATURAL.length)];
+                    this.mapResources[i][j][2] = this.naturalResources.getRandomResource();
 
                     while((this.mapResources[i][j][0] == this.mapResources[i][j][2])
                             || (this.mapResources[i][j][1] == mapResources[i][j][2])) {
-                        this.mapResources[i][j][2] = NATURAL[getRandomInt(NATURAL.length)];
+                        this.mapResources[i][j][2] = this.naturalResources.getRandomResource();
                     }
                 }
 
                 else if(getRandomDouble() > (1 / 2.0)) {
                     mapResources[i][j] = new Resource[2];
-                    Resource res1 = NATURAL[getRandomInt(NATURAL.length)];
-                    Resource res2 = NATURAL[getRandomInt(NATURAL.length)];
+                    Resource res1 = this.naturalResources.getRandomResource();
+                    Resource res2 = this.naturalResources.getRandomResource();
 
                     if(res1 != Resource.IRON && res2 != Resource.IRON) {
-                        res1 = NATURAL[getRandomInt(NATURAL.length)];
-                        res2 = NATURAL[getRandomInt(NATURAL.length)];
+                        res1 = this.naturalResources.getRandomResource();
+                        res2 = this.naturalResources.getRandomResource();
                     }
 
                     mapResources[i][j][0] = res1;
                     mapResources[i][j][1] = res2;
                     while(mapResources[i][j][0] == mapResources[i][j][1]) {
-                        mapResources[i][j][1] = NATURAL[getRandomInt(NATURAL.length)];
+                        mapResources[i][j][1] = this.naturalResources.getRandomResource();
                     }
                 }
                 else if(getRandomDouble() > (1 / 10.0)) {
                     mapResources[i][j] = new Resource[1];
-                    Resource res = NATURAL[getRandomInt(NATURAL.length)];
+                    Resource res = this.naturalResources.getRandomResource();
                     if(res != Resource.IRON) {
-                        res = NATURAL[getRandomInt(NATURAL.length)];
+                        res = this.naturalResources.getRandomResource();
                     }
                     mapResources[i][j][0] = res;
                 }
@@ -121,18 +129,17 @@ public class Map extends JPanel{
     public void paintComponent(Graphics g){
         boolean isInNormalAge = this.mapAge.isInNormalAge();
 
-
         for(int i = 0; i< MAP_SIZE; i++){
             for(int j = 0; j< MAP_SIZE; j++){
                 g.setColor(colors.get(mapTerrain[i][j]));
-                if(player != null && !player.canSee(i,j))
+                if(player != null && !player.canSee(i, j))
                     g.setColor(Color.WHITE);
                 if(player != null && player.getLocation() == null && player.getPosition().x == i && player.getPosition().y == j && !(isInNormalAge))
                     g.setColor(Color.RED);
                 g.fillRect(i* PIXEL_STEP, j* PIXEL_STEP, PIXEL_STEP, PIXEL_STEP);
             }
 
-            for(City c : cities){
+            for(City c : this.empire.getCities()){
                 if(!(player.getLocation() == c && isInNormalAge) && c.getController() == player || player.canSee(c.getPosition())){
                     g.setColor(new Color(181,80,137));
                     if(player.getLocation() == c)
@@ -445,13 +452,22 @@ public class Map extends JPanel{
             return false;
         }
 
-        for(City curCity : this.cities) {
+        for(City curCity : this.empire.getCities()) {
             if(curCity.getPosition().distance(new Point(xPosition, yPosition)) < 10) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    /**
+     * Fetch the Player's Empire
+     *
+     * @return the Player's Empire
+     */
+    public Empire getEmpire() {
+        return this.empire;
     }
 
 }

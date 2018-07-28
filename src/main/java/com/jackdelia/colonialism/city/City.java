@@ -1,6 +1,6 @@
 package com.jackdelia.colonialism.city;
 
-import com.jackdelia.colonialism.map.Resource;
+import com.jackdelia.colonialism.map.resource.Resource;
 import com.jackdelia.colonialism.map.Terrain;
 import com.jackdelia.colonialism.Game;
 import com.jackdelia.colonialism.map.Map;
@@ -75,8 +75,8 @@ public class City {
 			}
 		}
 
-        this.gameMap.cities.add(this);
-		this.availableResources = this.gameMap.getNearbyResources(xPosition,yPosition);
+        this.gameMap.getEmpire().addCity(this);
+		this.availableResources = this.gameMap.getNearbyResources(xPosition, yPosition);
 
 		if(this.coastal) {
             this.availableResources.add(Resource.FISH);

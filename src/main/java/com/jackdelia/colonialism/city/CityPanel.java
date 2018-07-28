@@ -1,6 +1,6 @@
 package com.jackdelia.colonialism.city;
 
-import com.jackdelia.colonialism.map.Resource;
+import com.jackdelia.colonialism.map.resource.Resource;
 import com.jackdelia.colonialism.Game;
 
 import java.awt.Color;

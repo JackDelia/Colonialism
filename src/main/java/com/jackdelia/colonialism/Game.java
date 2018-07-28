@@ -2,7 +2,7 @@ package com.jackdelia.colonialism;
 
 import com.jackdelia.colonialism.explorer.Explorer;
 import com.jackdelia.colonialism.city.City;
-import com.jackdelia.colonialism.map.Resource;
+import com.jackdelia.colonialism.map.resource.Resource;
 import com.jackdelia.colonialism.basics.BasicsPanel;
 import com.jackdelia.colonialism.city.CityPanel;
 import com.jackdelia.colonialism.map.Map;

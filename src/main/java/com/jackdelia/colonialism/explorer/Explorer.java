@@ -1,5 +1,6 @@
 package com.jackdelia.colonialism.explorer;
 
+import com.jackdelia.colonialism.currency.Funding;
 import com.jackdelia.colonialism.map.Map;
 import com.jackdelia.colonialism.math.RandomNumberGenerator;
 

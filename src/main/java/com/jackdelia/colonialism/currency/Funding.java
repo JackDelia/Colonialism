@@ -1,7 +1,7 @@
-package com.jackdelia.colonialism.explorer;
+package com.jackdelia.colonialism.currency;
 
 /**
- * <p>Information about an Explorer's Funding</p>
+ * <p>Information about an Explorer or Player's Funding</p>
  * <p>
  * Change Log:
  * </p>
@@ -40,16 +40,16 @@ public class Funding {
     }
 
     /**
-     * Fetch the Cash left in the Explorer's funding
+     * Fetch the Cash
      *
-     * @return int representing the cash left for the Explorer
+     * @return int representing the cash left in the account
      */
     public int getCash(){
         return this.cash;
     }
 
     /**
-     * Adds money to the Explorer's Funding
+     * Adds money to the Funding
      *
      * @param howMuch cash to add into the funding
      */

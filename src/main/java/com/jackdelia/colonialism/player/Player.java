@@ -1,5 +1,6 @@
 package com.jackdelia.colonialism.player;
 
+import com.jackdelia.colonialism.currency.Funding;
 import com.jackdelia.colonialism.explorer.Explorer;
 import com.jackdelia.colonialism.city.City;
 import com.jackdelia.colonialism.map.Map;
@@ -13,41 +14,49 @@ import java.util.HashSet;
  */
 public class Player {
 
+    private static final int STARTING_CASH = 1000;
+
     private String name;
     protected Map map;
-    private double money = 1000;
     private int influence = 50;
-    private ArrayList<Player> vassals = new ArrayList<Player>();
-    private ArrayList<City> cities = new ArrayList<City>();
-    private ArrayList<Explorer> explorers = new ArrayList<Explorer>();
+    private ArrayList<Player> vassals = new ArrayList<>();
+    private ArrayList<City> cities = new ArrayList<>();
+    private ArrayList<Explorer> explorers = new ArrayList<>();
     private City capitol;
     private boolean[][] visible = new boolean[Map.MAP_SIZE][Map.MAP_SIZE];
-    private Point position = new Point(Map.MAP_SIZE -1, 0);
+    private Point position = new Point(Map.MAP_SIZE - 1, 0);
     private City location = null;
+
+    private Funding money;
 
     public Player(String name, Map map) {
         this.name = name;
         this.map = map;
-        explorers.add(new Explorer(position));
+        this.money = new Funding(STARTING_CASH);
+
+        this.explorers.add(new Explorer(this.position));
 
         if(name.equals("�_�l")) {
-            money = 9999999;
-            for(int i = 0; i < visible.length; i++)
-                for(int j = 0; j < visible.length; j++)
-                    visible[i][j] = true;
+            this.money = new Funding(9999999);
+
+            for(int i = 0; i < this.visible.length; i++) {
+                for(int j = 0; j < this.visible.length; j++) {
+                    this.visible[i][j] = true;
+                }
+            }
         }
 
         for(int i = 0; i < 8; i++) {
             for(int j = 0; j < 8; j++) {
                 if(i + j < 8) {
-                    visible[Map.MAP_SIZE -1-i][j] = true;
+                    this.visible[Map.MAP_SIZE -1-i][j] = true;
                 }
             }
         }
     }
 
     public boolean canExplore() {
-        for(Explorer curExplorer : explorers) {
+        for(Explorer curExplorer : this.explorers) {
             if(!curExplorer.isExploring()) {
                 return true;
             }
@@ -56,7 +65,7 @@ public class Player {
     }
 
     public void explore(Point target) {
-        for(Explorer e: explorers) {
+        for(Explorer e: this.explorers) {
             if(!e.isExploring()) {
                 e.setTarget(target);
                 return;
@@ -66,7 +75,7 @@ public class Player {
 
     private void gainExploreKnowledge(HashSet<Point> knowledge) {
         for(Point p: knowledge) {
-            visible[p.x][p.y] = true;
+            this.visible[p.x][p.y] = true;
         }
     }
 
@@ -101,14 +110,14 @@ public class Player {
 
     public void update(int days) {
 
-        for(City c : cities){
+        for(City c : this.cities){
             c.update(days);
         }
 
         for(Explorer curExplorer : this.explorers) {
 
             if(curExplorer.isExploring()) {
-                this.money -= curExplorer.getFunding();
+                this.money.removeCash(curExplorer.getFunding());
             }
 
             if(curExplorer.update()) {
@@ -118,7 +127,7 @@ public class Player {
         }
 
         if(this.explorers.size() > this.cities.size() && this.explorers.size() > 1) {
-            this.money -= explorers.size();
+            this.money.removeCash(this.explorers.size());
         }
 
     }
@@ -141,44 +150,44 @@ public class Player {
     }
 
     public double getMoney() {
-        return money;
+        return this.money.getCash();
     }
 
     public void incrementMoney(double money) {
-        this.money += money;
+        this.money.addCash((int) money);
     }
 
     public ArrayList<City> getCities() {
-        return cities;
+        return this.cities;
     }
 
     public void addCity(City c){
-        cities.add(c);
+        this.cities.add(c);
     }
 
     public ArrayList<Explorer> getExplorers() {
-        return explorers;
+        return this.explorers;
     }
 
     public void fireExplorer(Explorer e){
-        explorers.remove(e);
+        this.explorers.remove(e);
     }
 
     public void addExplorer(Explorer e){
-        explorers.add(e);
+        this.explorers.add(e);
     }
 
     public void addInfluence(int i){
-        influence += i;
+        this.influence += i;
     }
 
     public Point getPosition() {
-        return position;
+        return this.position;
     }
 
     public void setPosition(Point position) {
         this.position = position;
-        for(Explorer e: explorers){
+        for(Explorer e: this.explorers){
             e.setOrigin(position);
             if(!e.isExploring()){
                 e.setLocation(position);
@@ -187,7 +196,7 @@ public class Player {
     }
 
     public City getLocation() {
-        return location;
+        return this.location;
     }
 
     public void setLocation(City location) {
@@ -197,17 +206,17 @@ public class Player {
     }
 
     public String toString(){
-        StringBuilder constructedMessage = new StringBuilder("name: " + name + "\nMoney: " + money + "\nlocation: ");
+        StringBuilder constructedMessage = new StringBuilder("name: " + this.name + "\nMoney: " + this.money + "\nlocation: ");
 
-        if(location != null) {
-            constructedMessage.append(location.getName());
+        if(this.location != null) {
+            constructedMessage.append(this.location.getName());
         } else {
-            constructedMessage.append(position);
+            constructedMessage.append(this.position);
         }
 
         constructedMessage.append("\nCities:\n");
 
-        for(City curCity : cities) {
+        for(City curCity : this.cities) {
             constructedMessage.append(curCity.toString()).append("\n");
         }
 
@@ -215,15 +224,15 @@ public class Player {
     }
 
     public boolean canSee(int i, int j) {
-        return visible[i][j];
+        return this.visible[i][j];
     }
 
     public boolean canSee(Point p){
-        return visible[p.x][p.y];
+        return this.visible[p.x][p.y];
     }
 
     public City findCityByName(String name) {
-        for(City curCity : cities) {
+        for(City curCity : this.cities) {
             if(curCity.getName().equals(name)) {
                 return curCity;
             }
@@ -234,7 +243,7 @@ public class Player {
 
     private int numExplored(){
         int count = 0;
-        for(boolean[] ba: visible) {
+        for(boolean[] ba: this.visible) {
             for(boolean b: ba) {
                 if(b)
                     count++;

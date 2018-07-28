@@ -17,7 +17,9 @@ public class City {
 	private String name;
 	private int cityId;
 	private Point position;
-	private int size = 50;
+
+	private Population population;
+
 	private double funding = 1;
 	private Player controller;
 	private Terrain terrain = Terrain.PLAINS;
@@ -55,6 +57,8 @@ public class City {
         this.production = new HashMap<>();
         this.exports = new HashMap<>();
 
+        this.population = new Population();
+
 		if(name.equals("")) {
 			this.name = "City " + controller.getCities().size();
 		} else {
@@ -67,7 +71,9 @@ public class City {
 		this.cityId = controller.getCities().size();
 		this.terrain = map.getTerrain(xPosition, yPosition);
 
-		for(int i = -2; i<=2; i++) {
+
+		// i = {-2, -1, 0, 1, 2}
+		for(int i = -2; i <= 2; i++) {
 			if((this.gameMap.getTerrain(xPosition + i, yPosition + i) == Terrain.OCEAN)
 					|| (this.gameMap.getTerrain(xPosition + i, yPosition) == Terrain.OCEAN)
 					|| (this.gameMap.getTerrain(xPosition, yPosition + i) == Terrain.OCEAN)) {
@@ -87,30 +93,31 @@ public class City {
 	public double getProductionPower(){
 		double toolsMult = 1;
 		if(this.stockpile.get(Resource.TOOLS) != null){
-			toolsMult += this.stockpile.get(Resource.TOOLS)/5;
+			toolsMult += this.stockpile.get(Resource.TOOLS) / 5;
 		}
-		return (((int) this.funding / 10) + 1) * (this.size / 10) * .01 * toolsMult;
+		return (((int) this.funding / 10) + 1) * (this.population.getNumberOfPeople() / 10) * .01 * toolsMult;
 	}
 	
 	private double getProductionOf(Resource res){
 		Double prod = this.production.get(res);
-		if(prod == null)
-			return 0;
+		if(prod == null) {
+            return 0;
+        }
 		return getProductionPower()*(prod/100);
 	}
 	
 	private void addPopulation(){
 		
-		int add = (int)(this.funding * 100.0 / this.size);
-		add += getProductionOf(Resource.GRAIN);
-		add += getProductionOf(Resource.MEAT) / 2;
+		int increaseByAmount = (int)(this.funding * 100.0 / this.population.getNumberOfPeople());
+		increaseByAmount += getProductionOf(Resource.GRAIN);
+		increaseByAmount += getProductionOf(Resource.MEAT) / 2;
 		switch(this.terrain) {
 			case MOUNTAINS:
-				add /= 2;
+				increaseByAmount /= 2;
 			case DESERT:
-				add /= 2;
+				increaseByAmount /= 2;
 			case FORREST:
-				add -= 1;
+				increaseByAmount -= 1;
 		}
 
 		double food = 0;
@@ -135,21 +142,21 @@ public class City {
 			foodTypes++;
 		}
 		
-		double foodMult = Math.max(.5, 10* food / this.size);
+		double foodMult = Math.max(.5, 10* food / this.population.getNumberOfPeople());
 
 		if(foodTypes != 0) {
-			incrementStockpile(Resource.GRAIN, - this.size / (1000 * foodTypes));
-			incrementStockpile(Resource.MEAT, - this.size / (1000 * foodTypes));
-			incrementStockpile(Resource.FISH, - this.size / (1000 * foodTypes));
+			incrementStockpile(Resource.GRAIN, - this.population.getNumberOfPeople() / (1000 * foodTypes));
+			incrementStockpile(Resource.MEAT, - this.population.getNumberOfPeople() / (1000 * foodTypes));
+			incrementStockpile(Resource.FISH, - this.population.getNumberOfPeople() / (1000 * foodTypes));
 		}
-		add *= foodMult;
+		increaseByAmount *= foodMult;
 		
-		if(add > 10) {
-            this.size += 10;
-        } else if(add <= 0 && RandomNumberGenerator.generate() > .75) {
-            this.size += 1;
+		if(increaseByAmount > 10) {
+            this.population.increasePopulation(10);
+        } else if(increaseByAmount <= 0 && RandomNumberGenerator.generate() > .75) {
+            this.population.increasePopulation(1);
         } else {
-            this.size += add;
+            this.population.increasePopulation(increaseByAmount);
         }
 
         this.controller.incrementMoney(-1 * funding);
@@ -198,10 +205,12 @@ public class City {
 			if(k == Resource.SOLDIERS) {
 				int base = (int)((entry.getValue()/100.0)*days*getProductionPower());
 				double weapons = this.stockpile.get(Resource.WEAPONS);
-				if(base > this.size - 50 || base > weapons) {
-					base = Math.min(this.size - 50, (int) weapons);
+
+				if(base > this.population.getNumberOfPeople() - 50 || base > weapons) {
+					base = Math.min(this.population.getNumberOfPeople() - 50, (int) weapons);
 				}
-				this.size -= base;
+
+				this.population.decreasePopulation(base);
 				this.stockpile.put(Resource.WEAPONS, this.stockpile.get(Resource.WEAPONS)-base);
 				this.soldiers += base;
 			} else {
@@ -226,7 +235,7 @@ public class City {
 		}
 		
 				
-		if(this.size >= 100 * (this.production.size() + 1)) {
+		if(this.population.getNumberOfPeople() >= 100 * (this.production.size() + 1)) {
 			Resource r = this.availableResources.get(((int)(RandomNumberGenerator.generate() * 100)) % this.availableResources.size());
 			if(this.production.get(r) != null) {
 				ArrayList<Resource> adv = getAdvancedResources();
@@ -277,7 +286,7 @@ public class City {
 
 	private void balanceProduction(Resource s, double d) {
 
-	    // validate that @param d is between 1 and 100
+	    // validate that param d is between 1 and 100
 	    if(d > 100 || d < 0) {
 			return;
 		}
@@ -297,7 +306,7 @@ public class City {
 				}
 		}
 		
-		distribute = increase/(this.production.size()-ignore.size());
+		distribute = increase / (this.production.size() - ignore.size());
 		
 		for(java.util.Map.Entry<Resource, Double> e : this.production.entrySet()){
 			if(!ignore.contains(e.getKey())) {
@@ -328,11 +337,7 @@ public class City {
 	}
 
 	public int getSize() {
-		return this.size;
-	}
-
-	public void setSize(int size) {
-		this.size = size;
+		return this.population.getNumberOfPeople();
 	}
 
 	public double getFunding() {

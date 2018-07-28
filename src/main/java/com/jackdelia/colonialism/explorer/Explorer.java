@@ -20,70 +20,76 @@ public class Explorer{
 	private boolean exploring = false;
 	private int travelled = 0;
 	private int range = 25;
-	private int funding = 1;
 	private Point target;
 
+	private Funding financing;
+
 	public Explorer(Point start) {
-		name = FIRST_NAMES[(int)(RandomNumberGenerator.generate() * FIRST_NAMES.length)] + " " +
+		this.name = FIRST_NAMES[(int)(RandomNumberGenerator.generate() * FIRST_NAMES.length)] + " " +
 				LAST_NAMES[(int)(RandomNumberGenerator.generate() * LAST_NAMES.length)];
-		location = (Point) start.clone();
-		origin = start;
+		this.location = (Point) start.clone();
+		this.origin = start;
+
+		this.financing = new Funding();
 	}
 	
 	public void setOrigin(Point o){
-		origin = o.getLocation();
-		if(!exploring){
-			location = o.getLocation();
+		this.origin = o.getLocation();
+		if(!this.exploring){
+			this.location = o.getLocation();
 		}
 	}
 	
 	public boolean isExploring(){
-		return exploring;
+		return this.exploring;
 	}
 	
 	public String getName(){
-		return name;
+		return this.name;
 	}
 	
 	public void setTarget(Point p){
-		exploring = true;
-		target = p.getLocation();
+		this.exploring = true;
+		this.target = p.getLocation();
 	}
 	
 	public void setLocation(Point p){
-		location = p.getLocation();
+		this.location = p.getLocation();
 	}
 	
 	public int getFunding() {
-		return funding;
+		return this.financing.getCash();
 	}
 
 	public void incrementFunding(int amount) {
-		funding += amount;
-		if(funding <= 0)
-			funding = 1;
-		range = 25 + (funding-1)* 6;
-		vision = 3 + (funding-1)/5;
+	    if(amount > 0){
+            this.financing.addCash(amount);
+        } else if(amount < 0){
+	        this.financing.removeCash(amount);
+        }
+
+		this.range = 25 + (this.financing.getCash() - 1) * 6;
+		this.vision = 3 + (this.financing.getCash() - 1) / 5;
 	}
 
 	private void moveTowardTarget() {
-		int[] direction = {0,0};
+		int[] direction = {0, 0};
 		
-		if(target.x != location.x && target.y != location.y) {
+		if(this.target.x != location.x && this.target.y != this.location.y) {
 
 			if(RandomNumberGenerator.generate() > .5) {
-                direction[0] = (target.x - location.x) / Math.abs(target.x - location.x);
+                direction[0] = (this.target.x - this.location.x) / Math.abs(this.target.x - this.location.x);
             } else {
-                direction[1] = (target.y - location.y) / Math.abs(target.y - location.y);
+                direction[1] = (this.target.y - this.location.y) / Math.abs(this.target.y - this.location.y);
             }
 
-		} else if(target.x != location.x) {
-            direction[0] = (target.x - location.x) / Math.abs(target.x - location.x);
+		} else if(this.target.x != this.location.x) {
+            direction[0] = (this.target.x - this.location.x) / Math.abs(this.target.x - this.location.x);
         } else {
-            direction[1] = (target.y - location.y) / Math.abs(target.y - location.y);
+            direction[1] = (this.target.y - this.location.y) / Math.abs(this.target.y - this.location.y);
         }
-		
-		location.translate(direction[0], direction[1]);
+
+		this.location.translate(direction[0], direction[1]);
 		gainKnowledge();
 	}
 	
@@ -137,7 +143,7 @@ public class Explorer{
 		} else {
 			ret+= " Free";
 		}
-		ret += "\t Funding: \t"+ this.funding;
+		ret += "\t Funding: \t"+ this.financing.getCash();
 		return ret;
 	}
 	

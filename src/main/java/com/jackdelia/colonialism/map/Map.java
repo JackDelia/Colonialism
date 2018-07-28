@@ -25,7 +25,7 @@ public class Map extends JPanel{
     public static final int PIXEL_STEP = 6;
     private static final Resource[] NATURAL = {Resource.GOLD, Resource.STONE, Resource.IRON};
     public Player player;
-    private int age;
+    private MapAge mapAge;
 
     private static final HashMap<Terrain, Color> colors = new HashMap<>();
     static{
@@ -46,7 +46,7 @@ public class Map extends JPanel{
         this.mapTerrain = new Terrain[MAP_SIZE][MAP_SIZE];
         this.mapResources = new Resource[MAP_SIZE][MAP_SIZE][];
         this.cities = new ArrayList<>();
-        this.age = 0;
+        this.mapAge = new MapAge();
 
         //procedural generation possible later
         //or maybe just a set map
@@ -119,18 +119,21 @@ public class Map extends JPanel{
     }
 
     public void paintComponent(Graphics g){
+        boolean isInNormalAge = this.mapAge.isInNormalAge();
+
+
         for(int i = 0; i< MAP_SIZE; i++){
             for(int j = 0; j< MAP_SIZE; j++){
                 g.setColor(colors.get(mapTerrain[i][j]));
                 if(player != null && !player.canSee(i,j))
                     g.setColor(Color.WHITE);
-                if(player != null && player.getLocation() == null && player.getPosition().x == i && player.getPosition().y == j && !(age%7000 < 3500))
+                if(player != null && player.getLocation() == null && player.getPosition().x == i && player.getPosition().y == j && !(isInNormalAge))
                     g.setColor(Color.RED);
                 g.fillRect(i* PIXEL_STEP, j* PIXEL_STEP, PIXEL_STEP, PIXEL_STEP);
             }
 
             for(City c : cities){
-                if(!(player.getLocation() == c && age%7000 < 3500) && c.getController() == player || player.canSee(c.getPosition())){
+                if(!(player.getLocation() == c && isInNormalAge) && c.getController() == player || player.canSee(c.getPosition())){
                     g.setColor(new Color(181,80,137));
                     if(player.getLocation() == c)
                         g.setColor(Color.red);
@@ -139,7 +142,7 @@ public class Map extends JPanel{
                     g.drawString(c.getName(), c.getPosition().x * 6, c.getPosition().y * 6-10);
                 }
             }
-            age++;
+            mapAge.incrementAge();
         }
     }
 

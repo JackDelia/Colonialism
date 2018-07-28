@@ -1,6 +1,7 @@
 package com.jackdelia.colonialism.explorer;
 
 import com.jackdelia.colonialism.map.Map;
+import com.jackdelia.colonialism.math.RandomNumberGenerator;
 
 import java.awt.Point;
 import java.util.HashSet;
@@ -23,8 +24,8 @@ public class Explorer{
 	private Point target;
 
 	public Explorer(Point start) {
-		name = FIRST_NAMES[(int)(Math.random()* FIRST_NAMES.length)] + " " +
-				LAST_NAMES[(int)(Math.random()* LAST_NAMES.length)];
+		name = FIRST_NAMES[(int)(RandomNumberGenerator.generate() * FIRST_NAMES.length)] + " " +
+				LAST_NAMES[(int)(RandomNumberGenerator.generate() * LAST_NAMES.length)];
 		location = (Point) start.clone();
 		origin = start;
 	}
@@ -70,7 +71,7 @@ public class Explorer{
 		
 		if(target.x != location.x && target.y != location.y) {
 
-			if(Math.random() > .5) {
+			if(RandomNumberGenerator.generate() > .5) {
                 direction[0] = (target.x - location.x) / Math.abs(target.x - location.x);
             } else {
                 direction[1] = (target.y - location.y) / Math.abs(target.y - location.y);
@@ -101,18 +102,18 @@ public class Explorer{
 	public boolean update(){
 		if(this.exploring){
             for(int i = 0; i < DEFAULT_SPEED; i++){
-				if(target.equals(location) || 
-						(travelled > range + (Math.random()*(range/2)) && !target.equals(origin))){
-					if(target.equals(origin)){
-						exploring = false;
-						travelled = 0;
+				if(this.target.equals(this.location) ||
+						(this.travelled > this.range + (RandomNumberGenerator.generate() * (this.range / 2)) && !this.target.equals(this.origin))){
+					if(this.target.equals(this.origin)) {
+						this.exploring = false;
+						this.travelled = 0;
 						resetKnowledge();
 					} else {
-						target = origin;
+						this.target = this.origin;
 					}
 				} else{
 					moveTowardTarget();
-					travelled++;
+					this.travelled++;
 				}
 			}
 			return true;
@@ -122,20 +123,21 @@ public class Explorer{
 	}
 	
 	public HashSet<Point> getKnowledge(){
-		return knowledge;
+		return this.knowledge;
 	}
 	
 	private void resetKnowledge(){
-		knowledge.clear();
+		this.knowledge.clear();
 	}
 	
 	public String toString(){
-		String ret = name + ": \t";
-		if(exploring)
+		String ret = this.name + ": \t";
+		if(this.exploring) {
 			ret+= "Exploring";
-		else
+		} else {
 			ret+= " Free";
-		ret += "\t Funding: \t"+ funding;
+		}
+		ret += "\t Funding: \t"+ this.funding;
 		return ret;
 	}
 	

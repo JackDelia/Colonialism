@@ -2,6 +2,8 @@ package com.jackdelia.colonialism.player;
 
 import com.jackdelia.colonialism.city.City;
 import com.jackdelia.colonialism.map.Map;
+import com.jackdelia.colonialism.math.RandomNumberGenerator;
+
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -36,7 +38,7 @@ public class ComputerPlayer extends Player {
 
 		for(int i = 0; i < Map.MAP_SIZE; i++){
 			for(int j = 0; j < Map.MAP_SIZE; j++){
-				if(canSee(i,j) && map.valid(i, j))
+				if(canSee(i,j) && this.map.valid(i, j))
 					possible.add(new Point(i,j));
 			}
 		}
@@ -46,8 +48,8 @@ public class ComputerPlayer extends Player {
 	
 	public void update(int days){
 		super.update(days);
-		if(canExplore() && Math.random() > .6){
-			explore(new Point((int)(Math.random()*Map.MAP_SIZE),(int)(Math.random()*Map.MAP_SIZE)));
+		if(canExplore() && RandomNumberGenerator.generate() > .6){
+			explore(new Point((int)(RandomNumberGenerator.generate() * Map.MAP_SIZE),(int)(RandomNumberGenerator.generate() * Map.MAP_SIZE)));
 		}
 		
 		for(City c: getCities()){
@@ -61,9 +63,9 @@ public class ComputerPlayer extends Player {
 		}
 		
 		ArrayList<Point> possible = possibleLocations();
-		if(possible.size() > 0 && System.currentTimeMillis() - lastCityTime > 50000){
-			lastCityTime = System.currentTimeMillis();
-			Point loc = new Point(possibleLocations().get((int)(Math.random()*possible.size())));
+		if(possible.size() > 0 && System.currentTimeMillis() - this.lastCityTime > 50000) {
+			this.lastCityTime = System.currentTimeMillis();
+			Point loc = new Point(possibleLocations().get((int)(RandomNumberGenerator.generate() * possible.size())));
 			foundCity(randomCityName(), loc.x, loc.y);
 		}
 	}
@@ -77,7 +79,7 @@ public class ComputerPlayer extends Player {
 	}
 	
 	private String randomCityName(){
-		return cityNames.get((int)(Math.random()* cityNames.size()));
+		return cityNames.get((int)(RandomNumberGenerator.generate() * cityNames.size()));
 	}
 
 }

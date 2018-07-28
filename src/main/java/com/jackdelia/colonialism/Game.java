@@ -83,8 +83,7 @@ public class Game extends JFrame{
 	         public void windowClosing(WindowEvent windowEvent){
 	            System.exit(0);
 	         }        
-	      });    
-		
+	      });
 		
 		exploreClicked = false;
 		foundClicked = false;

@@ -10,7 +10,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-
 public class BasicsPanel extends JPanel {
 
 	private Player player;

@@ -66,7 +66,7 @@ public class Explorer{
 	    if(amount > 0){
             this.financing.addCash(amount);
         } else if(amount < 0){
-	        this.financing.removeCash(amount);
+	        this.financing.removeCash(Math.abs(amount));
         }
 
 		this.range = 25 + (this.financing.getCash() - 1) * 6;

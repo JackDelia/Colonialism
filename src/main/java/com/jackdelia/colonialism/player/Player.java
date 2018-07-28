@@ -1,6 +1,7 @@
 package com.jackdelia.colonialism.player;
 
 import com.jackdelia.colonialism.currency.Funding;
+import com.jackdelia.colonialism.empire.Empire;
 import com.jackdelia.colonialism.explorer.Explorer;
 import com.jackdelia.colonialism.city.City;
 import com.jackdelia.colonialism.map.Map;
@@ -20,19 +21,20 @@ public class Player {
     protected Map map;
     private int influence = 50;
     private ArrayList<Player> vassals = new ArrayList<>();
-    private ArrayList<City> cities = new ArrayList<>();
     private ArrayList<Explorer> explorers = new ArrayList<>();
     private City capitol;
     private boolean[][] visible = new boolean[Map.MAP_SIZE][Map.MAP_SIZE];
     private Point position = new Point(Map.MAP_SIZE - 1, 0);
     private City location = null;
 
+    private Empire empire;
     private Funding money;
 
     public Player(String name, Map map) {
         this.name = name;
         this.map = map;
         this.money = new Funding(STARTING_CASH);
+        this.empire = new Empire();
 
         this.explorers.add(new Explorer(this.position));
 
@@ -88,10 +90,10 @@ public class Player {
     public City foundCity(String name, int latitude, int longitude) {
         if(this.map.valid(latitude, longitude) && this.visible[latitude][longitude]) {
             City newCity = new City(name, latitude, longitude, this, this.map);
-            this.cities.add(newCity);
+            this.empire.addCity(newCity);
             System.out.println("City " + name + " founded.");
 
-            if(this.cities.size() == 1) {
+            if(this.empire.size() == 1) {
                 this.position = new Point(latitude, longitude);
                 this.capitol = newCity;
                 this.location = newCity;
@@ -110,9 +112,7 @@ public class Player {
 
     public void update(int days) {
 
-        for(City c : this.cities){
-            c.update(days);
-        }
+        this.empire.updateDays(days);
 
         for(Explorer curExplorer : this.explorers) {
 
@@ -126,7 +126,7 @@ public class Player {
 
         }
 
-        if(this.explorers.size() > this.cities.size() && this.explorers.size() > 1) {
+        if(this.explorers.size() > this.empire.size() && this.explorers.size() > 1) {
             this.money.removeCash(this.explorers.size());
         }
 
@@ -158,11 +158,7 @@ public class Player {
     }
 
     public ArrayList<City> getCities() {
-        return this.cities;
-    }
-
-    public void addCity(City c){
-        this.cities.add(c);
+        return this.empire.getCities();
     }
 
     public ArrayList<Explorer> getExplorers() {
@@ -214,11 +210,7 @@ public class Player {
             constructedMessage.append(this.position);
         }
 
-        constructedMessage.append("\nCities:\n");
-
-        for(City curCity : this.cities) {
-            constructedMessage.append(curCity.toString()).append("\n");
-        }
+        constructedMessage.append(this.empire.toString());
 
         return constructedMessage + "\n";
     }
@@ -232,13 +224,7 @@ public class Player {
     }
 
     public City findCityByName(String name) {
-        for(City curCity : this.cities) {
-            if(curCity.getName().equals(name)) {
-                return curCity;
-            }
-        }
-
-        return null;
+        return this.empire.findCityByName(name);
     }
 
     private int numExplored(){

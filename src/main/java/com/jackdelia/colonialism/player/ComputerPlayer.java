@@ -26,11 +26,12 @@ public class ComputerPlayer extends Player {
 		cityNames.add("Virginia");
 	}
 
-	private long lastCityTime = 0;
+	private long lastCityTime;
 
 	public ComputerPlayer(String name, Map map) {
 		super(name, map);
 		setPosition(new Point(Map.MAP_SIZE -1, 20));
+		lastCityTime = 0;
 	}
 	
 	private ArrayList<Point> possibleLocations(){

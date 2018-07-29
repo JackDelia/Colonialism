@@ -44,6 +44,23 @@ public class ResourceFactory {
         return new ResourceCollection(new Resource[]{Resource.GOLD, Resource.STONE, Resource.IRON});
     }
 
-
-
+    /**
+     * Returns a list of Natural Resources
+     *
+     * @return Array of Natural Resources
+     */
+    public ResourceCollection getAdvancedResources() {
+        return new ResourceCollection(new Resource[]{
+                Resource.WEAPONS,
+                Resource.IRON,
+                Resource.SOLDIERS,
+                Resource.WEAPONS,
+                Resource.TOOLS,
+                Resource.STONE,
+                Resource.CLOTHING,
+                Resource.COTTON,
+                Resource.JEWELRY,
+                Resource.GOLD
+        });
+    }
 }

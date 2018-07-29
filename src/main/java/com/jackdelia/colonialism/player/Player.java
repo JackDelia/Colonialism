@@ -4,6 +4,7 @@ import com.jackdelia.colonialism.currency.Funding;
 import com.jackdelia.colonialism.empire.Empire;
 import com.jackdelia.colonialism.explorer.Explorer;
 import com.jackdelia.colonialism.city.City;
+import com.jackdelia.colonialism.explorer.Fleet;
 import com.jackdelia.colonialism.map.Map;
 
 import java.awt.Point;
@@ -19,13 +20,16 @@ public class Player {
 
     private String name;
     protected Map map;
-    private int influence = 50;
-    private ArrayList<Player> vassals = new ArrayList<>();
-    private ArrayList<Explorer> explorers = new ArrayList<>();
+
+    private Influence influence;
+
+    private Vassal vassal;
     private City capitol;
-    private boolean[][] visible = new boolean[Map.MAP_SIZE][Map.MAP_SIZE];
-    private Point position = new Point(Map.MAP_SIZE - 1, 0);
-    private City location = null;
+    private boolean[][] visible;
+    private Point position;
+    private City location;
+
+    private Fleet fleet;
 
     private Empire empire;
     private Funding money;
@@ -36,8 +40,12 @@ public class Player {
         this.money = new Funding(STARTING_CASH);
         this.empire = new Empire();
 
-        this.explorers.add(new Explorer(this.position));
+        this.position = new Point(Map.MAP_SIZE - 1, 0);
 
+        this.fleet = new Fleet();
+        this.fleet.addExplorer(new Explorer(this.position));
+
+        this.visible = new boolean[Map.MAP_SIZE][Map.MAP_SIZE];
         if(name.equals("�_�l")) {
             this.money = new Funding(9999999);
 
@@ -51,28 +59,21 @@ public class Player {
         for(int i = 0; i < 8; i++) {
             for(int j = 0; j < 8; j++) {
                 if(i + j < 8) {
-                    this.visible[Map.MAP_SIZE -1-i][j] = true;
+                    this.visible[Map.MAP_SIZE - 1 - i][j] = true;
                 }
             }
         }
+        this.location = null;
+        this.vassal = new Vassal();
+        this.influence = new Influence();
     }
 
     public boolean canExplore() {
-        for(Explorer curExplorer : this.explorers) {
-            if(!curExplorer.isExploring()) {
-                return true;
-            }
-        }
-        return false;
+        return this.fleet.hasIdleExplorer();
     }
 
     public void explore(Point target) {
-        for(Explorer e: this.explorers) {
-            if(!e.isExploring()) {
-                e.setTarget(target);
-                return;
-            }
-        }
+        this.fleet.explore(target);
     }
 
     private void gainExploreKnowledge(HashSet<Point> knowledge) {
@@ -97,9 +98,7 @@ public class Player {
                 this.position = new Point(latitude, longitude);
                 this.capitol = newCity;
                 this.location = newCity;
-                for(Explorer curExplorer : this.explorers) {
-                    curExplorer .setOrigin(this.position);
-                }
+                this.fleet.setHomeCity(this.position);
             }
 
             return newCity;
@@ -114,20 +113,19 @@ public class Player {
 
         this.empire.updateDays(days);
 
-        for(Explorer curExplorer : this.explorers) {
+        int fleetExpenditure = this.fleet.getExpenditure();
 
-            if(curExplorer.isExploring()) {
-                this.money.removeCash(curExplorer.getFunding());
-            }
+        this.money.removeCash(fleetExpenditure);
 
+        // TODO: refactor this loop to be in Fleet.java after knowledge is decoupled
+        for(Explorer curExplorer : this.fleet.getExplorers()) {
             if(curExplorer.update()) {
                 gainExploreKnowledge(curExplorer.getKnowledge());
             }
-
         }
 
-        if(this.explorers.size() > this.empire.size() && this.explorers.size() > 1) {
-            this.money.removeCash(this.explorers.size());
+        if(this.fleet.size() > this.empire.size() && this.fleet.size() > 1) {
+            this.money.removeCash(this.fleet.size());
         }
 
     }
@@ -162,19 +160,15 @@ public class Player {
     }
 
     public ArrayList<Explorer> getExplorers() {
-        return this.explorers;
+        return this.fleet.getExplorers();
     }
 
-    public void fireExplorer(Explorer e){
-        this.explorers.remove(e);
-    }
-
-    public void addExplorer(Explorer e){
-        this.explorers.add(e);
+    public void addExplorer(Explorer newExplorer){
+        this.fleet.addExplorer(newExplorer);
     }
 
     public void addInfluence(int i){
-        this.influence += i;
+        this.influence.addInfluence(i);
     }
 
     public Point getPosition() {
@@ -183,12 +177,7 @@ public class Player {
 
     public void setPosition(Point position) {
         this.position = position;
-        for(Explorer e: this.explorers){
-            e.setOrigin(position);
-            if(!e.isExploring()){
-                e.setLocation(position);
-            }
-        }
+        this.fleet.setIdleExplorersLocation(position);
     }
 
     public City getLocation() {
@@ -197,8 +186,9 @@ public class Player {
 
     public void setLocation(City location) {
         this.location = location;
-        if(location != null)
+        if(location != null) {
             setPosition(location.getPosition().getLocation());
+        }
     }
 
     public String toString(){
@@ -236,6 +226,6 @@ public class Player {
             }
         }
         return count;
-
     }
+
 }

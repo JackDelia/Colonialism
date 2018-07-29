@@ -1,6 +1,8 @@
 package com.jackdelia.colonialism.explorer;
 
 import com.jackdelia.colonialism.currency.Funding;
+import com.jackdelia.colonialism.location.Location;
+import com.jackdelia.colonialism.location.LocationEquality;
 import com.jackdelia.colonialism.map.Map;
 import com.jackdelia.colonialism.math.RandomNumberGenerator;
 
@@ -12,50 +14,56 @@ public class Explorer{
 	private static final String[] LAST_NAMES = {"Delia", "Smith", "Jones", "Joestar", "Mitchell", "Davidson", "Johnson", "Jefferson", "Washington", "Colombus"};
 
 	private static final int DEFAULT_SPEED = 4;
+	private static final int DEFAULT_RANGE = 25;
+	private static final int DEFAULT_VISIBILITY = 3;
+	private static final int INITIAL_TRAVELED = 0;
 
 	private String name;
-	private HashSet<Point> knowledge = new HashSet<>();
-	private int vision = 3;
-	private Point location;
-	private Point origin;
-	private boolean exploring = false;
-	private int travelled = 0;
-	private int range = 25;
-	private Point target;
+	private HashSet<Point> knowledge;
+	private int vision;
+
+	private Location location;
+    private Location target;
+    private Location origin;
+
+    private boolean exploring;
+    private int travelled;
+    private int range;
 
 	private Funding financing;
 
 	public Explorer(Point start) {
 		this.name = FIRST_NAMES[(int)(RandomNumberGenerator.generate() * FIRST_NAMES.length)] + " " +
 				LAST_NAMES[(int)(RandomNumberGenerator.generate() * LAST_NAMES.length)];
-		this.location = (Point) start.clone();
-		this.origin = start;
+        this.financing = new Funding();
 
-		this.financing = new Funding();
+        this.origin = new Location(start);
+        this.location = new Location((Point) start.clone());
+        this.exploring = false;
+        this.travelled = DEFAULT_RANGE;
+        this.range = INITIAL_TRAVELED;
+		this.vision = DEFAULT_VISIBILITY;
+		this.knowledge = new HashSet<>();
 	}
 	
 	public void setOrigin(Point o){
-		this.origin = o.getLocation();
-		if(!this.exploring){
-			this.location = o.getLocation();
+		this.origin.setPoint(o.getLocation());
+		if(!this.exploring) {
+			this.location.setPoint(this.origin.getPoint());
 		}
 	}
 	
 	public boolean isExploring(){
 		return this.exploring;
 	}
-	
-	public String getName(){
-		return this.name;
-	}
-	
+
 	public void setTarget(Point p){
 		this.exploring = true;
-		this.target = p.getLocation();
+		this.target = new Location(p.getLocation());
 	}
 	
 	public void setLocation(Point p){
-		this.location = p.getLocation();
+		this.location.setPoint(p.getLocation());
 	}
 	
 	public int getFunding() {
@@ -74,38 +82,60 @@ public class Explorer{
 	}
 
 	private void moveTowardTarget() {
-		int[] direction = {0, 0};
-		
-		if(this.target.x != location.x && this.target.y != this.location.y) {
+		Location direction = new Location(new Point(0,0));
 
-			if(RandomNumberGenerator.generate() > .5) {
-                direction[0] = (this.target.x - this.location.x) / Math.abs(this.target.x - this.location.x);
-            } else {
-                direction[1] = (this.target.y - this.location.y) / Math.abs(this.target.y - this.location.y);
-            }
+        LocationEquality locationEquality = this.location.compareTo(this.target);
 
-		} else if(this.target.x != this.location.x) {
-            direction[0] = (this.target.x - this.location.x) / Math.abs(this.target.x - this.location.x);
-        } else {
-            direction[1] = (this.target.y - this.location.y) / Math.abs(this.target.y - this.location.y);
+        switch (locationEquality) {
+            case DIFFERENT_VALUE_XY:
+                // move diagonal
+                if (RandomNumberGenerator.generate() > .5) {
+                    direction.setXValue(
+                            (this.target.getXValue() - this.location.getXValue())
+                                    / Math.abs(this.target.getXValue() - this.location.getXValue())
+                    );
+                } else {
+                    direction.setYValue(
+                            (this.target.getYValue() - this.location.getYValue())
+                                    / Math.abs(this.target.getYValue() - this.location.getYValue())
+                    );
+                }
+
+                break;
+            case DIFFERENT_VALUE_X:
+                // move along x
+                direction.setXValue(
+                        (this.target.getXValue() - this.location.getXValue())
+                                / Math.abs(this.target.getXValue() - this.location.getXValue())
+                );
+
+                break;
+            case DIFFERENT_VALUE_Y:
+                // move along y
+                direction.setYValue(
+                        (this.target.getYValue() - this.location.getYValue())
+                                / Math.abs(this.target.getYValue() - this.location.getYValue())
+                );
+
+                break;
         }
 
-		this.location.translate(direction[0], direction[1]);
+		this.location.translate(direction);
 		gainKnowledge();
 	}
 	
-	private void gainKnowledge(){
-		for(int i = -vision; i < vision; i++){
-			for(int j = -vision; j < vision; j++){
-				Point seen = (Point)location.clone();
+	private void gainKnowledge() {
+		for(int i = (-1 * this.vision); i < this.vision; i++) {
+			for(int j = (-1 * vision); j < this.vision; j++) {
+				Point seen = (Point) this.location.getPoint().clone();
 				seen.translate(i, j);
-				if(seen.x >= 0 && seen.x < Map.MAP_SIZE && seen.y >= 0 && seen.y < Map.MAP_SIZE && seen.distance(location) <= vision)
-					knowledge.add(seen);
+				if(seen.x >= 0 && seen.x < Map.MAP_SIZE && seen.y >= 0 && seen.y < Map.MAP_SIZE && seen.distance(this.location.getPoint()) <= this.vision) {
+                    this.knowledge.add(seen);
+                }
 			}
 		}
 	}
-	
-	
+
 	public boolean update(){
 		if(this.exploring){
             for(int i = 0; i < DEFAULT_SPEED; i++){
@@ -116,7 +146,7 @@ public class Explorer{
 						this.travelled = 0;
 						resetKnowledge();
 					} else {
-						this.target = this.origin;
+						this.target.setPoint(this.origin.getPoint());
 					}
 				} else{
 					moveTowardTarget();

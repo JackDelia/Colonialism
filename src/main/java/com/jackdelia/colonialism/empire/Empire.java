@@ -78,8 +78,8 @@ public class Empire {
      * @param howMany days to update by
      */
     public void updateDays(int howMany){
-        for(City c : this.cities){
-            c.update(howMany);
+        for(City curCity : this.cities){
+            curCity.update(howMany);
         }
     }
 

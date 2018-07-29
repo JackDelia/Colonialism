@@ -5,6 +5,7 @@ import com.jackdelia.colonialism.empire.Empire;
 import com.jackdelia.colonialism.map.resource.Resource;
 import com.jackdelia.colonialism.map.resource.ResourceCollection;
 import com.jackdelia.colonialism.map.resource.ResourceFactory;
+import com.jackdelia.colonialism.map.terrain.Terrain;
 import com.jackdelia.colonialism.math.RandomBooleanGenerator;
 import com.jackdelia.colonialism.math.RandomNumberGenerator;
 import com.jackdelia.colonialism.player.Player;
@@ -13,7 +14,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.swing.JPanel;
 
@@ -32,16 +32,6 @@ public class Map extends JPanel{
 
     private MapAge mapAge;
     private Empire empire;
-
-    private static final HashMap<Terrain, Color> colors = new HashMap<>();
-    static{
-        colors.put(Terrain.OCEAN, Color.BLUE);
-        colors.put(Terrain.PLAINS, new Color(255, 225, 79));
-        colors.put(Terrain.HILLS, Color.ORANGE);
-        colors.put(Terrain.MOUNTAINS, Color.BLACK);
-        colors.put(Terrain.DESERT, Color.YELLOW);
-        colors.put(Terrain.FORREST, Color.GREEN);
-    }
 
     /**
      * Default Constructor
@@ -72,7 +62,7 @@ public class Map extends JPanel{
 
             for(int j = 0; j < this.mapResources[i].length; j++) {
 
-                if(getRandomDouble() > (7/8.0) && this.mapTerrain[i][j] != Terrain.MOUNTAINS) {
+                if((getRandomDouble() > (7/8.0)) && (this.mapTerrain[i][j] != Terrain.MOUNTAINS)) {
 
                     this.mapResources[i][j] = new Resource[3];
                     this.mapResources[i][j][0] = this.naturalResources.getRandomResource();
@@ -85,13 +75,13 @@ public class Map extends JPanel{
                     this.mapResources[i][j][2] = this.naturalResources.getRandomResource();
 
                     while((this.mapResources[i][j][0] == this.mapResources[i][j][2])
-                            || (this.mapResources[i][j][1] == mapResources[i][j][2])) {
+                            || (this.mapResources[i][j][1] == this.mapResources[i][j][2])) {
                         this.mapResources[i][j][2] = this.naturalResources.getRandomResource();
                     }
                 }
 
                 else if(getRandomDouble() > (1 / 2.0)) {
-                    mapResources[i][j] = new Resource[2];
+                    this.mapResources[i][j] = new Resource[2];
                     Resource res1 = this.naturalResources.getRandomResource();
                     Resource res2 = this.naturalResources.getRandomResource();
 
@@ -100,25 +90,25 @@ public class Map extends JPanel{
                         res2 = this.naturalResources.getRandomResource();
                     }
 
-                    mapResources[i][j][0] = res1;
-                    mapResources[i][j][1] = res2;
-                    while(mapResources[i][j][0] == mapResources[i][j][1]) {
-                        mapResources[i][j][1] = this.naturalResources.getRandomResource();
+                    this.mapResources[i][j][0] = res1;
+                    this.mapResources[i][j][1] = res2;
+                    while(mapResources[i][j][0] == this.mapResources[i][j][1]) {
+                        this.mapResources[i][j][1] = this.naturalResources.getRandomResource();
                     }
                 }
                 else if(getRandomDouble() > (1 / 10.0)) {
-                    mapResources[i][j] = new Resource[1];
+                    this.mapResources[i][j] = new Resource[1];
                     Resource res = this.naturalResources.getRandomResource();
                     if(res != Resource.IRON) {
                         res = this.naturalResources.getRandomResource();
                     }
-                    mapResources[i][j][0] = res;
+                    this.mapResources[i][j][0] = res;
                 }
                 else {
-                    if(mapTerrain[i][j] == Terrain.MOUNTAINS) {
-                        mapResources[i][j] = new Resource[]{Resource.STONE};
+                    if(this.mapTerrain[i][j] == Terrain.MOUNTAINS) {
+                        this.mapResources[i][j] = new Resource[]{Resource.STONE};
                     } else {
-                        mapResources[i][j] = new Resource[0];
+                        this.mapResources[i][j] = new Resource[0];
                     }
                 }
             }
@@ -126,30 +116,31 @@ public class Map extends JPanel{
 
     }
 
-    public void paintComponent(Graphics g){
+    public void paintComponent(Graphics graphics){
         boolean isInNormalAge = this.mapAge.isInNormalAge();
 
-        for(int i = 0; i< MAP_SIZE; i++){
+        for(int i = 0; i < MAP_SIZE; i++){
             for(int j = 0; j< MAP_SIZE; j++){
-                g.setColor(colors.get(mapTerrain[i][j]));
-                if(player != null && !player.canSee(i, j))
-                    g.setColor(Color.WHITE);
-                if(player != null && player.getLocation() == null && player.getPosition().x == i && player.getPosition().y == j && !(isInNormalAge))
-                    g.setColor(Color.RED);
-                g.fillRect(i* PIXEL_STEP, j* PIXEL_STEP, PIXEL_STEP, PIXEL_STEP);
+                graphics.setColor(this.mapTerrain[i][j].getColor());
+                if(this.player != null && !(this.player.canSee(i, j))) {
+                    graphics.setColor(Color.WHITE);
+                }
+                if((this.player != null) && (this.player.getLocation() == null) && (this.player.getPosition().getX() == i) && (this.player.getPosition().getY() == j) && !(isInNormalAge))
+                    graphics.setColor(Color.RED);
+                graphics.fillRect(i* PIXEL_STEP, j* PIXEL_STEP, PIXEL_STEP, PIXEL_STEP);
             }
 
-            for(City c : this.empire.getCities()){
-                if(!(player.getLocation() == c && isInNormalAge) && c.getController() == player || player.canSee(c.getPosition())){
-                    g.setColor(new Color(181,80,137));
-                    if(player.getLocation() == c)
-                        g.setColor(Color.red);
-                    int ovalSize = 7 + c.getSize()/2000;
-                    g.fillOval(c.getPosition().x*6 - ovalSize/2, c.getPosition().y * 6-ovalSize/2, ovalSize , ovalSize);
-                    g.drawString(c.getName(), c.getPosition().x * 6, c.getPosition().y * 6-10);
+            for(City curCity : this.empire.getCities()){
+                if(!(this.player.getLocation() == curCity && isInNormalAge) && curCity.getPlayer() == this.player || this.player.canSee(curCity.getPosition())){
+                    graphics.setColor(new Color(181,80,137));
+                    if(this.player.getLocation() == curCity)
+                        graphics.setColor(Color.red);
+                    int ovalSize = 7 + curCity.getSize()/2000;
+                    graphics.fillOval(curCity.getPosition().x*6 - ovalSize/2, curCity.getPosition().y * 6-ovalSize/2, ovalSize , ovalSize);
+                    graphics.drawString(curCity.getName(), curCity.getPosition().x * 6, curCity.getPosition().y * 6-10);
                 }
             }
-            mapAge.incrementAge();
+            this.mapAge.incrementAge();
         }
     }
 
@@ -160,8 +151,10 @@ public class Map extends JPanel{
             int rangeWidth = getRandomInt(MAP_SIZE /17) + 2;
             boolean northSouth = getRandomBoolean();
             boolean eastWest = getRandomBoolean();
-            if(northSouth && eastWest)
+
+            if(northSouth && eastWest) {
                 eastWest = false;
+            }
 
             Point startPoint = new Point(getRandomInt(MAP_SIZE), getRandomInt(MAP_SIZE));
             while(getTerrain(startPoint.x, startPoint.y) != Terrain.PLAINS){
@@ -172,11 +165,11 @@ public class Map extends JPanel{
         }
     }
 
-    private void setTerrain(int x, int y, Terrain t){
-        if(x > 0 && x < MAP_SIZE && y > 0 && y < MAP_SIZE && mapTerrain[x][y] != Terrain.OCEAN)
-            mapTerrain[x][y] = t;
+    private void setTerrain(int xValue, int yValue, Terrain terrain){
+        if((xValue > 0) && (xValue < MAP_SIZE) && (yValue > 0) && (yValue < MAP_SIZE) && (this.mapTerrain[xValue][yValue] != Terrain.OCEAN)) {
+            this.mapTerrain[xValue][yValue] = terrain;
+        }
     }
-
 
     private void formMountainRange(int rangeLength, int rangeWidth,
                                    boolean northSouth, boolean eastWest, Point startPoint) {
@@ -203,15 +196,14 @@ public class Map extends JPanel{
             int effectiveWidth = (rangeWidth / 2)- getRandomInt(3);
             for(int j = 1; j <= effectiveWidth; j++) {
                 if(northSouth) {
-                    setTerrain(xPosition - j,yPosition,Terrain.MOUNTAINS);
-                    setTerrain(xPosition + j,yPosition,Terrain.MOUNTAINS);
+                    setTerrain(xPosition - j,yPosition, Terrain.MOUNTAINS);
+                    setTerrain(xPosition + j,yPosition, Terrain.MOUNTAINS);
                 } else {
-                    setTerrain(xPosition,yPosition + j,Terrain.MOUNTAINS);
-                    setTerrain(xPosition,yPosition - j,Terrain.MOUNTAINS);
+                    setTerrain(xPosition,yPosition + j, Terrain.MOUNTAINS);
+                    setTerrain(xPosition,yPosition - j, Terrain.MOUNTAINS);
                 }
             }
         }
-
     }
 
     /**

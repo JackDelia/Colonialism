@@ -1,5 +1,6 @@
 package com.jackdelia.colonialism.map;
 
+import com.jackdelia.colonialism.map.terrain.Terrain;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

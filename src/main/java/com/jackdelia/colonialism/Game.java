@@ -1,6 +1,5 @@
 package com.jackdelia.colonialism;
 
-import com.jackdelia.colonialism.explorer.Explorer;
 import com.jackdelia.colonialism.city.City;
 import com.jackdelia.colonialism.map.resource.Resource;
 import com.jackdelia.colonialism.basics.BasicsPanel;
@@ -58,25 +57,6 @@ public class Game extends JFrame{
 		ADVANCED.put(Resource.TOOLS, Resource.STONE);
 		ADVANCED.put(Resource.CLOTHING, Resource.COTTON);
 		ADVANCED.put(Resource.JEWELRY, Resource.GOLD);
-	}
-	
-	public static final HashMap<Resource, Double> prices;
-
-	static {
-		prices = new HashMap<>();
-		prices.put(Resource.COTTON, .09);
-		prices.put(Resource.IRON, .1);
-		prices.put(Resource.STONE, .08);
-		prices.put(Resource.GOLD, 1.0);
-		prices.put(Resource.JEWELRY, 1.2);
-		prices.put(Resource.MEAT, .1);
-		prices.put(Resource.FISH, .08);
-		prices.put(Resource.GRAIN, .07);
-		prices.put(Resource.WOOD, .1);
-		prices.put(Resource.WEAPONS, .2);
-		prices.put(Resource.CLOTHING, .15);
-		prices.put(Resource.TOOLS, .18);
-		prices.put(Resource.SOLDIERS, .4);
 	}
 	
 	public Game(){

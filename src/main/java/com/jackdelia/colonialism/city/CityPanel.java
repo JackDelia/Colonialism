@@ -122,7 +122,7 @@ public class CityPanel extends JPanel {
 		
 		JComboBox<String> resChoice = new JComboBox<>(resources);
 		
-		ArrayList<City> cityList = this.city.getController().getCities();
+		ArrayList<City> cityList = this.city.getPlayer().getCities();
 		
 		String[] cities = new String[cityList.size()-1];
 		
@@ -147,7 +147,7 @@ public class CityPanel extends JPanel {
         int result = JOptionPane.showConfirmDialog(null, panel, "Test",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (result == JOptionPane.OK_OPTION) {
-            	City chosenCity = this.city.getController().findCityByName(Objects.requireNonNull(cityChoice.getSelectedItem()).toString());
+            	City chosenCity = this.city.getPlayer().findCityByName(Objects.requireNonNull(cityChoice.getSelectedItem()).toString());
                 this.city.addExport(chosenCity, Resource.valueOf(Objects.requireNonNull(resChoice.getSelectedItem()).toString()),
             			Double.parseDouble(field1.getText()));
             }  

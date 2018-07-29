@@ -155,6 +155,10 @@ public class Player {
         this.money.addCash((int) money);
     }
 
+    public void decrementMoney(double money) {
+        this.money.removeCash((int) money);
+    }
+
     public ArrayList<City> getCities() {
         return this.empire.getCities();
     }

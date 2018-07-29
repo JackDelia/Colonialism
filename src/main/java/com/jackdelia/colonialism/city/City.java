@@ -1,7 +1,7 @@
 package com.jackdelia.colonialism.city;
 
 import com.jackdelia.colonialism.map.resource.Resource;
-import com.jackdelia.colonialism.map.Terrain;
+import com.jackdelia.colonialism.map.terrain.Terrain;
 import com.jackdelia.colonialism.Game;
 import com.jackdelia.colonialism.map.Map;
 import com.jackdelia.colonialism.math.RandomNumberGenerator;
@@ -21,8 +21,8 @@ public class City {
 	private Population population;
 
 	private double funding = 1;
-	private Player controller;
-	private Terrain terrain = Terrain.PLAINS;
+	private Player player;
+	private Terrain terrain;
 	private boolean coastal;
 	private Map gameMap;
 	private int soldiers = 0;
@@ -46,10 +46,10 @@ public class City {
 	 * @param name the name of the City
 	 * @param xPosition the x coordinate of the city
 	 * @param yPosition the y coordinate of the city
-	 * @param controller the player that owns this city
+	 * @param player the player that owns this city
 	 * @param map the game map
 	 */
-	public City(String name, int xPosition, int yPosition, Player controller, Map map) {
+	public City(String name, int xPosition, int yPosition, Player player, Map map) {
 
         // initialize class attributes
         this.stockpile = new HashMap<>();
@@ -60,15 +60,15 @@ public class City {
         this.population = new Population();
 
 		if(name.equals("")) {
-			this.name = "City " + controller.getCities().size();
+			this.name = "City " + player.getCities().size();
 		} else {
 			this.name = name;
 		}
 
 		this.position = new Point(xPosition, yPosition);
-		this.controller = controller;
+		this.player = player;
 		this.gameMap = map;
-		this.cityId = controller.getCities().size();
+		this.cityId = player.getCities().size();
 		this.terrain = map.getTerrain(xPosition, yPosition);
 
 
@@ -156,10 +156,14 @@ public class City {
         } else if(increaseByAmount <= 0 && RandomNumberGenerator.generate() > .75) {
             this.population.increasePopulation(1);
         } else {
-            this.population.increasePopulation(increaseByAmount);
+			if(increaseByAmount < 0) {
+			    this.population.decreasePopulation(increaseByAmount);
+            } else {
+			    this.population.increasePopulation(increaseByAmount);
+            }
         }
 
-        this.controller.incrementMoney(-1 * funding);
+        this.player.decrementMoney(-1 * funding);
 	}
 	
 	private void addToStockpile(Resource k, int days){
@@ -192,8 +196,8 @@ public class City {
 	}
 	
 	public void update(int days) {
-		if(controller.getMoney() < funding) {
-			funding = controller.getMoney();
+		if(this.player.getMoney() < this.funding) {
+			this.funding = this.player.getMoney();
 		}
 		
 		for (int i = 0; i < days; i++) {
@@ -201,8 +205,8 @@ public class City {
 		}
 		
 		for(java.util.Map.Entry<Resource, Double> entry : this.production.entrySet()) {
-			Resource k = entry.getKey();
-			if(k == Resource.SOLDIERS) {
+			Resource curProducingResource = entry.getKey();
+			if(curProducingResource == Resource.SOLDIERS) {
 				int base = (int)((entry.getValue()/100.0)*days*getProductionPower());
 				double weapons = this.stockpile.get(Resource.WEAPONS);
 
@@ -211,24 +215,24 @@ public class City {
 				}
 
 				this.population.decreasePopulation(base);
-				this.stockpile.put(Resource.WEAPONS, this.stockpile.get(Resource.WEAPONS)-base);
+				this.stockpile.put(Resource.WEAPONS, this.stockpile.get(Resource.WEAPONS) - base);
 				this.soldiers += base;
 			} else {
-				HashMap<String, Double> kInstr = this.instructions.get(k);
-				double stockpiled = this.stockpile.get(k);
+				HashMap<String, Double> kInstr = this.instructions.get(curProducingResource);
+				double stockpiled = this.stockpile.get(curProducingResource);
 				
-				addToStockpile(k, days);
+				addToStockpile(curProducingResource, days);
 				
 				double toStockpile = kInstr.get("stockpile"); 
 				if(stockpiled > toStockpile){
 					double excess = stockpiled-toStockpile;
 					
 					double sendBack = kInstr.get("return");
-					this.stockpile.put(k, stockpiled-(excess*(sendBack/100.0)));
-					this.controller.addInfluence((int)(excess*(sendBack/100.0)));
+					this.stockpile.put(curProducingResource, stockpiled-(excess*(sendBack/100.0)));
+					this.player.addInfluence((int)(excess*(sendBack/100.0)));
 
-					this.stockpile.put(k, stockpiled-(excess*(kInstr.get("sell")/100)));
-					this.controller.incrementMoney((excess*kInstr.get("sell"))* Game.prices.get(k));
+					this.stockpile.put(curProducingResource, stockpiled-(excess*(kInstr.get("sell")/100)));
+					this.player.incrementMoney((excess*kInstr.get("sell")) * curProducingResource.getPrice());
 					
 				}
 			}
@@ -367,12 +371,12 @@ public class City {
 		return returnArray;
 	}
 
-	public Player getController() {
-		return this.controller;
+	public Player getPlayer() {
+		return this.player;
 	}
 
-	public void setController(Player controller) {
-		this.controller = controller;
+	public void setPlayer(Player player) {
+		this.player = player;
 	}
 
 	public Terrain getTerrain() {

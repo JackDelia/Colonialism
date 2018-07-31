@@ -1,8 +1,7 @@
 package com.jackdelia.colonialism;
 
-import com.jackdelia.colonialism.explorer.Explorer;
 import com.jackdelia.colonialism.city.City;
-import com.jackdelia.colonialism.map.Resource;
+import com.jackdelia.colonialism.map.resource.Resource;
 import com.jackdelia.colonialism.basics.BasicsPanel;
 import com.jackdelia.colonialism.city.CityPanel;
 import com.jackdelia.colonialism.map.Map;
@@ -39,41 +38,26 @@ public class Game extends JFrame{
 	private boolean paused;
 	private int menu;
 	private Player pc;
-	private ArrayList<Player> players = new ArrayList<Player>();
+	private ArrayList<Player> players;
 	private Map gameMap;
 	private JPanel buttonPanel;
 	private JPanel moveButtonPanel;
-	public JPanel uiPanel;
+	private JPanel uiPanel;
 	private JEditorPane messages;
 	private String currentMessage = "";
 	private int day;
 	private long lastUpdate;
 	
-	public static final HashMap<Resource,Resource> ADVANCED = new HashMap<Resource,Resource>();
-	static{
+	public static final HashMap<Resource, Resource> ADVANCED;
+
+	static {
+		ADVANCED = new HashMap<>();
 		ADVANCED.put(Resource.WEAPONS, Resource.IRON);
 		ADVANCED.put(Resource.SOLDIERS, Resource.WEAPONS);
 		ADVANCED.put(Resource.TOOLS, Resource.STONE);
 		ADVANCED.put(Resource.CLOTHING, Resource.COTTON);
 		ADVANCED.put(Resource.JEWELRY, Resource.GOLD);
 	}
-	
-	public static final HashMap<Resource, Double> prices = new HashMap<Resource, Double>();
-	static {
-		prices.put(Resource.COTTON, .09);
-		prices.put(Resource.IRON, .1);
-		prices.put(Resource.STONE, .08);
-		prices.put(Resource.GOLD, 1.0);
-		prices.put(Resource.JEWELRY, 1.2);
-		prices.put(Resource.MEAT, .1);
-		prices.put(Resource.FISH, .08);
-		prices.put(Resource.GRAIN, .07);
-		prices.put(Resource.WOOD, .1);
-		prices.put(Resource.WEAPONS, .2);
-		prices.put(Resource.CLOTHING, .15);
-		prices.put(Resource.TOOLS, .18);
-		prices.put(Resource.SOLDIERS, .4);
-    }
 	
 	public Game(){
 		super("Colonialism!");
@@ -83,40 +67,41 @@ public class Game extends JFrame{
 	         public void windowClosing(WindowEvent windowEvent){
 	            System.exit(0);
 	         }        
-	      });    
+	      });
 		
-		
-		exploreClicked = false;
-		foundClicked = false;
-		
-		uiPanel = new JPanel();
-		uiPanel.setBackground(Color.YELLOW);
-		uiPanel.setPreferredSize(new Dimension(-250,-250));
-		uiPanel.setLayout(new BoxLayout(uiPanel, BoxLayout.X_AXIS));
+		this.exploreClicked = false;
+		this.foundClicked = false;
+
+		this.uiPanel = new JPanel();
+		this.uiPanel.setBackground(Color.YELLOW);
+		this.uiPanel.setPreferredSize(new Dimension(-250,-250));
+		this.uiPanel.setLayout(new BoxLayout(uiPanel, BoxLayout.X_AXIS));
 		
 		setVisible(true);
+		this.players = new ArrayList<>();
 	}
 	
 	public static double trim(double d){
-		if(Math.abs(d-((int) d)) < .01)
+		if(Math.abs(d - ((int) d)) < .01) {
 			d = (int) d;
+		}
 		return ((int)(d*10))/10.0;
 	}
 	
 	
 	private void setupMouseListener(){
-		gameMap.addMouseListener(new MouseListener(){
+		this.gameMap.addMouseListener(new MouseListener(){
 
 			public void mouseClicked(MouseEvent e) {
 				if(exploreClicked){
-					System.out.println(e.getX()/Map.PIXELSTEP);
-					explore(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
+					System.out.println(e.getX()/Map.PIXEL_STEP);
+					explore(e.getX()/Map.PIXEL_STEP, e.getY()/Map.PIXEL_STEP);
 				}
 				else if(foundClicked)
-					foundCity(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP);
+					foundCity(e.getX()/Map.PIXEL_STEP, e.getY()/Map.PIXEL_STEP);
 				else if(moving){
 					pc.setLocation(null);
-					pc.setPosition(new Point(e.getX()/Map.PIXELSTEP, e.getY()/Map.PIXELSTEP));
+					pc.setPosition(new Point(e.getX()/Map.PIXEL_STEP, e.getY()/Map.PIXEL_STEP));
 				}
 			}
 
@@ -141,9 +126,9 @@ public class Game extends JFrame{
 	}
 	
 	private void setupButtonPanel(){
-		buttonPanel = new JPanel();
-		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
-		buttonPanel.setAutoscrolls(true);
+		this.buttonPanel = new JPanel();
+		this.buttonPanel.setLayout(new BoxLayout(this.buttonPanel, BoxLayout.PAGE_AXIS));
+		this.buttonPanel.setAutoscrolls(true);
 		
 		JButton exploreButton = new JButton("Explore");
 		exploreButton.addActionListener(new ActionListener(){
@@ -159,10 +144,10 @@ public class Game extends JFrame{
 					currentMessage = "Explore Where?";
 				}
 		});
-		
-		
-		
-		buttonPanel.add(exploreButton);
+
+
+
+		this.buttonPanel.add(exploreButton);
 		
 		JButton foundButton = new JButton("Found City");
 		foundButton.addActionListener(new ActionListener(){
@@ -195,15 +180,14 @@ public class Game extends JFrame{
 				showMoveMenu();
 			}
 		});
-		
-		
-		buttonPanel.add(foundButton);
-		buttonPanel.add(pause);
-		buttonPanel.add(moveButton);
+
+		this.buttonPanel.add(foundButton);
+		this.buttonPanel.add(pause);
+		this.buttonPanel.add(moveButton);
 	}
 	
 	private void setupMoveButtonPanel(){
-		moveButtonPanel = new JPanel();
+		this.moveButtonPanel = new JPanel();
 		JButton positionMoveButton = new JButton("Move to Position");
 		positionMoveButton.addActionListener(new ActionListener(){
 
@@ -225,34 +209,34 @@ public class Game extends JFrame{
 				moving = false;
 			}
 		});
-		
-		moveButtonPanel.add(positionMoveButton);
-		moveButtonPanel.add(cancelMoveButton);
 
-		moveButtonPanel.setLayout(new BoxLayout(moveButtonPanel, BoxLayout.PAGE_AXIS));
+		this.moveButtonPanel.add(positionMoveButton);
+		this.moveButtonPanel.add(cancelMoveButton);
+
+		this.moveButtonPanel.setLayout(new BoxLayout(this.moveButtonPanel, BoxLayout.PAGE_AXIS));
 	}
 	
 	private void setup(String name){
 		setSize(1200, 600);
-		
-		lastUpdate = System.currentTimeMillis();
-		gameMap = new Map();
-		pc = new Player(name, gameMap);
-		players.add(pc);
+
+		this.lastUpdate = System.currentTimeMillis();
+		this.gameMap = new Map();
+		this.pc = new Player(name, gameMap);
+		this.players.add(pc);
 //		players.add(new ComputerPlayer("ROBOT", gameMap));
-		gameMap.player = pc;
+		this.gameMap.player = pc;
 
 		setupMoveButtonPanel();
 		setupButtonPanel();
 		JPanel basicsPanel = new BasicsPanel(pc, this);
-		uiPanel.add(basicsPanel);
-		uiPanel.add(buttonPanel);
+		this.uiPanel.add(basicsPanel);
+		this.uiPanel.add(this.buttonPanel);
 		setupMouseListener();
 		
 		JPanel container = new JPanel();
 		container.setSize(700,700);
-		container.add(gameMap);
-		container.add(uiPanel);
+		container.add(this.gameMap);
+		container.add(this.uiPanel);
 		BoxLayout b = new BoxLayout(container, BoxLayout.LINE_AXIS);
 		container.setLayout(b);
 		container.setBackground(Color.YELLOW);
@@ -260,14 +244,14 @@ public class Game extends JFrame{
 	}
 	
 	private JPanel createMessageBox(){
-		messages = new JEditorPane();
-		messages.setEditable(false);
-		messages.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
-		messages.setMargin(new Insets(50,50,50,50));
-		messages.setForeground(Color.BLUE);
-		messages.setBounds(0,50,250, 450);
-		messages.setBackground(Color.WHITE);
-		messages.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+		this.messages = new JEditorPane();
+		this.messages.setEditable(false);
+		this.messages.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
+		this.messages.setMargin(new Insets(50,50,50,50));
+		this.messages.setForeground(Color.BLUE);
+		this.messages.setBounds(0,50,250, 450);
+		this.messages.setBackground(Color.WHITE);
+		this.messages.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 		JPanel messagesHolder = new JPanel();
 		messagesHolder.setLayout(null);
 		messagesHolder.setPreferredSize(new Dimension(1,1));
@@ -278,29 +262,32 @@ public class Game extends JFrame{
 	}
 	
 	private void showMoveMenu(){
-		currentMessage = "Move to Where?";
-		uiPanel.remove(buttonPanel);
-		uiPanel.add(moveButtonPanel);
+		this.currentMessage = "Move to Where?";
+		this.uiPanel.remove(this.buttonPanel);
+		this.uiPanel.add(this.moveButtonPanel);
 		
 	}
 
 	private void foundCity(int x, int y) {
-		boolean wasPaused = paused;
-		paused = true;
+		boolean wasPaused = this.paused;
+		this.paused = true;
 		String cityName = JOptionPane.showInputDialog("Choose A City Name");
-		paused = wasPaused;
-		if(cityName == null)
+		this.paused = wasPaused;
+
+		if(cityName == null) {
 			return;
-		final City c = pc.foundCity(cityName, x, y);
-		if (c == null)
+		}
+
+		final City c = this.pc.foundCity(cityName, x, y);
+		if (c == null) {
 			return;
-		
-		foundClicked = false;
+		}
+
+        this.foundClicked = false;
 		JButton cityButton = new JButton(cityName);
 		cityButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e) {
-//				currentMessage = c.toString();	
 				showCity(c);
 			}
 			
@@ -315,10 +302,10 @@ public class Game extends JFrame{
 			}
 			
 		});
-		
-		buttonPanel.add(cityButton);
-		moveButtonPanel.add(moveToCityButton);
-		currentMessage = cityName + " founded.";
+
+        this.buttonPanel.add(cityButton);
+        this.moveButtonPanel.add(moveToCityButton);
+        this.currentMessage = cityName + " founded.";
 		repaint();
 	}
 	
@@ -334,29 +321,29 @@ public class Game extends JFrame{
 			
 		});
 		cpan.add(back);
-		uiPanel.remove(buttonPanel);
-		uiPanel.add(cpan);
+        this.uiPanel.remove(buttonPanel);
+        this.uiPanel.add(cpan);
 	}
 
 	private void explore(int i, int j) {
-		if(pc.canExplore()){
-			pc.explore(new Point(i,j));
-			currentMessage = "Explorer Sent.";
-			exploreClicked = false;
+		if(this.pc.canExplore()){
+            this.pc.explore(new Point(i,j));
+            this.currentMessage = "Explorer Sent.";
+            this.exploreClicked = false;
 		} else{
-			currentMessage = "No Explorers Left";
+            this.currentMessage = "No Explorers Left";
 		}
 	}
 	
 	private String showMenu(){
-		menu = 0;
+        this.menu = 0;
 		JPanel container = setupMenu();
 		add(container);
 		setSize(500, 500);
-		while(menu != 1){
+		while(this.menu != 1){
 			repaint();
 			container.repaint();
-			if(menu == 2){
+			if(this.menu == 2){
 				container.removeAll();
 				JButton backButton = new JButton("Back");
 				backButton.addActionListener(new ActionListener(){
@@ -365,27 +352,29 @@ public class Game extends JFrame{
 					}
 				});
 				JPanel instructions = createMessageBox();
-				messages.setText("Colonialism!\n\nExplore the map and found cities to \nmake money!\n\n"
+                this.messages.setText("Colonialism!\n\nExplore the map and found cities to \nmake money!\n\n"
 						+ "TIPS:\n\n You lose if you run out of money, so be careful!\n\n"
 						+ "Your explorers can be a bit lazy. You may have to move yourself a bit to get them to explore what you want\n\n"
 						+ "You've gotta spend money to make money!");
 				container.add(backButton);
 				container.add(instructions);
 				container.validate();
-				menu = 0;
+                this.menu = 0;
 			}
-			if(menu == 3){
+			if(this.menu == 3){
 				remove(container);
 				container = setupMenu();
 				add(container);
 				validate();
-				menu = 0;
+                this.menu = 0;
 			}
 		}
 		
 		String name = JOptionPane.showInputDialog("Enter Name");
-		if(name == null || name.equals(""))
-			name = "Jack Delia";
+
+		if(name == null || name.equals("")) {
+            name = "Jack Delia";
+        }
 		
 		remove(container);
 		return name;
@@ -426,29 +415,23 @@ public class Game extends JFrame{
 
 	public void run() {	
 		setup(showMenu());
-		while (pc.getMoney() >= 1){
+		while(this.pc.getMoney() >= 1) {
 			validate();
 			repaint();
-			gameMap.repaint();
-			if(paused)
-				lastUpdate = System.currentTimeMillis();
-			if(System.currentTimeMillis() - lastUpdate > 500){
-				day++;
-				lastUpdate = System.currentTimeMillis();
-				String explorerStati = "";
-				for(Explorer e: pc.getExplorers()){
-					explorerStati += e.getName();
-					if(e.isExploring())
-						explorerStati += ": Exploring\n";
-					else
-						explorerStati += ": Free\n";
-				}
-//				messages.setText(pc.getName() + "\nDay " + day + "\n" + "Money: " + 
-//				(int)pc.getMoney() + "G\n" + "Explorers:\n" +  
-//						explorerStati + currentMessage);
-				for(Player p: players){
+            this.gameMap.repaint();
+
+			if(this.paused) {
+                this.lastUpdate = System.currentTimeMillis();
+            }
+
+			if(System.currentTimeMillis() - this.lastUpdate > 500) {
+                this.day++;
+                this.lastUpdate = System.currentTimeMillis();
+
+				for(Player p: this.players) {
 					p.update(1);
 				}
+
 			}
 		}
 		
@@ -459,7 +442,7 @@ public class Game extends JFrame{
 	}
 	
 	public int getDay(){
-		return day;
+		return this.day;
 	}
 
 }

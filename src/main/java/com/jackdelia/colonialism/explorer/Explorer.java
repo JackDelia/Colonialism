@@ -1,112 +1,156 @@
 package com.jackdelia.colonialism.explorer;
 
+import com.jackdelia.colonialism.currency.Funding;
+import com.jackdelia.colonialism.location.Location;
+import com.jackdelia.colonialism.location.LocationEquality;
 import com.jackdelia.colonialism.map.Map;
+import com.jackdelia.colonialism.math.RandomNumberGenerator;
 
 import java.awt.Point;
 import java.util.HashSet;
 
 public class Explorer{
-	public static final String[] FIRSTNAMES = {"Jack", "Devin", "Brandon", "James", "Kenneth", "Allen", "Joeseph", "Jonathon", "George", "Thomas", "Christopher"};
-	public static final String[] LASTNAMES = {"Delia", "Smith", "Jones", "Joestar", "Mitchell", "Davidson", "Johnson", "Jefferson", "Washington", "Colombus"};
-	private String name;
-	private HashSet<Point> knowledge = new HashSet<Point>();
-	private int speed = 4;
-	private int vision = 3;
-	private Point location;
-	private Point origin;
-	private boolean exploring = false;
-	private int travelled = 0;
-	private int range = 25;
-	private int funding = 1;
-	private Point target;
+	private static final String[] FIRST_NAMES = {"Jack", "Devin", "Brandon", "James", "Kenneth", "Allen", "Joeseph", "Jonathon", "George", "Thomas", "Christopher"};
+	private static final String[] LAST_NAMES = {"Delia", "Smith", "Jones", "Joestar", "Mitchell", "Davidson", "Johnson", "Jefferson", "Washington", "Colombus"};
 
-	public Explorer(Point start){
-		name = FIRSTNAMES[(int)(Math.random()*FIRSTNAMES.length)] + " " + 
-				LASTNAMES[(int)(Math.random()*LASTNAMES.length)];
-		location = (Point) start.clone();
-		origin = start;
+	private static final int DEFAULT_SPEED = 4;
+	private static final int DEFAULT_RANGE = 25;
+	private static final int DEFAULT_VISIBILITY = 3;
+	private static final int INITIAL_TRAVELED = 0;
+
+	private String name;
+	private HashSet<Point> knowledge;
+	private int vision;
+
+	private Location location;
+    private Location target;
+    private Location origin;
+
+    private boolean exploring;
+    private int travelled;
+    private int range;
+
+	private Funding financing;
+
+	public Explorer(Point start) {
+		this.name = FIRST_NAMES[(int)(RandomNumberGenerator.generate() * FIRST_NAMES.length)] + " " +
+				LAST_NAMES[(int)(RandomNumberGenerator.generate() * LAST_NAMES.length)];
+        this.financing = new Funding();
+
+        this.origin = new Location(start);
+        this.location = new Location((Point) start.clone());
+        this.exploring = false;
+        this.travelled = DEFAULT_RANGE;
+        this.range = INITIAL_TRAVELED;
+		this.vision = DEFAULT_VISIBILITY;
+		this.knowledge = new HashSet<>();
 	}
 	
 	public void setOrigin(Point o){
-		origin = o.getLocation();
-		if(!exploring){
-			location = o.getLocation();
+		this.origin.setPoint(o.getLocation());
+		if(!this.exploring) {
+			this.location.setPoint(this.origin.getPoint());
 		}
 	}
 	
 	public boolean isExploring(){
-		return exploring;
+		return this.exploring;
 	}
-	
-	public String getName(){
-		return name;
-	}
-	
+
 	public void setTarget(Point p){
-		exploring = true;
-		target = p.getLocation();
+		this.exploring = true;
+		this.target = new Location(p.getLocation());
 	}
 	
 	public void setLocation(Point p){
-		location = p.getLocation();
+		this.location.setPoint(p.getLocation());
 	}
 	
 	public int getFunding() {
-		return funding;
+		return this.financing.getCash();
 	}
 
-	public void incrementFunding(int amnt) {
-		funding += amnt;
-		if(funding <= 0)
-			funding = 1;
-		range = 25 + (funding-1)* 6;
-		vision = 3 + (funding-1)/5;
+	public void incrementFunding(int amount) {
+	    if(amount > 0){
+            this.financing.addCash(amount);
+        } else if(amount < 0){
+	        this.financing.removeCash(Math.abs(amount));
+        }
+
+		this.range = 25 + (this.financing.getCash() - 1) * 6;
+		this.vision = 3 + (this.financing.getCash() - 1) / 5;
 	}
 
-	private void moveTowardTarget(){
-		int[] direction ={0,0};
-		
-		if(target.x != location.x && target.y != location.y){
-			if(Math.random() > .5)
-				direction[0] = (target.x-location.x)/Math.abs(target.x-location.x);
-			else
-				direction[1] = (target.y-location.y)/Math.abs(target.y-location.y);
-		} else if(target.x != location.x)
-			direction[0] = (target.x-location.x)/Math.abs(target.x-location.x);
-		else
-			direction[1] = (target.y-location.y)/Math.abs(target.y-location.y);
-		
-		location.translate(direction[0], direction[1]);
+	private void moveTowardTarget() {
+		Location direction = new Location(new Point(0,0));
+
+        LocationEquality locationEquality = this.location.compareTo(this.target);
+
+        switch (locationEquality) {
+            case DIFFERENT_VALUE_XY:
+                // move diagonal
+                if (RandomNumberGenerator.generate() > .5) {
+                    direction.setXValue(
+                            (this.target.getXValue() - this.location.getXValue())
+                                    / Math.abs(this.target.getXValue() - this.location.getXValue())
+                    );
+                } else {
+                    direction.setYValue(
+                            (this.target.getYValue() - this.location.getYValue())
+                                    / Math.abs(this.target.getYValue() - this.location.getYValue())
+                    );
+                }
+
+                break;
+            case DIFFERENT_VALUE_X:
+                // move along x
+                direction.setXValue(
+                        (this.target.getXValue() - this.location.getXValue())
+                                / Math.abs(this.target.getXValue() - this.location.getXValue())
+                );
+
+                break;
+            case DIFFERENT_VALUE_Y:
+                // move along y
+                direction.setYValue(
+                        (this.target.getYValue() - this.location.getYValue())
+                                / Math.abs(this.target.getYValue() - this.location.getYValue())
+                );
+
+                break;
+        }
+
+		this.location.translate(direction);
 		gainKnowledge();
 	}
 	
-	private void gainKnowledge(){
-		for(int i = -vision; i < vision; i++){
-			for(int j = -vision; j < vision; j++){
-				Point seen = (Point)location.clone();
+	private void gainKnowledge() {
+		for(int i = (-1 * this.vision); i < this.vision; i++) {
+			for(int j = (-1 * vision); j < this.vision; j++) {
+				Point seen = (Point) this.location.getPoint().clone();
 				seen.translate(i, j);
-				if(seen.x >= 0 && seen.x < Map.MAPSIZE && seen.y >= 0 && seen.y < Map.MAPSIZE && seen.distance(location) <= vision)
-					knowledge.add(seen);
+				if(seen.x >= 0 && seen.x < Map.MAP_SIZE && seen.y >= 0 && seen.y < Map.MAP_SIZE && seen.distance(this.location.getPoint()) <= this.vision) {
+                    this.knowledge.add(seen);
+                }
 			}
 		}
 	}
-	
-	
+
 	public boolean update(){
-		if(exploring){
-			for(int i = 0; i < speed; i++){
-				if(target.equals(location) || 
-						(travelled > range + (Math.random()*(range/2)) && !target.equals(origin))){
-					if(target.equals(origin)){
-						exploring = false;
-						travelled = 0;
+		if(this.exploring){
+            for(int i = 0; i < DEFAULT_SPEED; i++){
+				if(this.target.equals(this.location) ||
+						(this.travelled > this.range + (RandomNumberGenerator.generate() * (this.range / 2)) && !this.target.equals(this.origin))){
+					if(this.target.equals(this.origin)) {
+						this.exploring = false;
+						this.travelled = 0;
 						resetKnowledge();
 					} else {
-						target = origin;
+						this.target.setPoint(this.origin.getPoint());
 					}
 				} else{
 					moveTowardTarget();
-					travelled++;
+					this.travelled++;
 				}
 			}
 			return true;
@@ -116,20 +160,21 @@ public class Explorer{
 	}
 	
 	public HashSet<Point> getKnowledge(){
-		return knowledge;
+		return this.knowledge;
 	}
 	
 	private void resetKnowledge(){
-		knowledge.clear();
+		this.knowledge.clear();
 	}
 	
 	public String toString(){
-		String ret = name + ": \t";
-		if(exploring)
+		String ret = this.name + ": \t";
+		if(this.exploring) {
 			ret+= "Exploring";
-		else
+		} else {
 			ret+= " Free";
-		ret += "\t Funding: \t"+ funding;
+		}
+		ret += "\t Funding: \t"+ this.financing.getCash();
 		return ret;
 	}
 	

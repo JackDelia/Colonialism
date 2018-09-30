@@ -1,11 +1,13 @@
 package com.jackdelia.colonialism;
 
 import com.jackdelia.colonialism.city.City;
+import com.jackdelia.colonialism.input.PromptUser;
 import com.jackdelia.colonialism.map.resource.Resource;
 import com.jackdelia.colonialism.basics.BasicsPanel;
 import com.jackdelia.colonialism.city.CityPanel;
 import com.jackdelia.colonialism.map.Map;
 import com.jackdelia.colonialism.player.Player;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -265,16 +267,15 @@ public class Game extends JFrame{
 		this.currentMessage = "Move to Where?";
 		this.uiPanel.remove(this.buttonPanel);
 		this.uiPanel.add(this.moveButtonPanel);
-		
 	}
 
 	private void foundCity(int x, int y) {
 		boolean wasPaused = this.paused;
 		this.paused = true;
-		String cityName = JOptionPane.showInputDialog("Choose A City Name");
+		String cityName = PromptUser.forText("Choose A City Name");
 		this.paused = wasPaused;
 
-		if(cityName == null) {
+		if(StringUtils.isEmpty(cityName)) {
 			return;
 		}
 
@@ -327,7 +328,7 @@ public class Game extends JFrame{
 
 	private void explore(int i, int j) {
 		if(this.pc.canExplore()){
-            this.pc.explore(new Point(i,j));
+            this.pc.explore(new Point(i, j));
             this.currentMessage = "Explorer Sent.";
             this.exploreClicked = false;
 		} else{
@@ -370,9 +371,9 @@ public class Game extends JFrame{
 			}
 		}
 		
-		String name = JOptionPane.showInputDialog("Enter Name");
+		String name = PromptUser.forText("Enter Name");
 
-		if(name == null || name.equals("")) {
+		if(StringUtils.isEmpty(name)) {
             name = "Jack Delia";
         }
 		

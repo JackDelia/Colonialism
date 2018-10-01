@@ -2,9 +2,11 @@ package com.jackdelia.colonialism.map;
 
 import com.jackdelia.colonialism.city.City;
 import com.jackdelia.colonialism.empire.Empire;
+import com.jackdelia.colonialism.location.Location;
 import com.jackdelia.colonialism.map.resource.Resource;
 import com.jackdelia.colonialism.map.resource.ResourceCollection;
 import com.jackdelia.colonialism.map.resource.ResourceFactory;
+import com.jackdelia.colonialism.map.resource.stocking.ResourceStockingStrategyFactory;
 import com.jackdelia.colonialism.map.terrain.Terrain;
 import com.jackdelia.colonialism.math.RandomBooleanGenerator;
 import com.jackdelia.colonialism.math.RandomNumberGenerator;
@@ -33,12 +35,15 @@ public class Map extends JPanel{
     private MapAge mapAge;
     private Empire empire;
 
+    private static final int DEFAULT_MAP_WIDTH = 500;
+    private static final int DEFAULT_MAP_HEIGHT = 500;
+
     /**
      * Default Constructor
      */
     public Map() {
         // initialize class variables
-        this.setSize(500,500);
+        this.setSize(DEFAULT_MAP_WIDTH,DEFAULT_MAP_HEIGHT);
         this.mapTerrain = new Terrain[MAP_SIZE][MAP_SIZE];
         this.mapResources = new Resource[MAP_SIZE][MAP_SIZE][];
 
@@ -54,61 +59,33 @@ public class Map extends JPanel{
     }
 
     /**
-     *
+     * Populates the map with Resources
      */
     private void stockResources(){
+        final ResourceStockingStrategyFactory resourceStockingStrategyFactory = ResourceStockingStrategyFactory.init();
 
         for(int i = 0; i < this.mapResources.length; i++) {
 
             for(int j = 0; j < this.mapResources[i].length; j++) {
 
+                Location location = new Location(new Point(i, j));
+
                 if((getRandomDouble() > (7/8.0)) && (this.mapTerrain[i][j] != Terrain.MOUNTAINS)) {
+                    resourceStockingStrategyFactory.executeResourceStockingStrategy("THREE", this.mapResources, this.naturalResources, location);
 
-                    this.mapResources[i][j] = new Resource[3];
-                    this.mapResources[i][j][0] = this.naturalResources.getRandomResource();
-                    this.mapResources[i][j][1] = this.naturalResources.getRandomResource();
+                } else if(getRandomDouble() > (1 / 2.0)) {
+                    resourceStockingStrategyFactory.executeResourceStockingStrategy("TWO", this.mapResources, this.naturalResources, location);
 
-                    while(this.mapResources[i][j][0] == this.mapResources[i][j][1]) {
-                        this.mapResources[i][j][1] = this.naturalResources.getRandomResource();
-                    }
+                } else if(getRandomDouble() > (1 / 10.0)) {
+                    resourceStockingStrategyFactory.executeResourceStockingStrategy("ONE", this.mapResources, this.naturalResources, location);
 
-                    this.mapResources[i][j][2] = this.naturalResources.getRandomResource();
-
-                    while((this.mapResources[i][j][0] == this.mapResources[i][j][2])
-                            || (this.mapResources[i][j][1] == this.mapResources[i][j][2])) {
-                        this.mapResources[i][j][2] = this.naturalResources.getRandomResource();
-                    }
-                }
-
-                else if(getRandomDouble() > (1 / 2.0)) {
-                    this.mapResources[i][j] = new Resource[2];
-                    Resource res1 = this.naturalResources.getRandomResource();
-                    Resource res2 = this.naturalResources.getRandomResource();
-
-                    if(res1 != Resource.IRON && res2 != Resource.IRON) {
-                        res1 = this.naturalResources.getRandomResource();
-                        res2 = this.naturalResources.getRandomResource();
-                    }
-
-                    this.mapResources[i][j][0] = res1;
-                    this.mapResources[i][j][1] = res2;
-                    while(mapResources[i][j][0] == this.mapResources[i][j][1]) {
-                        this.mapResources[i][j][1] = this.naturalResources.getRandomResource();
-                    }
-                }
-                else if(getRandomDouble() > (1 / 10.0)) {
-                    this.mapResources[i][j] = new Resource[1];
-                    Resource res = this.naturalResources.getRandomResource();
-                    if(res != Resource.IRON) {
-                        res = this.naturalResources.getRandomResource();
-                    }
-                    this.mapResources[i][j][0] = res;
-                }
-                else {
+                } else {
                     if(this.mapTerrain[i][j] == Terrain.MOUNTAINS) {
-                        this.mapResources[i][j] = new Resource[]{Resource.STONE};
+                        resourceStockingStrategyFactory.executeResourceStockingStrategy("MOUNTAINS", this.mapResources, this.naturalResources, location);
+
                     } else {
-                        this.mapResources[i][j] = new Resource[0];
+                        resourceStockingStrategyFactory.executeResourceStockingStrategy("NULL", this.mapResources, this.naturalResources, location);
+
                     }
                 }
             }

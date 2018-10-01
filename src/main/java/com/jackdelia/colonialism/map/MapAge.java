@@ -30,7 +30,7 @@ public class MapAge {
      * @return boolean true if the map is in the Normal Age, false if not
      */
     public boolean isInNormalAge(){
-        return this.age % 7000 < 3500;
+        return (this.age % 7000) < 3500;
     }
 
     /**

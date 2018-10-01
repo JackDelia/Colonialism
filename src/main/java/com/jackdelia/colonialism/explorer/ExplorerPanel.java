@@ -21,18 +21,10 @@ public class ExplorerPanel extends JPanel {
 		label = new JLabel(explorer.toString());
 		add(label);
 		JButton increaseFunding = new JButton("^");
-		increaseFunding.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				explorer.incrementFunding(1);
-			}
-		});
+		increaseFunding.addActionListener(e -> explorer.incrementFunding(1));
 		
 		JButton decreaseFunding = new JButton("v");
-		decreaseFunding.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				ex.incrementFunding(-1);
-			}
-		});
+		decreaseFunding.addActionListener(e -> ex.incrementFunding(-1));
 		
 		add(decreaseFunding);
 		add(increaseFunding);

@@ -94,7 +94,7 @@ public class Location {
      * @return LocationEquality enum representing the result of the comparison
      */
     public LocationEquality compareTo(Location otherLocation) {
-        if (this.point.x != otherLocation.getPoint().x && this.point.y != otherLocation.getPoint().y) {
+        if ((this.point.x != otherLocation.getPoint().x) && (this.point.y != otherLocation.getPoint().y)) {
             return LocationEquality.DIFFERENT_VALUE_XY;
         } else if (this.point.x != otherLocation.getPoint().x) {
             return LocationEquality.DIFFERENT_VALUE_X;
@@ -124,8 +124,8 @@ public class Location {
 
         if(otherObject instanceof Location) {
             // if the x and y values are the same, then they are equal
-            return this.point.x == ((Location) otherObject).getPoint().getX()
-                    && this.point.y == ((Location) otherObject).getPoint().getY();
+            return (this.point.x == ((Location) otherObject).getPoint().getX())
+                    && (this.point.y == ((Location) otherObject).getPoint().getY());
         }
 
         if(otherObject instanceof Point) {

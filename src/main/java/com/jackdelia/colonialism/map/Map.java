@@ -1,6 +1,5 @@
 package com.jackdelia.colonialism.map;
 
-import com.jackdelia.colonialism.city.City;
 import com.jackdelia.colonialism.empire.Empire;
 import com.jackdelia.colonialism.location.Location;
 import com.jackdelia.colonialism.map.resource.Resource;
@@ -16,6 +15,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.JPanel;
 
@@ -96,34 +98,38 @@ public class Map extends JPanel{
     public void paintComponent(Graphics graphics){
         boolean isInNormalAge = this.mapAge.isInNormalAge();
 
-        for(int i = 0; i < MAP_SIZE; i++){
-            for(int j = 0; j< MAP_SIZE; j++){
+        for(int i = 0; i < MAP_SIZE; i++) {
+            for(int j = 0; j< MAP_SIZE; j++) {
                 graphics.setColor(this.mapTerrain[i][j].getColor());
                 if(this.player != null && !(this.player.canSee(i, j))) {
                     graphics.setColor(Color.WHITE);
                 }
-                if((this.player != null) && (this.player.getLocation() == null) && (this.player.getPosition().getX() == i) && (this.player.getPosition().getY() == j) && !(isInNormalAge))
+                if((this.player != null) && (this.player.getLocation() == null) && (this.player.getPosition().getX() == i) && (this.player.getPosition().getY() == j) && !(isInNormalAge)) {
                     graphics.setColor(Color.RED);
+                }
                 graphics.fillRect(i* PIXEL_STEP, j* PIXEL_STEP, PIXEL_STEP, PIXEL_STEP);
             }
 
-            for(City curCity : this.empire.getCities()){
-                if(!(this.player.getLocation() == curCity && isInNormalAge) && curCity.getPlayer() == this.player || this.player.canSee(curCity.getPosition())){
-                    graphics.setColor(new Color(181,80,137));
-                    if(this.player.getLocation() == curCity)
-                        graphics.setColor(Color.red);
-                    int ovalSize = 7 + curCity.getSize()/2000;
-                    graphics.fillOval(curCity.getPosition().x*6 - ovalSize/2, curCity.getPosition().y * 6-ovalSize/2, ovalSize , ovalSize);
-                    graphics.drawString(curCity.getName(), curCity.getPosition().x * 6, curCity.getPosition().y * 6-10);
-                }
-            }
+            this.empire.getCities().stream()
+                    .filter(curCity ->
+                            !(this.player.getLocation() == curCity && isInNormalAge)
+                                    && curCity.getPlayer() == this.player
+                                    || this.player.canSee(curCity.getPosition()))
+                    .forEach(curCity -> {
+                        graphics.setColor(new Color(181, 80, 137));
+                        if (this.player.getLocation() == curCity)
+                            graphics.setColor(Color.red);
+                        int ovalSize = 7 + curCity.getSize() / 2000;
+                        graphics.fillOval(curCity.getPosition().x * 6 - ovalSize / 2, curCity.getPosition().y * 6 - ovalSize / 2, ovalSize, ovalSize);
+                        graphics.drawString(curCity.getName(), curCity.getPosition().x * 6, curCity.getPosition().y * 6 - 10);
+            });
             this.mapAge.incrementAge();
         }
     }
 
     private void formMountains(){
         int count = getRandomInt((int) (Math.pow(MAP_SIZE, 2)/1000))+18;
-        for(int i = 0; i < count; i++){
+        for(int i = 0; i < count; i++) {
             int rangeLength = getRandomInt(MAP_SIZE /3);
             int rangeWidth = getRandomInt(MAP_SIZE /17) + 2;
             boolean northSouth = getRandomBoolean();
@@ -134,7 +140,7 @@ public class Map extends JPanel{
             }
 
             Point startPoint = new Point(getRandomInt(MAP_SIZE), getRandomInt(MAP_SIZE));
-            while(getTerrain(startPoint.x, startPoint.y) != Terrain.PLAINS){
+            while(getTerrain(startPoint.x, startPoint.y) != Terrain.PLAINS) {
                 startPoint = new Point(getRandomInt(MAP_SIZE), getRandomInt(MAP_SIZE));
             }
 
@@ -233,11 +239,11 @@ public class Map extends JPanel{
                 int x = getRandomInt(MAP_SIZE - 2) + 1;
                 int y = getRandomInt(MAP_SIZE - 2) + 1;
 
-                if(mapTerrain[x][y] == Terrain.PLAINS){
+                if(mapTerrain[x][y] == Terrain.PLAINS) {
                     mapTerrain[x][y] = t;
                     int dirCount = 1;
 
-                    while(getRandomDouble() < .75 && dirCount < x){
+                    while((getRandomDouble() < .75) && (dirCount < x)) {
                         if(mapTerrain[x - dirCount][y] == Terrain.PLAINS) {
                             mapTerrain[x - dirCount][y] = t;
                             if(mapTerrain[x - dirCount][y + 1] == Terrain.PLAINS && getRandomDouble() >= .5) {
@@ -251,8 +257,8 @@ public class Map extends JPanel{
                     }
 
                     dirCount = 1;
-                    while(getRandomDouble() < .75 && dirCount + x< MAP_SIZE){
-                        if(mapTerrain[x + dirCount][y] == Terrain.PLAINS){
+                    while((getRandomDouble() < .75) && ((dirCount + x) < MAP_SIZE)) {
+                        if(mapTerrain[x + dirCount][y] == Terrain.PLAINS) {
                             mapTerrain[x + dirCount][y] = t;
                             if(mapTerrain[x + dirCount][y + 1] == Terrain.PLAINS && getRandomDouble() >= .5) {
                                 mapTerrain[x + dirCount][y + 1] = t;
@@ -265,7 +271,7 @@ public class Map extends JPanel{
                     }
 
                     dirCount = 1;
-                    while(getRandomDouble() < .75 && dirCount < y) {
+                    while((getRandomDouble() < .75) && (dirCount < y)) {
                         if(mapTerrain[x][y - dirCount] == Terrain.PLAINS) {
                             mapTerrain[x][y - dirCount] = t;
                             if(mapTerrain[x + 1][y - dirCount] == Terrain.PLAINS && getRandomDouble() >= .5) {
@@ -279,7 +285,7 @@ public class Map extends JPanel{
                     }
 
                     dirCount = 1;
-                    while(getRandomDouble() < .75 && dirCount+y < MAP_SIZE) {
+                    while((getRandomDouble() < .75) && ((dirCount + y) < MAP_SIZE)) {
                         if(mapTerrain[x][y+dirCount] == Terrain.PLAINS) {
                             mapTerrain[x][y+dirCount] = t;
                             if(mapTerrain[x+1][y+dirCount] == Terrain.PLAINS && getRandomDouble() >= .5) {
@@ -325,9 +331,10 @@ public class Map extends JPanel{
             rt = lt;
             lt = temp;
         }
-        for(int i = 0; i< MAP_SIZE; i++){
+
+        for(int i = 0; i< MAP_SIZE; i++) {
             for(int j = 0; j< MAP_SIZE; j++){
-                if(j<=lt || j>=rt)
+                if(j <= lt || j >= rt)
                     mapTerrain[j][i] = Terrain.OCEAN;
                 else{
                     mapTerrain[j][i] = Terrain.PLAINS;
@@ -360,19 +367,17 @@ public class Map extends JPanel{
         }
         if(mass < (MAP_SIZE * MAP_SIZE)/2) {
             formContinents();
-            return;
         }
     }
 
     /**
      *
-
      * @param latitude latitude portion of the coordinate
      * @param longitude longitude portion of the coordinate
      * @return Enum corresponding to the terrain at the position
      */
     public Terrain getTerrain(int latitude, int longitude) {
-        if(latitude >= MAP_SIZE || longitude >= MAP_SIZE || latitude < 0 || longitude < 0) {
+        if((latitude >= MAP_SIZE) || (longitude >= MAP_SIZE) || (latitude < 0) || (longitude < 0)) {
             return Terrain.INVALID;
         }
         return mapTerrain[latitude][longitude];
@@ -386,25 +391,90 @@ public class Map extends JPanel{
             ret.add(Resource.MEAT);
         }
 
-        for(Resource s: mapResources[latitude][longitude]){
-            if(!ret.contains(s)) {
-                ret.add(s);
-            }
-        }
+        Arrays.stream(mapResources[latitude][longitude])
+                .filter(s -> !ret.contains(s))
+                .forEach(ret::add);
 
-        for(int i = -2; i<=2; i++){
-            for(int j = -2; j<=2; j++){
-                if(latitude+i > 0 && longitude+j > 0 && latitude+i < Map.MAP_SIZE && longitude+j < Map.MAP_SIZE){
-
-                    if(mapTerrain[latitude+i][longitude+j] == Terrain.FORREST && !ret.contains(Resource.WOOD))
+        IntStream.rangeClosed(-2, 2)
+                .filter(j ->
+                        latitude + -2 > 0
+                                && longitude + j > 0
+                                && latitude + -2 < Map.MAP_SIZE
+                                && longitude + j < Map.MAP_SIZE
+                )
+                .forEach((int j) -> {
+                    if ((mapTerrain[latitude + -2][longitude + j] == Terrain.FORREST) && !ret.contains(Resource.WOOD)) {
                         ret.add(Resource.WOOD);
-                    if(mapTerrain[latitude+1][longitude+1] == Terrain.DESERT && !ret.contains(Resource.COTTON))
+                    }
+                    if ((mapTerrain[latitude + 1][longitude + 1] == Terrain.DESERT) && !ret.contains(Resource.COTTON)) {
                         ret.add(Resource.COTTON);
-                }
-            }
-        }
+                    }
+                });
 
-        if(getRandomDouble() > .5 || ret.size() == 0) {
+        IntStream.rangeClosed(-2, 2)
+                .filter(j ->
+                        latitude + -1 > 0
+                                && longitude + j > 0
+                                && latitude + -1 < Map.MAP_SIZE
+                                && longitude + j < Map.MAP_SIZE
+                )
+                .forEach((int j) -> {
+                    if ((mapTerrain[latitude + -1][longitude + j] == Terrain.FORREST) && !ret.contains(Resource.WOOD)) {
+                        ret.add(Resource.WOOD);
+                    }
+                    if ((mapTerrain[latitude + 1][longitude + 1] == Terrain.DESERT) && !ret.contains(Resource.COTTON)) {
+                        ret.add(Resource.COTTON);
+                    }
+                });
+
+        IntStream.rangeClosed(-2, 2)
+                .filter(j -> latitude > 0
+                        && longitude + j > 0
+                        && latitude < Map.MAP_SIZE
+                        && longitude + j < Map.MAP_SIZE
+                )
+                .forEach((int j) -> {
+                    if ((mapTerrain[latitude][longitude + j] == Terrain.FORREST) && !ret.contains(Resource.WOOD)) {
+                        ret.add(Resource.WOOD);
+                    }
+                    if ((mapTerrain[latitude + 1][longitude + 1] == Terrain.DESERT) && !ret.contains(Resource.COTTON)) {
+                        ret.add(Resource.COTTON);
+                    }
+                });
+
+        IntStream.rangeClosed(-2, 2)
+                .filter(j ->
+                        latitude + 1 > 0
+                                && longitude + j > 0
+                                && latitude + 1 < Map.MAP_SIZE
+                                && longitude + j < Map.MAP_SIZE
+                )
+                .forEach((int j) -> {
+                    if ((mapTerrain[latitude + 1][longitude + j] == Terrain.FORREST) && !ret.contains(Resource.WOOD)) {
+                        ret.add(Resource.WOOD);
+                    }
+                    if ((mapTerrain[latitude + 1][longitude + 1] == Terrain.DESERT) && !ret.contains(Resource.COTTON)) {
+                        ret.add(Resource.COTTON);
+                    }
+                });
+
+        IntStream.rangeClosed(-2, 2)
+                .filter((int j) ->
+                        latitude + 2 > 0
+                                && longitude + j > 0
+                                && latitude + 2 < Map.MAP_SIZE
+                                && longitude + j < Map.MAP_SIZE
+                )
+                .forEach((int j) -> {
+                    if ((mapTerrain[latitude + 2][longitude + j] == Terrain.FORREST) && !ret.contains(Resource.WOOD)) {
+                        ret.add(Resource.WOOD);
+                    }
+                    if ((mapTerrain[latitude + 1][longitude + 1] == Terrain.DESERT) && !ret.contains(Resource.COTTON)) {
+                        ret.add(Resource.COTTON);
+                    }
+                });
+
+        if((getRandomDouble() > .5) || (ret.size() == 0)) {
             ret.add(Resource.GRAIN);
         }
 
@@ -417,17 +487,12 @@ public class Map extends JPanel{
      * @return boolean representing if the param coordinates were a valid location
      */
     public boolean valid(int xPosition, int yPosition) {
-        if(this.mapTerrain[xPosition][yPosition] == Terrain.OCEAN) {
-            return false;
-        }
-
-        for(City curCity : this.empire.getCities()) {
-            if(curCity.getPosition().distance(new Point(xPosition, yPosition)) < 10) {
-                return false;
-            }
-        }
-
-        return true;
+        return this.mapTerrain[xPosition][yPosition] != Terrain.OCEAN
+                && this.empire.getCities().stream()
+                    .filter(city ->
+                            city.getPosition().distance(new Point(xPosition, yPosition)) < 10)
+                    .collect(Collectors.toList())
+                    .isEmpty();
     }
 
     /**

@@ -10,6 +10,7 @@ import com.jackdelia.colonialism.map.Map;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -56,13 +57,33 @@ public class Player {
             }
         }
 
-        for(int i = 0; i < 8; i++) {
-            for(int j = 0; j < 8; j++) {
-                if(i + j < 8) {
-                    this.visible[Map.MAP_SIZE - 1 - i][j] = true;
-                }
+        IntStream.range(0, 8).forEach((int i) -> {
+            if (i < 8) {
+                this.visible[Map.MAP_SIZE - 1 - i][0] = true;
             }
-        }
+            if (i + 1 < 8) {
+                this.visible[Map.MAP_SIZE - 1 - i][1] = true;
+            }
+            if (i + 2 < 8) {
+                this.visible[Map.MAP_SIZE - 1 - i][2] = true;
+            }
+            if (i + 3 < 8) {
+                this.visible[Map.MAP_SIZE - 1 - i][3] = true;
+            }
+            if (i + 4 < 8) {
+                this.visible[Map.MAP_SIZE - 1 - i][4] = true;
+            }
+            if (i + 5 < 8) {
+                this.visible[Map.MAP_SIZE - 1 - i][5] = true;
+            }
+            if (i + 6 < 8) {
+                this.visible[Map.MAP_SIZE - 1 - i][6] = true;
+            }
+            if (i + 7 < 8) {
+                this.visible[Map.MAP_SIZE - 1 - i][7] = true;
+            }
+        });
+
         this.location = null;
         this.vassal = new Vassal();
         this.influence = new Influence();
@@ -77,9 +98,7 @@ public class Player {
     }
 
     private void gainExploreKnowledge(HashSet<Point> knowledge) {
-        for(Point p: knowledge) {
-            this.visible[p.x][p.y] = true;
-        }
+        knowledge.forEach(p -> this.visible[p.x][p.y] = true);
     }
 
     /**
@@ -117,12 +136,10 @@ public class Player {
 
         this.money.removeCash(fleetExpenditure);
 
-        // TODO: refactor this loop to be in Fleet.java after knowledge is decoupled
-        for(Explorer curExplorer : this.fleet.getExplorers()) {
-            if(curExplorer.update()) {
-                gainExploreKnowledge(curExplorer.getKnowledge());
-            }
-        }
+        this.fleet.getExplorers().stream()
+                .filter(Explorer::update)
+                .map(Explorer::getKnowledge)
+                .forEach(this::gainExploreKnowledge);
 
         if(this.fleet.size() > this.empire.size() && this.fleet.size() > 1) {
             this.money.removeCash(this.fleet.size());
@@ -225,8 +242,9 @@ public class Player {
         int count = 0;
         for(boolean[] ba: this.visible) {
             for(boolean b: ba) {
-                if(b)
+                if(b) {
                     count++;
+                }
             }
         }
         return count;

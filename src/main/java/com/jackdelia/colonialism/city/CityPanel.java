@@ -8,11 +8,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Objects;
 
 import javax.swing.BoxLayout;
@@ -87,11 +84,7 @@ public class CityPanel extends JPanel {
 		if(productTypes.size() > 0){
 			JButton balanceButton = new JButton("Balance");
 
-			balanceButton.addActionListener(new ActionListener(){
-				public void actionPerformed(ActionEvent e){
-					city.balanceProduction();
-				}
-			});
+			balanceButton.addActionListener(e -> city.balanceProduction());
 
             this.productionPanel.add(new JLabel("Production: "));
 			for(Resource type: productTypes){
@@ -102,11 +95,7 @@ public class CityPanel extends JPanel {
 
 		// setup export button
 		JButton exportButton = new JButton("Export");
-		exportButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				showExportDialog();
-			}
-		});
+		exportButton.addActionListener(e -> showExportDialog());
 		add(exportButton);
 
 	}
@@ -127,8 +116,8 @@ public class CityPanel extends JPanel {
 		String[] cities = new String[cityList.size()-1];
 		
 		i = 0;
-		for(City curCity : cityList){
-			if(curCity != this.city){
+		for(City curCity : cityList) {
+			if(curCity != this.city) {
 				cities[i] = curCity.getName();
 				i++;
 			}
@@ -165,19 +154,15 @@ public class CityPanel extends JPanel {
 
 		// setup increase stock button
 		JButton increaseStock= new JButton("^");
-		increaseStock.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				city.setInstruction(type, "stockpile", city.getInstruction(type, "stockpile")+1);
-			}
-		});
+		increaseStock.addActionListener(e ->
+                city.setInstruction(type, "stockpile", city.getInstruction(type, "stockpile")+1)
+        );
 
 		// setup decrease stock button
 		JButton decreaseStock = new JButton("v");
-		decreaseStock.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				city.setInstruction(type, "stockpile", city.getInstruction(type, "stockpile")-1);
-			}
-		});
+		decreaseStock.addActionListener(e ->
+				city.setInstruction(type, "stockpile", city.getInstruction(type, "stockpile")-1)
+        );
 		
 		stock.setLayout(new BoxLayout(stock, BoxLayout.X_AXIS));
 		stock.add(stockLabel);
@@ -199,20 +184,16 @@ public class CityPanel extends JPanel {
         this.productionLabels.put(type, productionLabel);
 		productionLabel.setBackground(Color.GRAY);
 		JButton increaseProduction = new JButton("^");
-		increaseProduction.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				city.incrementProduction(type, 1);
-				productionLabel.setText(type + ": " + city.getProduction(type));
-			}
-		});
+		increaseProduction.addActionListener(e -> {
+            city.incrementProduction(type, 1);
+            productionLabel.setText(type + ": " + city.getProduction(type));
+        });
 		
 		JButton decreaseProduction = new JButton("v");
-		decreaseProduction.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				city.incrementProduction(type,-1);
-				productionLabel.setText(type + ": " + city.getProduction(type));
-			}
-		});
+		decreaseProduction.addActionListener(e -> {
+            city.incrementProduction(type,-1);
+            productionLabel.setText(type + ": " + city.getProduction(type));
+        });
 		
 		product.setLayout(new BoxLayout(product, BoxLayout.X_AXIS));
 		product.add(productionLabel);
@@ -228,20 +209,16 @@ public class CityPanel extends JPanel {
 		final JLabel fundingLabel = new JLabel("Funding: " + city.getFunding());
 		funding.add(fundingLabel);
 		JButton increaseFunding = new JButton("^");
-		increaseFunding.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				city.incrementFunding(1);
-				fundingLabel.setText("Funding: " + city.getFunding());
-			}
-		});
+		increaseFunding.addActionListener(e -> {
+            city.incrementFunding(1);
+            fundingLabel.setText("Funding: " + city.getFunding());
+        });
 		
 		JButton decreaseFunding = new JButton("v");
-		decreaseFunding.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				city.incrementFunding(-1);
-				fundingLabel.setText("Funding: " + city.getFunding());
-			}
-		});
+		decreaseFunding.addActionListener(e -> {
+            city.incrementFunding(-1);
+            fundingLabel.setText("Funding: " + city.getFunding());
+        });
 		
 		funding.setLayout(new BoxLayout(funding, BoxLayout.X_AXIS));
 		funding.add(increaseFunding);
@@ -259,44 +236,41 @@ public class CityPanel extends JPanel {
 		soldierLabel.setText("Soldiers: " + city.getSoldiers());
 		ArrayList<Resource> types = city.getStockpileTypes();
 		if(types.size() > stockpileLabels.size()) {
-			for(Resource s : types) {
-				if(stockpileLabels.get(s) == null) {
-					if(stockpileLabels.size() == 0) {
-                        stockpilePanel.add(new JLabel("Stockpile: "));
-                    }
-					stockpilePanel.add(this.buildStockpilePanel(s));
-				}
-			}
+            types.stream()
+                    .filter(s -> stockpileLabels.get(s) == null)
+                    .forEach(s -> {
+                        if (stockpileLabels.size() == 0) {
+                            stockpilePanel.add(new JLabel("Stockpile: "));
+                        }
+                        stockpilePanel.add(this.buildStockpilePanel(s));
+                    });
 		}
 		
 		types = city.getProductionTypes();
 		if(types.size() > productionLabels.size()) {
-			for(Resource s : types) {
-				if(productionLabels.get(s) == null) {
-					if(productionLabels.size() == 0) {
-                        productionPanel.add(new JLabel("Production: "));
-                    }
-					productionPanel.add(this.buildProductionPanel(s));
-				}
-			}
+            types.stream()
+                    .filter(s -> productionLabels.get(s) == null)
+                    .forEach(s -> {
+                        if (productionLabels.size() == 0) {
+                            productionPanel.add(new JLabel("Production: "));
+                        }
+                        productionPanel.add(this.buildProductionPanel(s));
+                    });
 		}
-		
-		for(Entry<Resource, JEditorPane> label: stockpileLabels.entrySet()){
-			Resource type = label.getKey();
-			JEditorPane pane = label.getValue();
-			double amount = city.getStockpile(type);
-			pane.setText(Game.trim(amount) + " (" + 
-					Game.trim(city.getInstruction(type, "stockpile")) + ")"); 
-		}
-		for(Entry<Resource, JEditorPane> label: productionLabels.entrySet()) {
-			Resource type = label.getKey();
-			JEditorPane pane = label.getValue();
-			double amount = city.getProduction(type);
-			String productionString = (Game.trim(amount*city.getProductionPower())) + " (" + Game.trim(amount) + "%)";
-			if(!pane.getText().equals(productionString)) {
+
+        stockpileLabels.forEach((type, pane) -> {
+            double amount = city.getStockpile(type);
+            pane.setText(Game.trim(amount) + " (" +
+                    Game.trim(city.getInstruction(type, "stockpile")) + ")");
+        });
+
+        productionLabels.forEach((type, pane) -> {
+            double amount = city.getProduction(type);
+            String productionString = (Game.trim(amount * city.getProductionPower())) + " (" + Game.trim(amount) + "%)";
+            if (!pane.getText().equals(productionString)) {
                 pane.setText(productionString);
             }
-		}
+        });
 	}
 
 }

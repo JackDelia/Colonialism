@@ -27,13 +27,11 @@ public class ExplorationPanel extends JPanel {
 		}
 		add(explorersPanel);
 		JButton addExplorer = new JButton("+");
-		addExplorer.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				Explorer added = new Explorer(player.getPosition());
-				player.addExplorer(added);
-				explorersPanel.add(new ExplorerPanel(added));
-			}
-		});
+		addExplorer.addActionListener(e -> {
+            Explorer added = new Explorer(player.getPosition());
+            player.addExplorer(added);
+            explorersPanel.add(new ExplorerPanel(added));
+        });
 		add(addExplorer);
 	}
 

@@ -42,12 +42,8 @@ public class Fleet {
      * @return true if there is a free explorer, false if not
      */
     public boolean hasIdleExplorer(){
-        for(Explorer curExplorer : this.explorers) {
-            if(!curExplorer.isExploring()) {
-                return true;
-            }
-        }
-        return false;
+        return this.explorers.stream()
+                .anyMatch(curExplorer -> !curExplorer.isExploring());
     }
 
     /**
@@ -56,12 +52,9 @@ public class Fleet {
      * @param target Point where the Fleet will explore
      */
     public void explore(Point target) {
-        for(Explorer e: this.explorers) {
-            if(!e.isExploring()) {
-                e.setTarget(target);
-                return;
-            }
-        }
+        this.explorers.stream()
+                .filter(e -> !e.isExploring()).findFirst()
+                .ifPresent(e -> e.setTarget(target));
     }
 
     /**
@@ -70,9 +63,9 @@ public class Fleet {
      * @param location Point where the Fleet will be based out of
      */
     public void setHomeCity(Point location) {
-        for(Explorer curExplorer : this.explorers) {
-            curExplorer.setOrigin(location);
-        }
+        this.explorers.forEach(curExplorer ->
+                curExplorer.setOrigin(location)
+        );
     }
 
     /**
@@ -82,11 +75,9 @@ public class Fleet {
      */
     public void setIdleExplorersLocation(Point location){
         setHomeCity(location);
-        for(Explorer curExplorer: this.explorers){
-            if(!curExplorer.isExploring()){
-                curExplorer.setLocation(location);
-            }
-        }
+        this.explorers.stream()
+                .filter(curExplorer -> !curExplorer.isExploring())
+                .forEach(curExplorer -> curExplorer.setLocation(location));
     }
 
     /**
@@ -104,15 +95,10 @@ public class Fleet {
      * @return int the Total Expenditure for the Fleet
      */
     public int getExpenditure(){
-        int expenditure = 0;
-
-        for(Explorer curExplorer : this.explorers) {
-            if(curExplorer.isExploring()) {
-                expenditure += curExplorer.getFunding();
-            }
-        }
-
-        return expenditure;
+        return this.explorers.stream()
+                .filter(Explorer::isExploring)
+                .mapToInt(Explorer::getFunding)
+                .sum();
     }
 
     /**

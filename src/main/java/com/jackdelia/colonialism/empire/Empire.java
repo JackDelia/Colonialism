@@ -3,6 +3,7 @@ package com.jackdelia.colonialism.empire;
 import com.jackdelia.colonialism.city.City;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * <p>Information about a Collection of Cities</p>
@@ -63,13 +64,11 @@ public class Empire {
      * @return City the city corresponding to the param name
      */
     public City findCityByName(String name) {
-        for(City curCity : this.cities) {
-            if(curCity.getName().equals(name)) {
-                return curCity;
-            }
-        }
 
-        return null;
+        return this.cities.stream()
+                .filter(city -> name.equals(city.getName()))
+                .findAny()
+                .orElse(null);
     }
 
     /**
@@ -78,22 +77,17 @@ public class Empire {
      * @param howMany days to update by
      */
     public void updateDays(int howMany){
-        for(City curCity : this.cities){
-            curCity.update(howMany);
-        }
+        this.cities.forEach(city -> city.update(howMany));
     }
+
 
     /**
      * @return Message describing the Cities in the Empire
      */
     public String toString(){
-        StringBuilder sb = new StringBuilder().append("\nCities:\n");
-
-        for(City curCity : this.cities) {
-            sb.append(curCity.toString()).append("\n");
-        }
-
-        return sb.toString();
+        return this.cities.stream()
+                .map(curCity -> curCity.toString() + "\n")
+                .collect(Collectors.joining("", "\nCities:\n", ""));
     }
 
 }

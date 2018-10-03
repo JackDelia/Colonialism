@@ -8,10 +8,11 @@ import com.jackdelia.colonialism.math.RandomNumberGenerator;
 
 import java.awt.Point;
 import java.util.HashSet;
+import java.util.stream.IntStream;
 
 public class Explorer{
-	private static final String[] FIRST_NAMES = {"Jack", "Devin", "Brandon", "James", "Kenneth", "Allen", "Joeseph", "Jonathon", "George", "Thomas", "Christopher"};
-	private static final String[] LAST_NAMES = {"Delia", "Smith", "Jones", "Joestar", "Mitchell", "Davidson", "Johnson", "Jefferson", "Washington", "Colombus"};
+	private static final String[] FIRST_NAMES = new String[]{"Jack", "Devin", "Brandon", "James", "Kenneth", "Allen", "Joeseph", "Jonathon", "George", "Thomas", "Christopher"};
+	private static final String[] LAST_NAMES = new String[]{"Delia", "Smith", "Jones", "Joestar", "Mitchell", "Davidson", "Johnson", "Jefferson", "Washington", "Colombus"};
 
 	private static final int DEFAULT_SPEED = 4;
 	private static final int DEFAULT_RANGE = 25;
@@ -129,7 +130,7 @@ public class Explorer{
 			for(int j = (-1 * vision); j < this.vision; j++) {
 				Point seen = (Point) this.location.getPoint().clone();
 				seen.translate(i, j);
-				if(seen.x >= 0 && seen.x < Map.MAP_SIZE && seen.y >= 0 && seen.y < Map.MAP_SIZE && seen.distance(this.location.getPoint()) <= this.vision) {
+				if((seen.x >= 0) && (seen.x < Map.MAP_SIZE) && (seen.y >= 0) && (seen.y < Map.MAP_SIZE) && (seen.distance(this.location.getPoint()) <= this.vision)) {
                     this.knowledge.add(seen);
                 }
 			}
@@ -138,21 +139,22 @@ public class Explorer{
 
 	public boolean update(){
 		if(this.exploring){
-            for(int i = 0; i < DEFAULT_SPEED; i++){
-				if(this.target.equals(this.location) ||
-						(this.travelled > this.range + (RandomNumberGenerator.generate() * (this.range / 2)) && !this.target.equals(this.origin))){
-					if(this.target.equals(this.origin)) {
-						this.exploring = false;
-						this.travelled = 0;
-						resetKnowledge();
-					} else {
-						this.target.setPoint(this.origin.getPoint());
-					}
-				} else{
-					moveTowardTarget();
-					this.travelled++;
-				}
-			}
+			IntStream.range(0, DEFAULT_SPEED)
+					.forEach(i -> {
+                        if (this.target.equals(this.location) ||
+                                (this.travelled > this.range + (RandomNumberGenerator.generate() * (this.range / 2)) && !this.target.equals(this.origin))) {
+                            if (this.target.equals(this.origin)) {
+                                this.exploring = false;
+                                this.travelled = 0;
+                                resetKnowledge();
+                            } else {
+                                this.target.setPoint(this.origin.getPoint());
+                            }
+                        } else {
+                            moveTowardTarget();
+                            this.travelled++;
+                        }
+                    });
 			return true;
 		}
 
@@ -167,7 +169,7 @@ public class Explorer{
 		this.knowledge.clear();
 	}
 	
-	public String toString(){
+	public String toString() {
 		String ret = this.name + ": \t";
 		if(this.exploring) {
 			ret+= "Exploring";

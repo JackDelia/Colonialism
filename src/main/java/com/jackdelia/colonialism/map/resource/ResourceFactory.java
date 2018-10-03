@@ -29,7 +29,7 @@ public class ResourceFactory {
      * @return instance of the ResourceFactory
      */
     public static ResourceFactory getInstance() {
-        if(instance == null){
+        if(instance == null) {
             instance = new ResourceFactory();
         }
         return instance;

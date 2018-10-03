@@ -52,16 +52,15 @@ public class ComputerPlayer extends Player {
 		if(canExplore() && RandomNumberGenerator.generate() > .6){
 			explore(new Point((int)(RandomNumberGenerator.generate() * Map.MAP_SIZE),(int)(RandomNumberGenerator.generate() * Map.MAP_SIZE)));
 		}
-		
-		for(City c: getCities()){
-			if(c.getSize()/90 > c.getFunding() && getMoney() > getTotalExpenses()*1.2){
-				c.incrementFunding(1);
-			}
-			
-			if(getMoney() > getTotalExpenses()*4){
-				c.incrementFunding(1);
-			}
-		}
+
+        getCities().forEach(c -> {
+            if (c.getSize() / 90 > c.getFunding() && getMoney() > getTotalExpenses() * 1.2) {
+                c.incrementFunding(1);
+            }
+            if (getMoney() > getTotalExpenses() * 4) {
+                c.incrementFunding(1);
+            }
+        });
 		
 		ArrayList<Point> possible = possibleLocations();
 		if(possible.size() > 0 && System.currentTimeMillis() - this.lastCityTime > 50000) {
@@ -72,11 +71,9 @@ public class ComputerPlayer extends Player {
 	}
 	
 	private double getTotalExpenses(){
-		double total = 0;
-		for(City c: getCities()){
-			total += c.getFunding();
-		}
-		return total;
+        return getCities().stream()
+                .mapToDouble(City::getFunding)
+                .sum();
 	}
 	
 	private String randomCityName(){

@@ -5,7 +5,9 @@ import com.jackdelia.colonialism.map.terrain.Terrain;
 import com.jackdelia.colonialism.Game;
 import com.jackdelia.colonialism.map.Map;
 import com.jackdelia.colonialism.math.RandomNumberGenerator;
+import com.jackdelia.colonialism.player.BasePlayer;
 import com.jackdelia.colonialism.player.Player;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -14,7 +16,12 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-//A city is created at certain coordinates on the map.
+/**
+ * A city is created at certain coordinates on the map
+ *
+ *
+ *
+ */
 public class City {
 
 	private String name;
@@ -23,12 +30,11 @@ public class City {
 
 	private Population population;
 
-	private double funding = 1;
-	private Player player;
+	private double funding;
+	private BasePlayer player;
 	private Terrain terrain;
 	private boolean coastal;
-	private Map gameMap;
-	private int soldiers = 0;
+    private int soldiers;
 	private ArrayList<Resource> availableResources;
 	private HashMap<Resource, Double> stockpile;
 	private HashMap<Resource, HashMap<String, Double>> instructions;
@@ -42,19 +48,9 @@ public class City {
 		DEFAULT_INSTRUCTIONS.put("return", 0.0);
 		DEFAULT_INSTRUCTIONS.put("sell", 100.0);
 		DEFAULT_INSTRUCTIONS.put("export", 0.0);
-		
 	}
 
-	/**
-	 * @param name the name of the City
-	 * @param xPosition the x coordinate of the city
-	 * @param yPosition the y coordinate of the city
-	 * @param player the player that owns this city
-	 * @param map the game map
-	 */
-	public City(String name, int xPosition, int yPosition, Player player, Map map) {
-
-        // initialize class attributes
+	private City() {
         this.stockpile = new HashMap<>();
         this.instructions = new HashMap<>();
         this.production = new HashMap<>();
@@ -62,36 +58,52 @@ public class City {
 
         this.population = new Population();
 
-		if(name.equals("")) {
-			this.name = "City " + player.getCities().size();
-		} else {
-			this.name = name;
-		}
+        this.funding = 1;
+        this.soldiers = 0;
+        this.coastal = false;
+    }
 
-		this.position = new Point(xPosition, yPosition);
-		this.player = player;
-		this.gameMap = map;
-		this.cityId = player.getCities().size();
-		this.terrain = map.getTerrain(xPosition, yPosition);
+    /**
+     * Factory Method to handle the creation
+     * @param name Name of the City
+     * @param xPosition the City's Position
+     * @param yPosition the City's Position
+     * @param player the Player who owns this City
+     * @param map the Game Map instance
+     * @return the constructed City
+     */
+    public static City create(String name, int xPosition, int yPosition, BasePlayer player, Map map) {
 
+	    City constructedCity = new City();
 
-		// i = {-2, -1, 0, 1, 2}
-		for(int i = -2; i <= 2; i++) {
-			if((this.gameMap.getTerrain(xPosition + i, yPosition + i) == Terrain.OCEAN)
-					|| (this.gameMap.getTerrain(xPosition + i, yPosition) == Terrain.OCEAN)
-					|| (this.gameMap.getTerrain(xPosition, yPosition + i) == Terrain.OCEAN)) {
-				this.coastal = true;
-			}
-		}
-
-        this.gameMap.getEmpire().addCity(this);
-		this.availableResources = this.gameMap.getNearbyResources(xPosition, yPosition);
-
-		if(this.coastal) {
-            this.availableResources.add(Resource.FISH);
+        if(StringUtils.isEmpty(name)) {
+            constructedCity.setName("City " + player.getCities().size());
+        } else {
+            constructedCity.setName(name);
         }
 
+        constructedCity.setPosition(new Point(xPosition, yPosition));
+        constructedCity.setPlayer(player);
+        constructedCity.setCityId(player.getCities().size());
+        constructedCity.setTerrain(map.getTerrain(xPosition, yPosition));
+
+        IntStream.rangeClosed(-2, 2)
+                .filter((int i) ->
+                        (map.getTerrain(xPosition + i, yPosition + i) == Terrain.OCEAN)
+                                || (map.getTerrain(xPosition + i, yPosition) == Terrain.OCEAN)
+                                || (map.getTerrain(xPosition, yPosition + i) == Terrain.OCEAN))
+                .forEach((int i) -> constructedCity.setCoastal(true));
+
+        map.getEmpire().addCity(constructedCity);
+        constructedCity.setAvailableResources(map.getNearbyResources(xPosition, yPosition));
+
+        if(constructedCity.isCoastal()) {
+            constructedCity.availableResources.add(Resource.FISH);
+        }
+
+        return constructedCity;
     }
+
 	
 	public double getProductionPower(){
 		double toolsMult = 1;
@@ -366,11 +378,11 @@ public class City {
 				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
-	public Player getPlayer() {
+	public BasePlayer getPlayer() {
 		return this.player;
 	}
 
-	public void setPlayer(Player player) {
+	public void setPlayer(BasePlayer player) {
 		this.player = player;
 	}
 
@@ -456,4 +468,23 @@ public class City {
 		System.out.println(city.getName() + " " + resource + " " + percent);
 	}
 
+    public void setPosition(Point position) {
+        this.position = position;
+    }
+
+    public void setCityId(int cityId) {
+        this.cityId = cityId;
+    }
+
+    public void setTerrain(Terrain terrain) {
+        this.terrain = terrain;
+    }
+
+    public void setCoastal(boolean coastal) {
+        this.coastal = coastal;
+    }
+
+    public void setAvailableResources(ArrayList<Resource> availableResources) {
+        this.availableResources = availableResources;
+    }
 }

@@ -7,7 +7,7 @@ import com.jackdelia.colonialism.math.RandomNumberGenerator;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class ComputerPlayer extends Player {
+public class ComputerPlayer extends BasePlayer {
 	
 	private static final ArrayList<String> cityNames = new ArrayList<>();
 
@@ -46,8 +46,9 @@ public class ComputerPlayer extends Player {
 		
 		return possible;
 	}
-	
-	public void update(int days){
+
+	@Override
+	public void update(int days) {
 		super.update(days);
 		if(canExplore() && RandomNumberGenerator.generate() > .6){
 			explore(new Point((int)(RandomNumberGenerator.generate() * Map.MAP_SIZE),(int)(RandomNumberGenerator.generate() * Map.MAP_SIZE)));

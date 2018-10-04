@@ -10,7 +10,7 @@ public class MapTest {
     @Test
     public void getTerrainShouldReturnInvalidForBadInput(){
         // Test Data Setup
-        Map testMap = new Map();
+        Map testMap = Map.create();
 
         // Perform Method Call
         Terrain resultWhenAboveByOne = testMap.getTerrain(Map.MAP_SIZE + 1, Map.MAP_SIZE + 1);

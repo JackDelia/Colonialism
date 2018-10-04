@@ -43,9 +43,9 @@ public class Map extends JPanel{
     /**
      * Default Constructor
      */
-    public Map() {
+    private Map() {
         // initialize class variables
-        this.setSize(DEFAULT_MAP_WIDTH,DEFAULT_MAP_HEIGHT);
+        this.setSize(DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT);
         this.mapTerrain = new Terrain[MAP_SIZE][MAP_SIZE];
         this.mapResources = new Resource[MAP_SIZE][MAP_SIZE][];
 
@@ -53,11 +53,22 @@ public class Map extends JPanel{
         this.mapAge = new MapAge();
         this.naturalResources = ResourceFactory.getInstance().getNaturalResources();
 
-        //procedural generation possible later
-        //or maybe just a set map
-        formContinents();
-        formTerrain();
-        stockResources();
+    }
+
+    /**
+     * Factory Method for creating new Instances of Maps
+     *
+     * @return constructed Map instance
+     */
+    public static Map create() {
+        Map constructedMap = new Map();
+
+        //trigger procedural generation of map
+        constructedMap.formContinents();
+        constructedMap.formTerrain();
+        constructedMap.stockResources();
+
+        return constructedMap;
     }
 
     /**

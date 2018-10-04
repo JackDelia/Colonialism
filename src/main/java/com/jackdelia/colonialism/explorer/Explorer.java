@@ -33,19 +33,33 @@ public class Explorer{
 
 	private Funding financing;
 
-	public Explorer(Point start) {
-		this.name = FIRST_NAMES[(int)(RandomNumberGenerator.generate() * FIRST_NAMES.length)] + " " +
-				LAST_NAMES[(int)(RandomNumberGenerator.generate() * LAST_NAMES.length)];
-        this.financing = new Funding();
 
-        this.origin = new Location(start);
-        this.location = new Location((Point) start.clone());
+	private Explorer() {
+        this.financing = new Funding();
         this.exploring = false;
         this.travelled = DEFAULT_RANGE;
         this.range = INITIAL_TRAVELED;
-		this.vision = DEFAULT_VISIBILITY;
-		this.knowledge = new HashSet<>();
-	}
+        this.vision = DEFAULT_VISIBILITY;
+        this.knowledge = new HashSet<>();
+
+    }
+
+    /**
+     * Factory Method to handle creating new Explorer instances
+     * @param start the Starting Position for the new Explorer
+     * @return a constructed Explorer instance
+     */
+	public static Explorer create(Point start) {
+	    Explorer constructedExplorer = new Explorer();
+
+        constructedExplorer.setName(FIRST_NAMES[(int)(RandomNumberGenerator.generate() * FIRST_NAMES.length)] + " " +
+                LAST_NAMES[(int)(RandomNumberGenerator.generate() * LAST_NAMES.length)]);
+
+        constructedExplorer.setOrigin(new Location(start));
+        constructedExplorer.setLocation(new Location((Point) start.clone()));
+
+	    return constructedExplorer;
+    }
 	
 	public void setOrigin(Point o){
 		this.origin.setPoint(o.getLocation());
@@ -179,5 +193,77 @@ public class Explorer{
 		ret += "\t Funding: \t"+ this.financing.getCash();
 		return ret;
 	}
-	
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setKnowledge(HashSet<Point> knowledge) {
+        this.knowledge = knowledge;
+    }
+
+    public int getVision() {
+        return vision;
+    }
+
+    public void setVision(int vision) {
+        this.vision = vision;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Location getTarget() {
+        return target;
+    }
+
+    public void setTarget(Location target) {
+        this.target = target;
+    }
+
+    public Location getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(Location origin) {
+        this.origin = origin;
+    }
+
+    public void setExploring(boolean exploring) {
+        this.exploring = exploring;
+    }
+
+    public int getTravelled() {
+        return travelled;
+    }
+
+    public void setTravelled(int travelled) {
+        this.travelled = travelled;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public void setRange(int range) {
+        this.range = range;
+    }
+
+    public Funding getFinancing() {
+        return financing;
+    }
+
+    public void setFinancing(Funding financing) {
+        this.financing = financing;
+    }
 }

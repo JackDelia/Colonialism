@@ -59,27 +59,38 @@ public class Game extends JFrame{
 		ADVANCED.put(Resource.JEWELRY, Resource.GOLD);
 	}
 	
-	public Game(){
+	private Game(){
 		super("Colonialism!");
-		setSize(1200, 600);
-		this.getContentPane().setBackground(Color.YELLOW);
-		this.addWindowListener(new WindowAdapter() {
-	         public void windowClosing(WindowEvent windowEvent){
-	            System.exit(0);
-	         }        
-	      });
-		
-		this.exploreClicked = false;
-		this.foundClicked = false;
 
-		this.uiPanel = new JPanel();
-		this.uiPanel.setBackground(Color.YELLOW);
-		this.uiPanel.setPreferredSize(new Dimension(-250,-250));
-		this.uiPanel.setLayout(new BoxLayout(uiPanel, BoxLayout.X_AXIS));
-		
-		setVisible(true);
-		this.players = new ArrayList<>();
-	}
+        this.exploreClicked = false;
+        this.foundClicked = false;
+        this.players = new ArrayList<>();
+    }
+
+	public static Game create() {
+	    Game constructedGame = new Game();
+
+        constructedGame.setSize(1200, 600);
+        constructedGame.setVisible(true);
+
+        constructedGame.getContentPane().setBackground(Color.YELLOW);
+
+        // add exit event
+        constructedGame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent windowEvent){
+                System.exit(0);
+            }
+        });
+
+        // construct ui panel
+        JPanel uiPanel = new JPanel();
+        uiPanel.setBackground(Color.YELLOW);
+        uiPanel.setPreferredSize(new Dimension(-250,-250));
+        uiPanel.setLayout(new BoxLayout(uiPanel, BoxLayout.X_AXIS));
+        constructedGame.setUiPanel(uiPanel);
+
+	    return constructedGame;
+    }
 	
 	public static double trim(double d){
 		if(Math.abs(d - ((int) d)) < .01) {
@@ -200,15 +211,16 @@ public class Game extends JFrame{
 		setSize(1200, 600);
 
 		this.lastUpdate = System.currentTimeMillis();
-		this.gameMap = new Map();
-		this.pc = new Player(name, gameMap);
+		this.gameMap = Map.create();
+		this.pc = Player.create(name, gameMap);
+
 		this.players.add(pc);
 //		players.add(new ComputerPlayer("ROBOT", gameMap));
 		this.gameMap.player = pc;
 
 		setupMoveButtonPanel();
 		setupButtonPanel();
-		JPanel basicsPanel = new BasicsPanel(pc, this);
+		JPanel basicsPanel = BasicsPanel.create(pc, this);
 		this.uiPanel.add(basicsPanel);
 		this.uiPanel.add(this.buttonPanel);
 		setupMouseListener();
@@ -274,17 +286,21 @@ public class Game extends JFrame{
         this.currentMessage = cityName + " founded.";
 		repaint();
 	}
-	
-	private void showCity(City c) {
-		final CityPanel cpan = new CityPanel(c);
+
+	/**
+	 * Displays the Sidebar for the given City
+	 * @param city the City instance to display on the Panel
+	 */
+	private void showCity(City city) {
+		final CityPanel citySidePanel = CityPanel.create(city);
 		JButton back = new JButton("Back");
 		back.addActionListener(e -> {
-            uiPanel.remove(cpan);
+            uiPanel.remove(citySidePanel);
             uiPanel.add(buttonPanel);
         });
-		cpan.add(back);
+        citySidePanel.add(back);
         this.uiPanel.remove(buttonPanel);
-        this.uiPanel.add(cpan);
+        this.uiPanel.add(citySidePanel);
 	}
 
 	private void explore(int i, int j) {
@@ -379,11 +395,126 @@ public class Game extends JFrame{
 		JOptionPane.showMessageDialog(null, "You ran out of money. Game Over.");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		dispose();
-		new Game().run();
+		Game.create().run();
 	}
 	
 	public int getDay(){
 		return this.day;
 	}
 
+    public boolean isExploreClicked() {
+        return exploreClicked;
+    }
+
+    public void setExploreClicked(boolean exploreClicked) {
+        this.exploreClicked = exploreClicked;
+    }
+
+    public boolean isFoundClicked() {
+        return foundClicked;
+    }
+
+    public void setFoundClicked(boolean foundClicked) {
+        this.foundClicked = foundClicked;
+    }
+
+    public boolean isMoving() {
+        return moving;
+    }
+
+    public void setMoving(boolean moving) {
+        this.moving = moving;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    public int getMenu() {
+        return menu;
+    }
+
+    public void setMenu(int menu) {
+        this.menu = menu;
+    }
+
+    public Player getPc() {
+        return pc;
+    }
+
+    public void setPc(Player pc) {
+        this.pc = pc;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
+    public Map getGameMap() {
+        return gameMap;
+    }
+
+    public void setGameMap(Map gameMap) {
+        this.gameMap = gameMap;
+    }
+
+    public JPanel getButtonPanel() {
+        return buttonPanel;
+    }
+
+    public void setButtonPanel(JPanel buttonPanel) {
+        this.buttonPanel = buttonPanel;
+    }
+
+    public JPanel getMoveButtonPanel() {
+        return moveButtonPanel;
+    }
+
+    public void setMoveButtonPanel(JPanel moveButtonPanel) {
+        this.moveButtonPanel = moveButtonPanel;
+    }
+
+    public JPanel getUiPanel() {
+        return uiPanel;
+    }
+
+    public void setUiPanel(JPanel uiPanel) {
+        this.uiPanel = uiPanel;
+    }
+
+    public JEditorPane getMessages() {
+        return messages;
+    }
+
+    public void setMessages(JEditorPane messages) {
+        this.messages = messages;
+    }
+
+    public String getCurrentMessage() {
+        return currentMessage;
+    }
+
+    public void setCurrentMessage(String currentMessage) {
+        this.currentMessage = currentMessage;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public long getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(long lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
 }

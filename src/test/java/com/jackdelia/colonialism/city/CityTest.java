@@ -9,38 +9,38 @@ import static org.junit.Assert.*;
 public class CityTest {
 
     @Test
-    public void constructorShouldInitCityWithParamName(){
+    public void createShouldInitCityWithParamName(){
         // Setup Test Data
-        Map gameMap = new Map();
+        Map gameMap = Map.create();
 
         String playerName = "Merlin";
-        Player player = new Player(playerName, gameMap);
+        Player player = Player.create(playerName, gameMap);
 
         String cityName = "Avalon";
         int xPosition = 10;
         int yPosition = 10;
 
         // Perform Method Call
-        City testCity = new City(cityName, xPosition, yPosition, player, gameMap);
+        City testCity = City.create(cityName, xPosition, yPosition, player, gameMap);
 
         // Verify
         assertEquals(cityName, testCity.getName());
     }
 
     @Test
-    public void constructorShouldInitCityWithParamLocation(){
+    public void createShouldInitCityWithParamLocation(){
         // Setup Test Data
-        Map gameMap = new Map();
+        Map gameMap = Map.create();
 
         String playerName = "Arthur";
-        Player player = new Player(playerName, gameMap);
+        Player player = Player.create(playerName, gameMap);
 
         String cityName = "Camelot";
         int xPosition = 10;
         int yPosition = 20;
 
         // Perform Method Call
-        City testCity = new City(cityName, xPosition, yPosition, player, gameMap);
+        City testCity = City.create(cityName, xPosition, yPosition, player, gameMap);
 
         // Verify
         assertEquals(xPosition, testCity.getPosition().x);

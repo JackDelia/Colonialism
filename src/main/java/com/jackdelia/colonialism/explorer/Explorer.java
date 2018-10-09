@@ -52,8 +52,10 @@ public class Explorer{
 	public static Explorer create(Point start) {
 	    Explorer constructedExplorer = new Explorer();
 
-        constructedExplorer.setName(FIRST_NAMES[(int)(RandomNumberGenerator.generate() * FIRST_NAMES.length)] + " " +
-                LAST_NAMES[(int)(RandomNumberGenerator.generate() * LAST_NAMES.length)]);
+        constructedExplorer.setName(String.format("%s %s",
+                FIRST_NAMES[(int) (RandomNumberGenerator.generate() * FIRST_NAMES.length)],
+                LAST_NAMES[(int) (RandomNumberGenerator.generate() * LAST_NAMES.length)])
+        );
 
         constructedExplorer.setOrigin(new Location(start));
         constructedExplorer.setLocation(new Location((Point) start.clone()));
@@ -170,14 +172,16 @@ public class Explorer{
 	}
 	
 	public String toString() {
-		String ret = this.name + ": \t";
-		if(this.exploring) {
-			ret+= "Exploring";
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(this.name);
+        stringBuilder.append(": 	");
+        if(this.exploring) {
+			stringBuilder.append("Exploring");
 		} else {
-			ret+= " Free";
+            stringBuilder.append(" Free");
 		}
-		ret += "\t Funding: \t"+ this.financing.getCash();
-		return ret;
+        stringBuilder.append(String.format("\t Funding: \t%d", this.financing.getCash()));
+		return stringBuilder.toString();
 	}
 
 

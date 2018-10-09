@@ -116,7 +116,7 @@ public class Map extends JPanel{
                 if(this.player != null && !(this.player.canSee(i, j))) {
                     graphics.setColor(Color.WHITE);
                 }
-                if((this.player != null) && (this.player.getLocation() == null) && (this.player.getPosition().getX() == i) && (this.player.getPosition().getY() == j) && !(isInNormalAge)) {
+                if((this.player != null) && (this.player.getSelectedCity() == null) && (this.player.getPosition().getX() == i) && (this.player.getPosition().getY() == j) && !(isInNormalAge)) {
                     graphics.setColor(Color.RED);
                 }
                 graphics.fillRect(i* PIXEL_STEP, j* PIXEL_STEP, PIXEL_STEP, PIXEL_STEP);
@@ -124,13 +124,13 @@ public class Map extends JPanel{
 
             this.empire.getCities().stream()
                     .filter((City curCity) -> {
-                        return !(this.player.getLocation() == curCity && isInNormalAge)
+                        return !(this.player.getSelectedCity() == curCity && isInNormalAge)
                                 && curCity.getPlayer() == this.player
                                 || this.player.canSee(curCity.getPosition());
                     })
                     .forEach((City curCity) -> {
                         graphics.setColor(new Color(181, 80, 137));
-                        if (this.player.getLocation() == curCity)
+                        if (this.player.getSelectedCity() == curCity)
                             graphics.setColor(Color.red);
                         int ovalSize = 7 + curCity.getSize() / 2000;
                         graphics.fillOval(curCity.getPosition().x * 6 - ovalSize / 2, curCity.getPosition().y * 6 - ovalSize / 2, ovalSize, ovalSize);

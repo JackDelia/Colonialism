@@ -19,6 +19,10 @@ public class PromptUserSwingImpl implements IPromptUser {
         return JOptionPane.showInputDialog(promptText);
     }
 
+    @Override
+    public void withText(String modalText) {
+        JOptionPane.showMessageDialog(null, modalText);
+    }
 
 
 }

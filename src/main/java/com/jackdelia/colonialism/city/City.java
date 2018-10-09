@@ -464,7 +464,7 @@ public class City {
 		
 		double currentSell = this.instructions.get(resource).get("sell");
         this.instructions.get(resource).put("sell", currentSell - exportDelta);
-		System.out.println(city.getName() + " " + resource + " " + percent);
+		System.out.printf("%s %s %s%n", city.getName(), resource, percent);
 	}
 
     public void setPosition(Point position) {

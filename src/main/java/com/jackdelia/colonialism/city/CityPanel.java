@@ -190,7 +190,7 @@ public class CityPanel extends JPanel {
 	
 	private JPanel buildProductionPanel(final Resource type) {
 		JPanel product = new JPanel();
-		product.add(new JLabel(type + ": "));
+		product.add(new JLabel(String.format("%s: ", type)));
 		final JEditorPane productionLabel = new JEditorPane();
 		productionLabel.setText("" + city.getProduction(type));
 		productionLabel.setMaximumSize(new Dimension(300,20));
@@ -201,13 +201,13 @@ public class CityPanel extends JPanel {
 		JButton increaseProduction = new JButton("^");
 		increaseProduction.addActionListener((ActionEvent e) -> {
             city.incrementProduction(type, 1);
-            productionLabel.setText(type + ": " + city.getProduction(type));
+            productionLabel.setText(String.format("%s: %s", type, city.getProduction(type)));
         });
 		
 		JButton decreaseProduction = new JButton("v");
 		decreaseProduction.addActionListener((ActionEvent e) -> {
             city.incrementProduction(type,-1);
-            productionLabel.setText(type + ": " + city.getProduction(type));
+            productionLabel.setText(String.format("%s: %s", type, city.getProduction(type)));
         });
 		
 		product.setLayout(new BoxLayout(product, BoxLayout.X_AXIS));

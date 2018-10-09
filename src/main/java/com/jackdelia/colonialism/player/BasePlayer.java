@@ -25,7 +25,7 @@ public abstract class BasePlayer {
     private City capitol;
     private boolean[][] visible;
     private Point position;
-    private City location;
+    private City selectedCity;
 
     private Fleet fleet;
 
@@ -42,7 +42,7 @@ public abstract class BasePlayer {
         setVassal(new Vassal());
         setInfluence(new Influence());
 
-        // construct the player's location
+        // construct the player's selectedCity
         Point playerPoint = new Point(Map.MAP_SIZE - 1, 0);
         setPosition(playerPoint);
 
@@ -85,30 +85,18 @@ public abstract class BasePlayer {
 
     }
 
-    private int numExplored(){
-        int count = 0;
-        for(boolean[] ba: this.visible) {
-            for(boolean b: ba) {
-                if(b) {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-
     public String toString(){
-        StringBuilder constructedMessage = new StringBuilder("name: " + this.name + "\nMoney: " + this.money + "\nlocation: ");
+        StringBuilder constructedMessage = new StringBuilder(String.format("name: %s\nMoney: %s\nselectedCity: ", this.name, this.money));
 
-        if(this.location != null) {
-            constructedMessage.append(this.location.getName());
+        if(this.selectedCity != null) {
+            constructedMessage.append(this.selectedCity.getName());
         } else {
             constructedMessage.append(this.position);
         }
 
         constructedMessage.append(this.empire.toString());
 
-        return constructedMessage + "\n";
+        return String.format("%s\n", constructedMessage);
     }
 
     public void update(int days) {
@@ -161,19 +149,19 @@ public abstract class BasePlayer {
         if(this.map.valid(latitude, longitude) && this.visible[latitude][longitude]) {
             City newCity = City.create(name, latitude, longitude, this, this.map);
             this.empire.addCity(newCity);
-            System.out.println("City " + name + " founded.");
+            System.out.printf("City %s founded.%n", name);
 
             if(this.empire.size() == 1) {
                 this.position = new Point(latitude, longitude);
                 this.capitol = newCity;
-                this.location = newCity;
+                this.selectedCity = newCity;
                 this.fleet.setHomeCity(this.position);
             }
 
             return newCity;
         }
         else {
-            System.out.println("Not a Valid location.");
+            System.out.println("Not a valid location.");
         }
         return null;
     }
@@ -269,12 +257,12 @@ public abstract class BasePlayer {
     }
 
 
-    public City getLocation() {
-        return location;
+    public City getSelectedCity() {
+        return selectedCity;
     }
 
-    public void setLocation(City location) {
-        this.location = location;
+    public void setSelectedCity(City selectedCity) {
+        this.selectedCity = selectedCity;
     }
 
     public Fleet getFleet() {

@@ -112,7 +112,7 @@ public class Game extends JFrame{
 				else if(foundClicked)
 					foundCity(e.getX()/Map.PIXEL_STEP, e.getY()/Map.PIXEL_STEP);
 				else if(moving){
-					pc.setLocation(null);
+					pc.setSelectedCity(null);
 					pc.setPosition(new Point(e.getX()/Map.PIXEL_STEP, e.getY()/Map.PIXEL_STEP));
 				}
 			}
@@ -255,11 +255,11 @@ public class Game extends JFrame{
 		cityButton.addActionListener((ActionEvent e) -> showCity(c));
 		
 		JButton moveToCityButton = new JButton(cityName);
-		moveToCityButton.addActionListener((ActionEvent e) -> pc.setLocation(c));
+		moveToCityButton.addActionListener((ActionEvent e) -> pc.setSelectedCity(c));
 
         this.buttonPanel.add(cityButton);
         this.moveButtonPanel.add(moveToCityButton);
-        this.currentMessage = cityName + " founded.";
+        this.currentMessage = String.format("%s founded.", cityName);
 		repaint();
 	}
 
@@ -302,7 +302,7 @@ public class Game extends JFrame{
 				JButton backButton = new JButton("Back");
 				backButton.addActionListener(this::performBackButtonClick);
 				JPanel instructions = createMessageBox();
-                this.messages.setText("Colonialism!\n\nExplore the map and found cities to \nmake money!\n\n" + "TIPS:\n\n You lose if you run out of money, so be careful!\n\n" + "Your explorers can be a bit lazy. You may have to move yourself a bit to get them to explore what you want\n\n" + "You've gotta spend money to make money!");
+                this.messages.setText("Colonialism!\n\nExplore the map and found cities to \nmake money!\n\nTIPS:\n\n You lose if you run out of money, so be careful!\n\nYour explorers can be a bit lazy. You may have to move yourself a bit to get them to explore what you want\n\nYou've gotta spend money to make money!");
 				container.add(backButton);
 				container.add(instructions);
 				container.validate();
@@ -368,7 +368,7 @@ public class Game extends JFrame{
 			}
 		}
 		
-		JOptionPane.showMessageDialog(null, "You ran out of money. Game Over.");
+        PromptUser.withText("You ran out of money. Game Over.");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		dispose();
 		Game.create().run();

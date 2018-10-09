@@ -3,10 +3,10 @@ package com.jackdelia.colonialism.map;
 import com.jackdelia.colonialism.city.City;
 import com.jackdelia.colonialism.empire.Empire;
 import com.jackdelia.colonialism.location.Location;
-import com.jackdelia.colonialism.map.resource.Resource;
-import com.jackdelia.colonialism.map.resource.ResourceCollection;
-import com.jackdelia.colonialism.map.resource.ResourceFactory;
-import com.jackdelia.colonialism.map.resource.stocking.ResourceStockingStrategyFactory;
+import com.jackdelia.colonialism.resource.Resource;
+import com.jackdelia.colonialism.resource.ResourceCollection;
+import com.jackdelia.colonialism.resource.ResourceFactory;
+import com.jackdelia.colonialism.resource.stocking.ResourceStockingStrategyFactory;
 import com.jackdelia.colonialism.map.terrain.Terrain;
 import com.jackdelia.colonialism.math.RandomBooleanGenerator;
 import com.jackdelia.colonialism.math.RandomNumberGenerator;
@@ -132,7 +132,7 @@ public class Map extends JPanel{
                         graphics.setColor(new Color(181, 80, 137));
                         if (this.player.getSelectedCity() == curCity)
                             graphics.setColor(Color.red);
-                        int ovalSize = 7 + curCity.getSize() / 2000;
+                        int ovalSize = 7 + curCity.getCityPopulation() / 2000;
                         graphics.fillOval(curCity.getPosition().x * 6 - ovalSize / 2, curCity.getPosition().y * 6 - ovalSize / 2, ovalSize, ovalSize);
                         graphics.drawString(curCity.getName(), curCity.getPosition().x * 6, curCity.getPosition().y * 6 - 10);
             });

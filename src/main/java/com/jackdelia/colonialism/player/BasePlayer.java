@@ -5,11 +5,11 @@ import com.jackdelia.colonialism.currency.Funding;
 import com.jackdelia.colonialism.empire.Empire;
 import com.jackdelia.colonialism.explorer.Explorer;
 import com.jackdelia.colonialism.explorer.Fleet;
+import com.jackdelia.colonialism.knowledge.Knowledge;
 import com.jackdelia.colonialism.map.Map;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.stream.IntStream;
 
 public abstract class BasePlayer {
@@ -138,7 +138,6 @@ public abstract class BasePlayer {
         this.influence.addInfluence(i);
     }
 
-
     /**
      * @param name the name of the new City
      * @param latitude the latitude portion of the coordinate
@@ -170,7 +169,6 @@ public abstract class BasePlayer {
         return this.empire.getCities();
     }
 
-
     public boolean canExplore() {
         return this.fleet.hasIdleExplorer();
     }
@@ -179,8 +177,8 @@ public abstract class BasePlayer {
         this.fleet.explore(target);
     }
 
-    private void gainExploreKnowledge(HashSet<Point> knowledge) {
-        knowledge.forEach(p -> this.visible[p.x][p.y] = true);
+    private void gainExploreKnowledge(Knowledge knowledge) {
+        knowledge.getKnowledge().forEach(p -> this.visible[p.x][p.y] = true);
     }
 
     public boolean canSee(int i, int j) {
@@ -190,7 +188,6 @@ public abstract class BasePlayer {
     public boolean canSee(Point p){
         return this.visible[p.x][p.y];
     }
-
 
     public String getName() {
         return name;
@@ -208,35 +205,15 @@ public abstract class BasePlayer {
         this.map = map;
     }
 
-    public Influence getInfluence() {
-        return influence;
-    }
-
-    public void setInfluence(Influence influence) {
+    private void setInfluence(Influence influence) {
         this.influence = influence;
     }
 
-    public Vassal getVassal() {
-        return vassal;
-    }
-
-    public void setVassal(Vassal vassal) {
+    private void setVassal(Vassal vassal) {
         this.vassal = vassal;
     }
 
-    public City getCapitol() {
-        return capitol;
-    }
-
-    public void setCapitol(City capitol) {
-        this.capitol = capitol;
-    }
-
-    public boolean[][] getVisible() {
-        return visible;
-    }
-
-    public void setVisible(boolean[][] visible) {
+    private void setVisible(boolean[][] visible) {
         this.visible = visible;
     }
 
@@ -256,7 +233,6 @@ public abstract class BasePlayer {
         return this.fleet.getExplorers();
     }
 
-
     public City getSelectedCity() {
         return selectedCity;
     }
@@ -265,23 +241,15 @@ public abstract class BasePlayer {
         this.selectedCity = selectedCity;
     }
 
-    public Fleet getFleet() {
-        return fleet;
-    }
-
-    public void setFleet(Fleet fleet) {
+    private void setFleet(Fleet fleet) {
         this.fleet = fleet;
     }
 
-    public Empire getEmpire() {
-        return empire;
-    }
-
-    public void setEmpire(Empire empire) {
+    private void setEmpire(Empire empire) {
         this.empire = empire;
     }
 
-    public void setMoney(Funding money) {
+    private void setMoney(Funding money) {
         this.money = money;
     }
 }

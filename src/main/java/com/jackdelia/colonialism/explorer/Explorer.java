@@ -1,13 +1,13 @@
 package com.jackdelia.colonialism.explorer;
 
 import com.jackdelia.colonialism.currency.Funding;
+import com.jackdelia.colonialism.knowledge.Knowledge;
 import com.jackdelia.colonialism.location.Location;
 import com.jackdelia.colonialism.location.LocationEquality;
 import com.jackdelia.colonialism.map.Map;
 import com.jackdelia.colonialism.math.RandomNumberGenerator;
 
 import java.awt.Point;
-import java.util.HashSet;
 import java.util.stream.IntStream;
 
 public class Explorer{
@@ -20,7 +20,7 @@ public class Explorer{
 	private static final int INITIAL_TRAVELED = 0;
 
 	private String name;
-	private HashSet<Point> knowledge;
+	private Knowledge knowledge;
 	private int vision;
 
 	private Location location;
@@ -40,8 +40,7 @@ public class Explorer{
         this.travelled = DEFAULT_RANGE;
         this.range = INITIAL_TRAVELED;
         this.vision = DEFAULT_VISIBILITY;
-        this.knowledge = new HashSet<>();
-
+        this.knowledge = new Knowledge();
     }
 
     /**
@@ -147,7 +146,7 @@ public class Explorer{
 				Point seen = (Point) this.location.getPoint().clone();
 				seen.translate(i, j);
 				if((seen.x >= 0) && (seen.x < Map.MAP_SIZE) && (seen.y >= 0) && (seen.y < Map.MAP_SIZE) && (seen.distance(this.location.getPoint()) <= this.vision)) {
-                    this.knowledge.add(seen);
+                    this.knowledge.markSeen(seen);
                 }
 			}
 		}
@@ -163,12 +162,12 @@ public class Explorer{
 		return false;
 	}
 	
-	public HashSet<Point> getKnowledge(){
+	public Knowledge getKnowledge(){
 		return this.knowledge;
 	}
 	
 	private void resetKnowledge(){
-		this.knowledge.clear();
+		this.knowledge.resetKnowledge();
 	}
 	
 	public String toString() {
@@ -185,24 +184,8 @@ public class Explorer{
 	}
 
 
-    public String getName() {
-        return name;
-    }
-
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setKnowledge(HashSet<Point> knowledge) {
-        this.knowledge = knowledge;
-    }
-
-    public int getVision() {
-        return vision;
-    }
-
-    public void setVision(int vision) {
-        this.vision = vision;
     }
 
     public Location getLocation() {
@@ -213,48 +196,8 @@ public class Explorer{
         this.location = location;
     }
 
-    public Location getTarget() {
-        return target;
-    }
-
-    public void setTarget(Location target) {
-        this.target = target;
-    }
-
-    public Location getOrigin() {
-        return origin;
-    }
-
     public void setOrigin(Location origin) {
         this.origin = origin;
-    }
-
-    public void setExploring(boolean exploring) {
-        this.exploring = exploring;
-    }
-
-    public int getTravelled() {
-        return travelled;
-    }
-
-    public void setTravelled(int travelled) {
-        this.travelled = travelled;
-    }
-
-    public int getRange() {
-        return range;
-    }
-
-    public void setRange(int range) {
-        this.range = range;
-    }
-
-    public Funding getFinancing() {
-        return financing;
-    }
-
-    public void setFinancing(Funding financing) {
-        this.financing = financing;
     }
 
     private void updateExplorerLocation(int i) {

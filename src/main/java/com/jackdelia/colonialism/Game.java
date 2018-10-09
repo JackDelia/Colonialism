@@ -2,7 +2,7 @@ package com.jackdelia.colonialism;
 
 import com.jackdelia.colonialism.city.City;
 import com.jackdelia.colonialism.input.PromptUser;
-import com.jackdelia.colonialism.map.resource.Resource;
+import com.jackdelia.colonialism.resource.Resource;
 import com.jackdelia.colonialism.basics.BasicsPanel;
 import com.jackdelia.colonialism.city.CityPanel;
 import com.jackdelia.colonialism.map.Map;
@@ -24,7 +24,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 

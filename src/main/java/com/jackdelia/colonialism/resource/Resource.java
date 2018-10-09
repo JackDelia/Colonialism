@@ -1,4 +1,4 @@
-package com.jackdelia.colonialism.map.resource;
+package com.jackdelia.colonialism.resource;
 
 /**
  * <p>Information about a Game Resource</p>

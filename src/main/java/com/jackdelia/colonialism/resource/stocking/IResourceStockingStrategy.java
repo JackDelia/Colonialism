@@ -1,8 +1,8 @@
-package com.jackdelia.colonialism.map.resource.stocking;
+package com.jackdelia.colonialism.resource.stocking;
 
 import com.jackdelia.colonialism.location.Location;
-import com.jackdelia.colonialism.map.resource.Resource;
-import com.jackdelia.colonialism.map.resource.ResourceCollection;
+import com.jackdelia.colonialism.resource.Resource;
+import com.jackdelia.colonialism.resource.ResourceCollection;
 
 @FunctionalInterface
 public interface IResourceStockingStrategy {

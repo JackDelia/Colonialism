@@ -1,6 +1,6 @@
 package com.jackdelia.colonialism.city;
 
-import com.jackdelia.colonialism.map.resource.Resource;
+import com.jackdelia.colonialism.resource.Resource;
 import com.jackdelia.colonialism.Game;
 
 import java.awt.Color;
@@ -68,7 +68,7 @@ public class CityPanel extends JPanel {
         JLabel nameLabel = new JLabel(city.getName());
         nameLabel.setFont(new Font(nameLabel.getFont().getName(), Font.PLAIN, 20));
         constructedCityPanel.add(nameLabel);
-        constructedCityPanel.popLabel = new JLabel(String.format("Population: %d", city.getSize()));
+        constructedCityPanel.popLabel = new JLabel(String.format("Population: %d", city.getCityPopulation()));
         constructedCityPanel.soldierLabel = new JLabel(String.format("Soldiers: %d", city.getSoldiers()));
         constructedCityPanel.add(constructedCityPanel.popLabel);
         constructedCityPanel.add(constructedCityPanel.soldierLabel);
@@ -247,7 +247,7 @@ public class CityPanel extends JPanel {
 	}
 	
 	private void update(){
-		popLabel.setText(String.format("Population: %d", city.getSize()));
+		popLabel.setText(String.format("Population: %d", city.getCityPopulation()));
 		soldierLabel.setText(String.format("Soldiers: %d", city.getSoldiers()));
 		ArrayList<Resource> types = city.getStockpileTypes();
 		if(types.size() > stockpileLabels.size()) {

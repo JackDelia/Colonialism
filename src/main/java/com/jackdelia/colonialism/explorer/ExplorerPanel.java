@@ -2,7 +2,6 @@ package com.jackdelia.colonialism.explorer;
 
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -20,7 +19,7 @@ public class ExplorerPanel extends JPanel {
     /**
      * Factory Method for Creating new Instances of ExplorerPanels
      * @param explorer the Explorer to be displayed
-     * @return a constructed isntance of an ExplorerPanel
+     * @return a constructed instance of an ExplorerPanel
      */
 	public static ExplorerPanel create(final Explorer explorer) {
 	    ExplorerPanel constructedExplorerPanel = new ExplorerPanel();
@@ -28,14 +27,16 @@ public class ExplorerPanel extends JPanel {
         constructedExplorerPanel.setExplorer(explorer);
 
         constructedExplorerPanel.setLayout(new BoxLayout(constructedExplorerPanel, BoxLayout.LINE_AXIS));
-        constructedExplorerPanel.setLabel(new JLabel(explorer.toString()));
-        constructedExplorerPanel.add(constructedExplorerPanel.getLabel());
+
+        JLabel explorerLabel = new JLabel(explorer.toString());
+        constructedExplorerPanel.setLabel(explorerLabel);
+        constructedExplorerPanel.add(explorerLabel);
 
         JButton increaseFunding = new JButton("^");
-        increaseFunding.addActionListener(e -> explorer.incrementFunding(1));
+        increaseFunding.addActionListener((ActionEvent e) -> explorer.incrementFunding(1));
 
         JButton decreaseFunding = new JButton("v");
-        decreaseFunding.addActionListener(e -> explorer.incrementFunding(-1));
+        decreaseFunding.addActionListener((ActionEvent e) -> explorer.incrementFunding(-1));
 
         constructedExplorerPanel.add(decreaseFunding);
         constructedExplorerPanel.add(increaseFunding);
@@ -43,7 +44,7 @@ public class ExplorerPanel extends JPanel {
 	    return constructedExplorerPanel;
     }
 	
-	public void paintComponent(Graphics g){
+	public void paintComponent(Graphics g) {
 		label.setText(explorer.toString());
 	}
 

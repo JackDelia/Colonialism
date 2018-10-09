@@ -15,10 +15,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -98,8 +95,12 @@ public class Game extends JFrame{
 		}
 		return ((int)(d*10))/10.0;
 	}
-	
-	
+
+	private static void performExitButtonClickAction(ActionEvent e) {
+		System.exit(0);
+	}
+
+
 	private void setupMouseListener(){
 		this.gameMap.addMouseListener(new MouseListener(){
 
@@ -143,32 +144,17 @@ public class Game extends JFrame{
 		this.buttonPanel.setAutoscrolls(true);
 		
 		JButton exploreButton = new JButton("Explore");
-		exploreButton.addActionListener(e -> {
-            if(exploreClicked){
-                exploreClicked = false;
-                currentMessage = "";
-                return;
-            }
-            exploreClicked = true;
-            foundClicked = false;
-            moving = false;
-            currentMessage = "Explore Where?";
-        });
+		exploreButton.addActionListener(this::performExploreButtonClick);
 
 		this.buttonPanel.add(exploreButton);
 		
 		JButton foundButton = new JButton("Found City");
-		foundButton.addActionListener(e -> {
-            foundClicked = true;
-            exploreClicked = false;
-            moving = false;
-            currentMessage = "Pick a Location";
-        });
+		foundButton.addActionListener(this::performFoundCityButtonClick);
 		
 		final JButton pause = new JButton("pause");
-		pause.addActionListener(e -> {
+		pause.addActionListener((ActionEvent e) -> {
             paused = !paused;
-            if(paused) {
+            if (paused) {
                 pause.setText("unpause");
             } else {
                 pause.setText("pause");
@@ -176,7 +162,7 @@ public class Game extends JFrame{
         });
 		
 		JButton moveButton = new JButton("Move");
-		moveButton.addActionListener(e -> showMoveMenu());
+		moveButton.addActionListener(this::performMoveButtonClick);
 
 		this.buttonPanel.add(foundButton);
 		this.buttonPanel.add(pause);
@@ -186,20 +172,10 @@ public class Game extends JFrame{
 	private void setupMoveButtonPanel(){
 		this.moveButtonPanel = new JPanel();
 		JButton positionMoveButton = new JButton("Move to Position");
-		positionMoveButton.addActionListener(e -> {
-            moving = true;
-            exploreClicked = false;
-            foundClicked = false;
-            currentMessage = "Click where you want to move on the map.";
-        });
+		positionMoveButton.addActionListener(this::performMoveToPositionButtonClick);
 		
 		JButton cancelMoveButton = new JButton("Cancel");
-		cancelMoveButton.addActionListener(e -> {
-            currentMessage = "";
-            uiPanel.remove(moveButtonPanel);
-            uiPanel.add(buttonPanel);
-            moving = false;
-        });
+		cancelMoveButton.addActionListener(this::performCancelAction);
 
 		this.moveButtonPanel.add(positionMoveButton);
 		this.moveButtonPanel.add(cancelMoveButton);
@@ -276,10 +252,10 @@ public class Game extends JFrame{
 
         this.foundClicked = false;
 		JButton cityButton = new JButton(cityName);
-		cityButton.addActionListener(e -> showCity(c));
+		cityButton.addActionListener((ActionEvent e) -> showCity(c));
 		
 		JButton moveToCityButton = new JButton(cityName);
-		moveToCityButton.addActionListener(e -> pc.setLocation(c));
+		moveToCityButton.addActionListener((ActionEvent e) -> pc.setLocation(c));
 
         this.buttonPanel.add(cityButton);
         this.moveButtonPanel.add(moveToCityButton);
@@ -294,7 +270,7 @@ public class Game extends JFrame{
 	private void showCity(City city) {
 		final CityPanel citySidePanel = CityPanel.create(city);
 		JButton back = new JButton("Back");
-		back.addActionListener(e -> {
+		back.addActionListener((ActionEvent e) -> {
             uiPanel.remove(citySidePanel);
             uiPanel.add(buttonPanel);
         });
@@ -324,7 +300,7 @@ public class Game extends JFrame{
 			if(this.menu == 2){
 				container.removeAll();
 				JButton backButton = new JButton("Back");
-				backButton.addActionListener(e -> menu = 3);
+				backButton.addActionListener(this::performBackButtonClick);
 				JPanel instructions = createMessageBox();
                 this.messages.setText("Colonialism!\n\nExplore the map and found cities to \nmake money!\n\n" + "TIPS:\n\n You lose if you run out of money, so be careful!\n\n" + "Your explorers can be a bit lazy. You may have to move yourself a bit to get them to explore what you want\n\n" + "You've gotta spend money to make money!");
 				container.add(backButton);
@@ -355,13 +331,13 @@ public class Game extends JFrame{
 		JPanel container = new JPanel();
 		container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
 		JButton startButton = new JButton("Start!");
-		startButton.addActionListener(e -> menu = 1);
+		startButton.addActionListener(this::performStartButtonClickAction);
 		
 		JButton instructionsButton = new JButton("Instructions");
-		instructionsButton.addActionListener(e -> menu = 2);
+		instructionsButton.addActionListener(this::performInstructionButtonClickAction);
 		
 		JButton exitButton = new JButton("Quit");
-		exitButton.addActionListener(e -> System.exit(0));
+		exitButton.addActionListener(Game::performExitButtonClickAction);
 		
 		container.add(startButton);
 		container.add(instructionsButton);
@@ -517,4 +493,53 @@ public class Game extends JFrame{
     public void setLastUpdate(long lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
+
+	private void performCancelAction(ActionEvent e) {
+		currentMessage = "";
+		uiPanel.remove(moveButtonPanel);
+		uiPanel.add(buttonPanel);
+		moving = false;
+	}
+
+	private void performStartButtonClickAction(ActionEvent e) {
+		menu = 1;
+	}
+
+	private void performInstructionButtonClickAction(ActionEvent e) {
+		menu = 2;
+	}
+
+	private void performExploreButtonClick(ActionEvent e) {
+		if (exploreClicked) {
+			exploreClicked = false;
+			currentMessage = "";
+			return;
+		}
+		exploreClicked = true;
+		foundClicked = false;
+		moving = false;
+		currentMessage = "Explore Where?";
+	}
+
+	private void performFoundCityButtonClick(ActionEvent e) {
+		foundClicked = true;
+		exploreClicked = false;
+		moving = false;
+		currentMessage = "Pick a Location";
+	}
+
+	private void performMoveButtonClick(ActionEvent e) {
+		showMoveMenu();
+	}
+
+	private void performMoveToPositionButtonClick(ActionEvent e) {
+		moving = true;
+		exploreClicked = false;
+		foundClicked = false;
+		currentMessage = "Click where you want to move on the map.";
+	}
+
+	private void performBackButtonClick(ActionEvent e) {
+		menu = 3;
+	}
 }

@@ -7,6 +7,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import java.awt.event.ActionEvent;
 
 /**
  *
@@ -40,7 +41,7 @@ public class ExplorationPanel extends JPanel {
         constructedExplorationPanel.add(explorersPanel);
 
         JButton addExplorer = new JButton("+");
-        addExplorer.addActionListener(e -> {
+        addExplorer.addActionListener((ActionEvent e) -> {
             Explorer added = Explorer.create(player.getPosition());
             player.addExplorer(added);
             explorersPanel.add(ExplorerPanel.create(added));

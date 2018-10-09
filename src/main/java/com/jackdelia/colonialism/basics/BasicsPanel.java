@@ -37,8 +37,8 @@ public class BasicsPanel extends JPanel {
         JPanel aPan = new JPanel();
         aPan.setLayout(new BoxLayout(aPan, BoxLayout.PAGE_AXIS));
         aPan.add(new JLabel(player.getName()));
-        constructedBasicsPanel.setDayLabel(new JLabel("Day \t" + game.getDay()));
-        constructedBasicsPanel.setMoneyLabel(new JLabel("Money: \t" + player.getMoney()));
+        constructedBasicsPanel.setDayLabel(new JLabel(String.format("Day \t%d", game.getDay())));
+        constructedBasicsPanel.setMoneyLabel(new JLabel(String.format("Money: \t%s", player.getMoney())));
         aPan.add(constructedBasicsPanel.getMoneyLabel());
         aPan.add(constructedBasicsPanel.getDayLabel());
         aPan.add(ExplorationPanel.create(constructedBasicsPanel.getPlayer()));
@@ -48,8 +48,8 @@ public class BasicsPanel extends JPanel {
     }
 	
 	public void paintComponent(Graphics g){
-		this.getMoneyLabel().setText("Money: \t" + Game.trim(this.getPlayer().getMoney()));
-		this.getDayLabel().setText("Day \t" + this.getGame().getDay());
+		this.getMoneyLabel().setText(String.format("Money: \t%s", Game.trim(this.getPlayer().getMoney())));
+		this.getDayLabel().setText(String.format("Day \t%d", this.getGame().getDay()));
 	}
 
     public Player getPlayer() {

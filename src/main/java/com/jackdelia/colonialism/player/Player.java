@@ -23,10 +23,7 @@ public class Player extends BasePlayer {
      * @return a constructed Player instance
      */
     public static Player create(String name, Map map) {
-        Player constructedPlayer = new Player(name, map);
-
-
-        return constructedPlayer;
+        return new Player(name, map);
     }
 
 

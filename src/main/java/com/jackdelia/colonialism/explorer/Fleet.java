@@ -27,6 +27,10 @@ public class Fleet {
         this.explorers = new ArrayList<>();
     }
 
+    private static boolean isExplorerFree(Explorer e) {
+        return !e.isExploring();
+    }
+
     /**
      * Adds a new Explorer to the Fleet
      *
@@ -43,7 +47,7 @@ public class Fleet {
      */
     public boolean hasIdleExplorer(){
         return this.explorers.stream()
-                .anyMatch(curExplorer -> !curExplorer.isExploring());
+                .anyMatch(Fleet::isExplorerFree);
     }
 
     /**
@@ -53,8 +57,8 @@ public class Fleet {
      */
     public void explore(Point target) {
         this.explorers.stream()
-                .filter(e -> !e.isExploring()).findFirst()
-                .ifPresent(e -> e.setTarget(target));
+                .filter(Fleet::isExplorerFree).findFirst()
+                .ifPresent((Explorer e) -> e.setTarget(target));
     }
 
     /**
@@ -63,7 +67,7 @@ public class Fleet {
      * @param location Point where the Fleet will be based out of
      */
     public void setHomeCity(Point location) {
-        this.explorers.forEach(curExplorer ->
+        this.explorers.forEach((Explorer curExplorer) ->
                 curExplorer.setOrigin(location)
         );
     }
@@ -76,8 +80,8 @@ public class Fleet {
     public void setIdleExplorersLocation(Point location){
         setHomeCity(location);
         this.explorers.stream()
-                .filter(curExplorer -> !curExplorer.isExploring())
-                .forEach(curExplorer -> curExplorer.setLocation(location));
+                .filter(Fleet::isExplorerFree)
+                .forEach((Explorer curExplorer) -> curExplorer.setLocation(location));
     }
 
     /**

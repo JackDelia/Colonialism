@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -67,8 +68,8 @@ public class CityPanel extends JPanel {
         JLabel nameLabel = new JLabel(city.getName());
         nameLabel.setFont(new Font(nameLabel.getFont().getName(), Font.PLAIN, 20));
         constructedCityPanel.add(nameLabel);
-        constructedCityPanel.popLabel = new JLabel("Population: " + city.getSize());
-        constructedCityPanel.soldierLabel = new JLabel("Soldiers: " + city.getSoldiers());
+        constructedCityPanel.popLabel = new JLabel(String.format("Population: %d", city.getSize()));
+        constructedCityPanel.soldierLabel = new JLabel(String.format("Soldiers: %d", city.getSoldiers()));
         constructedCityPanel.add(constructedCityPanel.popLabel);
         constructedCityPanel.add(constructedCityPanel.soldierLabel);
         constructedCityPanel.add(constructedCityPanel.fundingPanel());
@@ -158,9 +159,9 @@ public class CityPanel extends JPanel {
 	
 	private JPanel buildStockpilePanel(final Resource type){
 		JPanel stock = new JPanel();
-		stock.add(new JLabel(type.toString() + ": "));
+		stock.add(new JLabel(String.format("%s: ", type.toString())));
 		JEditorPane stockLabel = new JEditorPane();
-		stockLabel.setText("" + this.city.getStockpile(type));
+		stockLabel.setText(String.format("%s", this.city.getStockpile(type)));
 		stockLabel.setMaximumSize(new Dimension(300,20));
 
         this.stockpileLabels.put(type, stockLabel);
@@ -168,13 +169,13 @@ public class CityPanel extends JPanel {
 
 		// setup increase stock button
 		JButton increaseStock= new JButton("^");
-		increaseStock.addActionListener(e ->
-                city.setInstruction(type, "stockpile", city.getInstruction(type, "stockpile")+1)
+		increaseStock.addActionListener((ActionEvent e) ->
+                city.setInstruction(type, "stockpile", city.getInstruction(type, "stockpile") + 1)
         );
 
 		// setup decrease stock button
 		JButton decreaseStock = new JButton("v");
-		decreaseStock.addActionListener(e ->
+		decreaseStock.addActionListener((ActionEvent e) ->
 				city.setInstruction(type, "stockpile", city.getInstruction(type, "stockpile")-1)
         );
 		
@@ -198,13 +199,13 @@ public class CityPanel extends JPanel {
         this.productionLabels.put(type, productionLabel);
 		productionLabel.setBackground(Color.GRAY);
 		JButton increaseProduction = new JButton("^");
-		increaseProduction.addActionListener(e -> {
+		increaseProduction.addActionListener((ActionEvent e) -> {
             city.incrementProduction(type, 1);
             productionLabel.setText(type + ": " + city.getProduction(type));
         });
 		
 		JButton decreaseProduction = new JButton("v");
-		decreaseProduction.addActionListener(e -> {
+		decreaseProduction.addActionListener((ActionEvent e) -> {
             city.incrementProduction(type,-1);
             productionLabel.setText(type + ": " + city.getProduction(type));
         });
@@ -220,18 +221,18 @@ public class CityPanel extends JPanel {
 
 	private JPanel fundingPanel(){
 		JPanel funding = new JPanel();
-		final JLabel fundingLabel = new JLabel("Funding: " + city.getFunding());
+		final JLabel fundingLabel = new JLabel(String.format("Funding: %s", city.getFunding()));
 		funding.add(fundingLabel);
 		JButton increaseFunding = new JButton("^");
 		increaseFunding.addActionListener(e -> {
             city.incrementFunding(1);
-            fundingLabel.setText("Funding: " + city.getFunding());
+            fundingLabel.setText(String.format("Funding: %s", city.getFunding()));
         });
 		
 		JButton decreaseFunding = new JButton("v");
-		decreaseFunding.addActionListener(e -> {
+		decreaseFunding.addActionListener((ActionEvent e) -> {
             city.incrementFunding(-1);
-            fundingLabel.setText("Funding: " + city.getFunding());
+            fundingLabel.setText(String.format("Funding: %s", city.getFunding()));
         });
 		
 		funding.setLayout(new BoxLayout(funding, BoxLayout.X_AXIS));
@@ -246,48 +247,63 @@ public class CityPanel extends JPanel {
 	}
 	
 	private void update(){
-		popLabel.setText("Population: " + city.getSize());
-		soldierLabel.setText("Soldiers: " + city.getSoldiers());
+		popLabel.setText(String.format("Population: %d", city.getSize()));
+		soldierLabel.setText(String.format("Soldiers: %d", city.getSoldiers()));
 		ArrayList<Resource> types = city.getStockpileTypes();
 		if(types.size() > stockpileLabels.size()) {
             types.stream()
-                    .filter(s -> stockpileLabels.get(s) == null)
-                    .forEach(s -> {
-                        if (stockpileLabels.size() == 0) {
-                            stockpilePanel.add(new JLabel("Stockpile: "));
-                        }
-                        stockpilePanel.add(this.buildStockpilePanel(s));
-                    });
+                    .filter(this::notNullStockpileResource)
+                    .forEach(this::addResourceAsLabelToPanel);
 		}
 		
 		types = city.getProductionTypes();
 		if(types.size() > productionLabels.size()) {
             types.stream()
-                    .filter(s -> productionLabels.get(s) == null)
-                    .forEach(s -> {
-                        if (productionLabels.size() == 0) {
-                            productionPanel.add(new JLabel("Production: "));
-                        }
-                        productionPanel.add(this.buildProductionPanel(s));
-                    });
+                    .filter(this::notNullProductionLabel)
+                    .forEach(this::addProductionAsLabelToPanel);
 		}
 
-        stockpileLabels.forEach((type, pane) -> {
-            double amount = city.getStockpile(type);
-            pane.setText(Game.trim(amount) + " (" +
-                    Game.trim(city.getInstruction(type, "stockpile")) + ")");
-        });
+        stockpileLabels.forEach(this::setStockpileQuantityOnPanel);
 
-        productionLabels.forEach((type, pane) -> {
-            double amount = city.getProduction(type);
-            String productionString = (Game.trim(amount * city.getProductionPower())) + " (" + Game.trim(amount) + "%)";
-            if (!pane.getText().equals(productionString)) {
-                pane.setText(productionString);
-            }
-        });
+        productionLabels.forEach(this::setProductionQuantityOnPanel);
 	}
 
     public void setCity(City city) {
         this.city = city;
+    }
+
+    private void addResourceAsLabelToPanel(Resource s) {
+        if (stockpileLabels.size() == 0) {
+            stockpilePanel.add(new JLabel("Stockpile: "));
+        }
+        stockpilePanel.add(this.buildStockpilePanel(s));
+    }
+
+    private boolean notNullStockpileResource(Resource s) {
+        return stockpileLabels.get(s) == null;
+    }
+
+    private void addProductionAsLabelToPanel(Resource s) {
+        if (productionLabels.size() == 0) {
+            productionPanel.add(new JLabel("Production: "));
+        }
+        productionPanel.add(this.buildProductionPanel(s));
+    }
+
+    private boolean notNullProductionLabel(Resource s) {
+        return productionLabels.get(s) == null;
+    }
+
+    private void setStockpileQuantityOnPanel(Resource type, JEditorPane pane) {
+        double amount = city.getStockpile(type);
+        pane.setText(String.format("%s (%s)", Game.trim(amount), Game.trim(city.getInstruction(type, "stockpile"))));
+    }
+
+    private void setProductionQuantityOnPanel(Resource type, JEditorPane pane) {
+        double amount = city.getProduction(type);
+        String productionString = String.format("%s (%s%%)", Game.trim(amount * city.getProductionPower()), Game.trim(amount));
+        if (!pane.getText().equals(productionString)) {
+            pane.setText(productionString);
+        }
     }
 }

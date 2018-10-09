@@ -33,8 +33,6 @@ public abstract class BasePlayer {
     private Funding money;
 
 
-
-
     public BasePlayer(String name, Map map) {
 
         setName(name);
@@ -126,7 +124,7 @@ public abstract class BasePlayer {
                 .map(Explorer::getKnowledge)
                 .forEach(this::gainExploreKnowledge);
 
-        if(this.fleet.size() > this.empire.size() && this.fleet.size() > 1) {
+        if((this.fleet.size() > this.empire.size()) && (this.fleet.size() > 1)) {
             this.money.removeCash(this.fleet.size());
         }
 

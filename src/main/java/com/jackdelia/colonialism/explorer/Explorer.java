@@ -61,7 +61,7 @@ public class Explorer{
 	    return constructedExplorer;
     }
 	
-	public void setOrigin(Point o){
+	public void setOrigin(Point o) {
 		this.origin.setPoint(o.getLocation());
 		if(!this.exploring) {
 			this.location.setPoint(this.origin.getPoint());
@@ -86,7 +86,7 @@ public class Explorer{
 	}
 
 	public void incrementFunding(int amount) {
-	    if(amount > 0){
+	    if(amount > 0) {
             this.financing.addCash(amount);
         } else if(amount < 0){
 	        this.financing.removeCash(Math.abs(amount));
@@ -151,24 +151,10 @@ public class Explorer{
 		}
 	}
 
-	public boolean update(){
-		if(this.exploring){
+	public boolean update() {
+		if(this.exploring) {
 			IntStream.range(0, DEFAULT_SPEED)
-					.forEach(i -> {
-                        if (this.target.equals(this.location) ||
-                                (this.travelled > this.range + (RandomNumberGenerator.generate() * (this.range / 2)) && !this.target.equals(this.origin))) {
-                            if (this.target.equals(this.origin)) {
-                                this.exploring = false;
-                                this.travelled = 0;
-                                resetKnowledge();
-                            } else {
-                                this.target.setPoint(this.origin.getPoint());
-                            }
-                        } else {
-                            moveTowardTarget();
-                            this.travelled++;
-                        }
-                    });
+					.forEach(this::updateExplorerLocation);
 			return true;
 		}
 
@@ -265,5 +251,21 @@ public class Explorer{
 
     public void setFinancing(Funding financing) {
         this.financing = financing;
+    }
+
+    private void updateExplorerLocation(int i) {
+        if (this.target.equals(this.location) ||
+                (this.travelled > this.range + (RandomNumberGenerator.generate() * (this.range / 2)) && !this.target.equals(this.origin))) {
+            if (this.target.equals(this.origin)) {
+                this.exploring = false;
+                this.travelled = 0;
+                resetKnowledge();
+            } else {
+                this.target.setPoint(this.origin.getPoint());
+            }
+        } else {
+            moveTowardTarget();
+            this.travelled++;
+        }
     }
 }

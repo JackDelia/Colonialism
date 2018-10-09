@@ -1,5 +1,6 @@
 package com.jackdelia.colonialism.map;
 
+import com.jackdelia.colonialism.city.City;
 import com.jackdelia.colonialism.empire.Empire;
 import com.jackdelia.colonialism.location.Location;
 import com.jackdelia.colonialism.map.resource.Resource;
@@ -122,11 +123,12 @@ public class Map extends JPanel{
             }
 
             this.empire.getCities().stream()
-                    .filter(curCity ->
-                            !(this.player.getLocation() == curCity && isInNormalAge)
-                                    && curCity.getPlayer() == this.player
-                                    || this.player.canSee(curCity.getPosition()))
-                    .forEach(curCity -> {
+                    .filter((City curCity) -> {
+                        return !(this.player.getLocation() == curCity && isInNormalAge)
+                                && curCity.getPlayer() == this.player
+                                || this.player.canSee(curCity.getPosition());
+                    })
+                    .forEach((City curCity) -> {
                         graphics.setColor(new Color(181, 80, 137));
                         if (this.player.getLocation() == curCity)
                             graphics.setColor(Color.red);
@@ -138,7 +140,7 @@ public class Map extends JPanel{
         }
     }
 
-    private void formMountains(){
+    private void formMountains() {
         int count = getRandomInt((int) (Math.pow(MAP_SIZE, 2)/1000))+18;
         for(int i = 0; i < count; i++) {
             int rangeLength = getRandomInt(MAP_SIZE /3);
@@ -159,7 +161,7 @@ public class Map extends JPanel{
         }
     }
 
-    private void setTerrain(int xValue, int yValue, Terrain terrain){
+    private void setTerrain(int xValue, int yValue, Terrain terrain) {
         if((xValue > 0) && (xValue < MAP_SIZE) && (yValue > 0) && (yValue < MAP_SIZE) && (this.mapTerrain[xValue][yValue] != Terrain.OCEAN)) {
             this.mapTerrain[xValue][yValue] = terrain;
         }

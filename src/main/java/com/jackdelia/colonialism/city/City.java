@@ -216,7 +216,7 @@ public class City {
 
         IntStream.range(0, days).forEachOrdered(i -> addPopulation());
 
-        this.production.forEach((curProducingResource, value) -> {
+        this.production.forEach((Resource curProducingResource, Double value) -> {
             if (curProducingResource == Resource.SOLDIERS) {
                 int base = (int) ((value / 100.0) * days * getProductionPower());
                 double weapons = this.stockpile.get(Resource.WEAPONS);
@@ -248,7 +248,6 @@ public class City {
                 }
             }
         });
-		
 				
 		if(this.population.getNumberOfPeople() >= 100 * (this.production.size() + 1)) {
 			Resource r = this.availableResources.get(((int)(RandomNumberGenerator.generate() * 100)) % this.availableResources.size());

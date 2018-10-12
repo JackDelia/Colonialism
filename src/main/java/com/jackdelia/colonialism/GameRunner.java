@@ -8,7 +8,7 @@ import sun.audio.*;
 public class GameRunner {
 
 	public static void main(String[] args) {
-		Game g = new Game();
+		Game g = Game.create();
 		
 		Thread musicThread = new Thread(new Runnable() {
 

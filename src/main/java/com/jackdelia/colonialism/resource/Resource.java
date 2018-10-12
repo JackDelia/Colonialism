@@ -1,6 +1,4 @@
-package com.jackdelia.colonialism.map.resource;
-
-import java.awt.*;
+package com.jackdelia.colonialism.resource;
 
 /**
  * <p>Information about a Game Resource</p>

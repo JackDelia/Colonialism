@@ -1,13 +1,13 @@
 package com.jackdelia.colonialism.explorer;
 
 import com.jackdelia.colonialism.currency.Funding;
+import com.jackdelia.colonialism.knowledge.Knowledge;
 import com.jackdelia.colonialism.location.Location;
 import com.jackdelia.colonialism.location.LocationEquality;
 import com.jackdelia.colonialism.map.Map;
 import com.jackdelia.colonialism.math.RandomNumberGenerator;
 
 import java.awt.Point;
-import java.util.HashSet;
 import java.util.stream.IntStream;
 
 public class Explorer{
@@ -20,7 +20,7 @@ public class Explorer{
 	private static final int INITIAL_TRAVELED = 0;
 
 	private String name;
-	private HashSet<Point> knowledge;
+	private Knowledge knowledge;
 	private int vision;
 
 	private Location location;
@@ -33,21 +33,36 @@ public class Explorer{
 
 	private Funding financing;
 
-	public Explorer(Point start) {
-		this.name = FIRST_NAMES[(int)(RandomNumberGenerator.generate() * FIRST_NAMES.length)] + " " +
-				LAST_NAMES[(int)(RandomNumberGenerator.generate() * LAST_NAMES.length)];
-        this.financing = new Funding();
 
-        this.origin = new Location(start);
-        this.location = new Location((Point) start.clone());
+	private Explorer() {
+        this.financing = new Funding();
         this.exploring = false;
         this.travelled = DEFAULT_RANGE;
         this.range = INITIAL_TRAVELED;
-		this.vision = DEFAULT_VISIBILITY;
-		this.knowledge = new HashSet<>();
-	}
+        this.vision = DEFAULT_VISIBILITY;
+        this.knowledge = new Knowledge();
+    }
+
+    /**
+     * Factory Method to handle creating new Explorer instances
+     * @param start the Starting Position for the new Explorer
+     * @return a constructed Explorer instance
+     */
+	public static Explorer create(Point start) {
+	    Explorer constructedExplorer = new Explorer();
+
+        constructedExplorer.setName(String.format("%s %s",
+                FIRST_NAMES[(int) (RandomNumberGenerator.generate() * FIRST_NAMES.length)],
+                LAST_NAMES[(int) (RandomNumberGenerator.generate() * LAST_NAMES.length)])
+        );
+
+        constructedExplorer.setOrigin(new Location(start));
+        constructedExplorer.setLocation(new Location((Point) start.clone()));
+
+	    return constructedExplorer;
+    }
 	
-	public void setOrigin(Point o){
+	public void setOrigin(Point o) {
 		this.origin.setPoint(o.getLocation());
 		if(!this.exploring) {
 			this.location.setPoint(this.origin.getPoint());
@@ -72,7 +87,7 @@ public class Explorer{
 	}
 
 	public void incrementFunding(int amount) {
-	    if(amount > 0){
+	    if(amount > 0) {
             this.financing.addCash(amount);
         } else if(amount < 0){
 	        this.financing.removeCash(Math.abs(amount));
@@ -131,53 +146,73 @@ public class Explorer{
 				Point seen = (Point) this.location.getPoint().clone();
 				seen.translate(i, j);
 				if((seen.x >= 0) && (seen.x < Map.MAP_SIZE) && (seen.y >= 0) && (seen.y < Map.MAP_SIZE) && (seen.distance(this.location.getPoint()) <= this.vision)) {
-                    this.knowledge.add(seen);
+                    this.knowledge.markSeen(seen);
                 }
 			}
 		}
 	}
 
-	public boolean update(){
-		if(this.exploring){
+	public boolean update() {
+		if(this.exploring) {
 			IntStream.range(0, DEFAULT_SPEED)
-					.forEach(i -> {
-                        if (this.target.equals(this.location) ||
-                                (this.travelled > this.range + (RandomNumberGenerator.generate() * (this.range / 2)) && !this.target.equals(this.origin))) {
-                            if (this.target.equals(this.origin)) {
-                                this.exploring = false;
-                                this.travelled = 0;
-                                resetKnowledge();
-                            } else {
-                                this.target.setPoint(this.origin.getPoint());
-                            }
-                        } else {
-                            moveTowardTarget();
-                            this.travelled++;
-                        }
-                    });
+					.forEach(this::updateExplorerLocation);
 			return true;
 		}
 
 		return false;
 	}
 	
-	public HashSet<Point> getKnowledge(){
+	public Knowledge getKnowledge(){
 		return this.knowledge;
 	}
 	
 	private void resetKnowledge(){
-		this.knowledge.clear();
+		this.knowledge.resetKnowledge();
 	}
 	
 	public String toString() {
-		String ret = this.name + ": \t";
-		if(this.exploring) {
-			ret+= "Exploring";
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(this.name);
+        stringBuilder.append(": 	");
+        if(this.exploring) {
+			stringBuilder.append("Exploring");
 		} else {
-			ret+= " Free";
+            stringBuilder.append(" Free");
 		}
-		ret += "\t Funding: \t"+ this.financing.getCash();
-		return ret;
+        stringBuilder.append(String.format("\t Funding: \t%d", this.financing.getCash()));
+		return stringBuilder.toString();
 	}
-	
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public void setOrigin(Location origin) {
+        this.origin = origin;
+    }
+
+    private void updateExplorerLocation(int i) {
+        if (this.target.equals(this.location) ||
+                (this.travelled > this.range + (RandomNumberGenerator.generate() * (this.range / 2)) && !this.target.equals(this.origin))) {
+            if (this.target.equals(this.origin)) {
+                this.exploring = false;
+                this.travelled = 0;
+                resetKnowledge();
+            } else {
+                this.target.setPoint(this.origin.getPoint());
+            }
+        } else {
+            moveTowardTarget();
+            this.travelled++;
+        }
+    }
 }

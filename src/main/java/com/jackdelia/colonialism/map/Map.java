@@ -1,11 +1,12 @@
 package com.jackdelia.colonialism.map;
 
+import com.jackdelia.colonialism.city.City;
 import com.jackdelia.colonialism.empire.Empire;
 import com.jackdelia.colonialism.location.Location;
-import com.jackdelia.colonialism.map.resource.Resource;
-import com.jackdelia.colonialism.map.resource.ResourceCollection;
-import com.jackdelia.colonialism.map.resource.ResourceFactory;
-import com.jackdelia.colonialism.map.resource.stocking.ResourceStockingStrategyFactory;
+import com.jackdelia.colonialism.resource.Resource;
+import com.jackdelia.colonialism.resource.ResourceCollection;
+import com.jackdelia.colonialism.resource.ResourceFactory;
+import com.jackdelia.colonialism.resource.stocking.ResourceStockingStrategyFactory;
 import com.jackdelia.colonialism.map.terrain.Terrain;
 import com.jackdelia.colonialism.math.RandomBooleanGenerator;
 import com.jackdelia.colonialism.math.RandomNumberGenerator;
@@ -43,9 +44,9 @@ public class Map extends JPanel{
     /**
      * Default Constructor
      */
-    public Map() {
+    private Map() {
         // initialize class variables
-        this.setSize(DEFAULT_MAP_WIDTH,DEFAULT_MAP_HEIGHT);
+        this.setSize(DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT);
         this.mapTerrain = new Terrain[MAP_SIZE][MAP_SIZE];
         this.mapResources = new Resource[MAP_SIZE][MAP_SIZE][];
 
@@ -53,11 +54,22 @@ public class Map extends JPanel{
         this.mapAge = new MapAge();
         this.naturalResources = ResourceFactory.getInstance().getNaturalResources();
 
-        //procedural generation possible later
-        //or maybe just a set map
-        formContinents();
-        formTerrain();
-        stockResources();
+    }
+
+    /**
+     * Factory Method for creating new Instances of Maps
+     *
+     * @return constructed Map instance
+     */
+    public static Map create() {
+        Map constructedMap = new Map();
+
+        //trigger procedural generation of map
+        constructedMap.formContinents();
+        constructedMap.formTerrain();
+        constructedMap.stockResources();
+
+        return constructedMap;
     }
 
     /**
@@ -104,22 +116,23 @@ public class Map extends JPanel{
                 if(this.player != null && !(this.player.canSee(i, j))) {
                     graphics.setColor(Color.WHITE);
                 }
-                if((this.player != null) && (this.player.getLocation() == null) && (this.player.getPosition().getX() == i) && (this.player.getPosition().getY() == j) && !(isInNormalAge)) {
+                if((this.player != null) && (this.player.getSelectedCity() == null) && (this.player.getPosition().getX() == i) && (this.player.getPosition().getY() == j) && !(isInNormalAge)) {
                     graphics.setColor(Color.RED);
                 }
                 graphics.fillRect(i* PIXEL_STEP, j* PIXEL_STEP, PIXEL_STEP, PIXEL_STEP);
             }
 
             this.empire.getCities().stream()
-                    .filter(curCity ->
-                            !(this.player.getLocation() == curCity && isInNormalAge)
-                                    && curCity.getPlayer() == this.player
-                                    || this.player.canSee(curCity.getPosition()))
-                    .forEach(curCity -> {
+                    .filter((City curCity) -> {
+                        return !(this.player.getSelectedCity() == curCity && isInNormalAge)
+                                && curCity.getPlayer() == this.player
+                                || this.player.canSee(curCity.getPosition());
+                    })
+                    .forEach((City curCity) -> {
                         graphics.setColor(new Color(181, 80, 137));
-                        if (this.player.getLocation() == curCity)
+                        if (this.player.getSelectedCity() == curCity)
                             graphics.setColor(Color.red);
-                        int ovalSize = 7 + curCity.getSize() / 2000;
+                        int ovalSize = 7 + curCity.getCityPopulation() / 2000;
                         graphics.fillOval(curCity.getPosition().x * 6 - ovalSize / 2, curCity.getPosition().y * 6 - ovalSize / 2, ovalSize, ovalSize);
                         graphics.drawString(curCity.getName(), curCity.getPosition().x * 6, curCity.getPosition().y * 6 - 10);
             });
@@ -127,7 +140,7 @@ public class Map extends JPanel{
         }
     }
 
-    private void formMountains(){
+    private void formMountains() {
         int count = getRandomInt((int) (Math.pow(MAP_SIZE, 2)/1000))+18;
         for(int i = 0; i < count; i++) {
             int rangeLength = getRandomInt(MAP_SIZE /3);
@@ -148,7 +161,7 @@ public class Map extends JPanel{
         }
     }
 
-    private void setTerrain(int xValue, int yValue, Terrain terrain){
+    private void setTerrain(int xValue, int yValue, Terrain terrain) {
         if((xValue > 0) && (xValue < MAP_SIZE) && (yValue > 0) && (yValue < MAP_SIZE) && (this.mapTerrain[xValue][yValue] != Terrain.OCEAN)) {
             this.mapTerrain[xValue][yValue] = terrain;
         }

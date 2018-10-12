@@ -1,4 +1,4 @@
-package com.jackdelia.colonialism.map.resource;
+package com.jackdelia.colonialism.resource;
 
 
 import com.jackdelia.colonialism.math.RandomNumberGenerator;

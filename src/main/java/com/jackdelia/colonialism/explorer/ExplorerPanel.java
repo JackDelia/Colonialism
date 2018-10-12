@@ -2,7 +2,6 @@ package com.jackdelia.colonialism.explorer;
 
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -15,23 +14,54 @@ public class ExplorerPanel extends JPanel {
 	private Explorer explorer;
 	private JLabel label;
 	
-	public ExplorerPanel(final Explorer ex) {
-		explorer = ex;
-		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-		label = new JLabel(explorer.toString());
-		add(label);
-		JButton increaseFunding = new JButton("^");
-		increaseFunding.addActionListener(e -> explorer.incrementFunding(1));
-		
-		JButton decreaseFunding = new JButton("v");
-		decreaseFunding.addActionListener(e -> ex.incrementFunding(-1));
-		
-		add(decreaseFunding);
-		add(increaseFunding);
-	}
+	private ExplorerPanel() {}
+
+    /**
+     * Factory Method for Creating new Instances of ExplorerPanels
+     * @param explorer the Explorer to be displayed
+     * @return a constructed instance of an ExplorerPanel
+     */
+	public static ExplorerPanel create(final Explorer explorer) {
+	    ExplorerPanel constructedExplorerPanel = new ExplorerPanel();
+
+        constructedExplorerPanel.setExplorer(explorer);
+
+        constructedExplorerPanel.setLayout(new BoxLayout(constructedExplorerPanel, BoxLayout.LINE_AXIS));
+
+        JLabel explorerLabel = new JLabel(explorer.toString());
+        constructedExplorerPanel.setLabel(explorerLabel);
+        constructedExplorerPanel.add(explorerLabel);
+
+        JButton increaseFunding = new JButton("^");
+        increaseFunding.addActionListener((ActionEvent e) -> explorer.incrementFunding(1));
+
+        JButton decreaseFunding = new JButton("v");
+        decreaseFunding.addActionListener((ActionEvent e) -> explorer.incrementFunding(-1));
+
+        constructedExplorerPanel.add(decreaseFunding);
+        constructedExplorerPanel.add(increaseFunding);
+
+	    return constructedExplorerPanel;
+    }
 	
-	public void paintComponent(Graphics g){
+	public void paintComponent(Graphics g) {
 		label.setText(explorer.toString());
 	}
 
+
+    public Explorer getExplorer() {
+        return explorer;
+    }
+
+    public void setExplorer(Explorer explorer) {
+        this.explorer = explorer;
+    }
+
+    public JLabel getLabel() {
+        return label;
+    }
+
+    public void setLabel(JLabel label) {
+        this.label = label;
+    }
 }

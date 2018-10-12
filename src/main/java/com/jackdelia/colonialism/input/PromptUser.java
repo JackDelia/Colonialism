@@ -26,6 +26,10 @@ public class PromptUser {
         return getInstance().forText(promptText);
     }
 
+    public static void withText(String modalText) {
+        getInstance().withText(modalText);
+    }
+
     /**
      * Factory Method to Support Lazy Loading the underlying Implementation as a singleton
      * @return a concrete implementation of IPromptUser

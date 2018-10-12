@@ -32,7 +32,7 @@ public class Funding {
     public Funding(int cash) {
 
         // validate input
-        if(cash < 0){
+        if(cash < 0) {
             cash = DEFAULT_STARTING_CASH;
         }
 

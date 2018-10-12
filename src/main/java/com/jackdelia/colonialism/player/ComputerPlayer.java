@@ -7,7 +7,7 @@ import com.jackdelia.colonialism.math.RandomNumberGenerator;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class ComputerPlayer extends Player {
+public class ComputerPlayer extends BasePlayer {
 	
 	private static final ArrayList<String> cityNames = new ArrayList<>();
 
@@ -35,32 +35,27 @@ public class ComputerPlayer extends Player {
 	}
 	
 	private ArrayList<Point> possibleLocations(){
-		ArrayList<Point> possible = new ArrayList<Point>();
+		ArrayList<Point> possible = new ArrayList<>();
 
 		for(int i = 0; i < Map.MAP_SIZE; i++){
 			for(int j = 0; j < Map.MAP_SIZE; j++){
-				if(canSee(i,j) && this.map.valid(i, j))
+				if(canSee(i, j) && this.map.valid(i, j)) {
 					possible.add(new Point(i,j));
+				}
 			}
 		}
 		
 		return possible;
 	}
-	
-	public void update(int days){
+
+	@Override
+	public void update(int days) {
 		super.update(days);
-		if(canExplore() && RandomNumberGenerator.generate() > .6){
-			explore(new Point((int)(RandomNumberGenerator.generate() * Map.MAP_SIZE),(int)(RandomNumberGenerator.generate() * Map.MAP_SIZE)));
+		if(canExplore() && RandomNumberGenerator.generate() > .6) {
+			explore(new Point((int)(RandomNumberGenerator.generate() * Map.MAP_SIZE), (int)(RandomNumberGenerator.generate() * Map.MAP_SIZE)));
 		}
 
-        getCities().forEach(c -> {
-            if (c.getSize() / 90 > c.getFunding() && getMoney() > getTotalExpenses() * 1.2) {
-                c.incrementFunding(1);
-            }
-            if (getMoney() > getTotalExpenses() * 4) {
-                c.incrementFunding(1);
-            }
-        });
+        getCities().forEach(this::incrementCityExpenses);
 		
 		ArrayList<Point> possible = possibleLocations();
 		if(possible.size() > 0 && System.currentTimeMillis() - this.lastCityTime > 50000) {
@@ -80,4 +75,12 @@ public class ComputerPlayer extends Player {
 		return cityNames.get((int)(RandomNumberGenerator.generate() * cityNames.size()));
 	}
 
+	private void incrementCityExpenses(City c) {
+		if (c.getCityPopulation() / 90 > c.getFunding() && getMoney() > getTotalExpenses() * 1.2) {
+			c.incrementFunding(1);
+		}
+		if (getMoney() > getTotalExpenses() * 4) {
+			c.incrementFunding(1);
+		}
+	}
 }

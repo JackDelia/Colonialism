@@ -7,6 +7,10 @@ class DayLabelView extends JLabel implements Observer {
     String text
     Observable observable
 
+    DayLabelView() {
+        text = ''
+    }
+
     void subscribe() {
         this.observable.addObserver(this)
     }

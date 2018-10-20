@@ -5,7 +5,8 @@ import com.jackdelia.colonialism.explorer.ExplorationPanel;
 import com.jackdelia.colonialism.Game;
 import com.jackdelia.colonialism.money.MoneyController;
 import com.jackdelia.colonialism.player.Player;
-import com.jackdelia.colonialism.player.PlayerController;
+import com.jackdelia.colonialism.player.PlayerNameController;
+import com.jackdelia.colonialism.player.PlayerNameModel;
 
 import java.awt.Graphics;
 
@@ -22,7 +23,7 @@ public class BasicsPanel extends JPanel {
     private BasicsModel basicsModel;
     private MoneyController moneyController;
     private DayController dayController;
-    private PlayerController playerController;
+    private PlayerNameController playerNameController;
 
 	public BasicsPanel(Player player) {
 
@@ -39,8 +40,8 @@ public class BasicsPanel extends JPanel {
 	    this.dayController = new DayController();
 	    this.dayController.addViewToPanel(rootPanel);
 
-	    this.playerController = new PlayerController();
-	    this.playerController.addViewToPanel(rootPanel);
+	    this.playerNameController = new PlayerNameController(player.getName());
+	    this.playerNameController.addViewToPanel(rootPanel);
 
         JPanel explorerPanel = ExplorationPanel.create(player);
         rootPanel.add(explorerPanel);
@@ -57,7 +58,6 @@ public class BasicsPanel extends JPanel {
 	public static BasicsPanel create(Player player, Game game) {
 	    BasicsPanel constructedBasicsPanel = new BasicsPanel(player);
 
-        constructedBasicsPanel.basicsModel.setPlayerName(player.getName());
         constructedBasicsPanel.basicsModel.setGameDay(game.getDay());
 
 	    return constructedBasicsPanel;
@@ -66,7 +66,6 @@ public class BasicsPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 
 	    this.dayController.setDay(this.basicsModel.getGameDay());
-	    this.playerController.setName(this.basicsModel.getPlayerName());
 
 	}
 

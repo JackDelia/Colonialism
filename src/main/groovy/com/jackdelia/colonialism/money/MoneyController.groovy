@@ -8,7 +8,6 @@ class MoneyController implements Observer {
     MoneyLabelView moneyLabelView
     Observable observable
 
-
     MoneyController() {
         moneyModel = new MoneyModel()
         moneyLabelView = new MoneyLabelView(observable: moneyModel)

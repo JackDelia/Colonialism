@@ -7,6 +7,10 @@ class MoneyLabelView extends JLabel implements Observer {
     String text
     Observable observable
 
+    MoneyLabelView() {
+        text = ''
+    }
+
     void subscribe() {
         this.observable.addObserver(this)
     }

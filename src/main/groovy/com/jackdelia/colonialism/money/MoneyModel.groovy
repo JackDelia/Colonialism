@@ -1,13 +1,11 @@
 package com.jackdelia.colonialism.money
 
-import com.jackdelia.colonialism.currency.Funding
-
 class MoneyModel extends Observable {
 
     private double money
 
     MoneyModel() {
-        money = Funding.DEFAULT_STARTING_CASH
+        money = 0
     }
 
     void setMoney(double newMoneyValue) {

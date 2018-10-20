@@ -1,5 +1,7 @@
 package com.jackdelia.colonialism.location;
 
+import org.jetbrains.annotations.Contract;
+
 import java.awt.*;
 
 /**
@@ -22,7 +24,7 @@ public class Location {
     /**
      * Default Constructor
      */
-    public Location(){
+    public Location() {
         this.point = new Point();
     }
 
@@ -38,7 +40,7 @@ public class Location {
      *
      * @return Point the coordinate pair representing a location
      */
-    public Point getPoint(){
+    public Point getPoint() {
         return this.point;
     }
 
@@ -47,7 +49,7 @@ public class Location {
      *
      * @param newPoint for the location to represent
      */
-    public void setPoint(Point newPoint){
+    public void setPoint(Point newPoint) {
         this.point = newPoint;
     }
 
@@ -56,7 +58,7 @@ public class Location {
      *
      * @param xValue for the location to represent
      */
-    public void setXValue(int xValue){
+    public void setXValue(int xValue) {
         this.point.x = xValue;
     }
 
@@ -65,7 +67,7 @@ public class Location {
      *
      * @param yValue for the location to represent
      */
-    public void setYValue(int yValue){
+    public void setYValue(int yValue) {
         this.point.y = yValue;
     }
 
@@ -74,7 +76,7 @@ public class Location {
      *
      * @return the x coordinate
      */
-    public int getXValue(){
+    public int getXValue() {
         return this.point.x;
     }
 
@@ -83,7 +85,7 @@ public class Location {
      *
      * @return the y coordinate
      */
-    public int getYValue(){
+    public int getYValue() {
         return this.point.y;
     }
 
@@ -110,7 +112,7 @@ public class Location {
      *
      * @param targetLocation the location to move towards
      */
-    public void translate(Location targetLocation){
+    public void translate(Location targetLocation) {
         this.point.translate(targetLocation.getPoint().x, targetLocation.getPoint().y);
     }
 
@@ -120,22 +122,23 @@ public class Location {
      * @param otherObject either a Point or a Location to compare against
      * @return true if equal, false if not
      */
-    public boolean equals(Object otherObject){
+    @Contract(value = "null -> false", pure = true)
+    public boolean equals(Object otherObject) {
 
-        if(otherObject instanceof Location) {
+        if (otherObject instanceof Location) {
             // if the x and y values are the same, then they are equal
             return (this.point.x == ((Location) otherObject).getPoint().getX())
                     && (this.point.y == ((Location) otherObject).getPoint().getY());
         }
 
-        if(otherObject instanceof Point) {
-            // if it is a Point, then compare based on the underlying point object
-            return this.point.equals(otherObject);
-        }
-
         // object type mismatch, so return false
         return false;
+    }
 
+    @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
     }
 
 }

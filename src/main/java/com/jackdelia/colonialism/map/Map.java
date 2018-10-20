@@ -238,12 +238,18 @@ public class Map extends JPanel{
         for(int i = 3; i <= 4; i++){
             Terrain t = Terrain.PLAINS;
             switch(i) {
-                case 2: t = Terrain.MOUNTAINS;
+                case 2:
                     // this is an unreachable case: intended behavior?
+                    t = Terrain.MOUNTAINS;
                     break;
-                case 3: t = Terrain.DESERT;
+                case 3:
+                    t = Terrain.DESERT;
                     break;
-                case 4: t = Terrain.FORREST;
+                case 4:
+                    t = Terrain.FORREST;
+                    break;
+                default:
+                    break;
 
             }
 

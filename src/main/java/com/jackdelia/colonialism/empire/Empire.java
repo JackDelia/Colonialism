@@ -31,7 +31,7 @@ public class Empire {
     }
 
     private static String toStringForCollection(City curCity) {
-        return String.format("%s\n", curCity.toString());
+        return String.format("%s%n", curCity.toString());
     }
 
     /**

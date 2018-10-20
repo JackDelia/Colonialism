@@ -88,7 +88,7 @@ public abstract class BasePlayer {
     }
 
     public String toString(){
-        StringBuilder constructedMessage = new StringBuilder(String.format("name: %s\nMoney: %s\nselectedCity: ", this.playerNameModel.getName(), this.money));
+        StringBuilder constructedMessage = new StringBuilder(String.format("name: %s%nMoney: %s%nselectedCity: ", this.playerNameModel.getName(), this.money));
 
         if(this.selectedCity != null) {
             constructedMessage.append(this.selectedCity.getName());
@@ -98,7 +98,7 @@ public abstract class BasePlayer {
 
         constructedMessage.append(this.empire.toString());
 
-        return String.format("%s\n", constructedMessage);
+        return String.format("%s%n", constructedMessage);
     }
 
     public void update(int days) {

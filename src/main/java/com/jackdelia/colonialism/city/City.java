@@ -107,7 +107,7 @@ public class City {
 		if(this.stockpile.get(Resource.TOOLS) != null){
 			toolsMult += this.stockpile.get(Resource.TOOLS) / 5;
 		}
-		return (((int) this.funding / 10) + 1) * (getCityPopulation() / 10) * .01 * toolsMult;
+		return ((this.funding / 10) + 1) * ((double) getCityPopulation() / 10.0) * 0.01 * toolsMult;
 	}
 	
 	private double getProductionOf(Resource res) {
@@ -126,10 +126,15 @@ public class City {
 		switch(this.terrain) {
 			case MOUNTAINS:
 				increaseByAmount /= 2;
+				break;
 			case DESERT:
 				increaseByAmount /= 2;
+				break;
 			case FORREST:
 				increaseByAmount -= 1;
+				break;
+            default:
+			    break;
 		}
 
 		double food = 0;
@@ -154,13 +159,14 @@ public class City {
 			foodTypes++;
 		}
 		
-		double foodMult = Math.max(.5, 10* food / getCityPopulation());
+		double foodMult = Math.max(0.5, (10.0 * food) / (double) getCityPopulation());
 
 		if(foodTypes != 0) {
-			incrementStockpile(Resource.GRAIN, - getCityPopulation() / (1000 * foodTypes));
-			incrementStockpile(Resource.MEAT, - getCityPopulation() / (1000 * foodTypes));
-			incrementStockpile(Resource.FISH, - getCityPopulation() / (1000 * foodTypes));
+			incrementStockpile(Resource.GRAIN, -1.0 * (double) getCityPopulation() / (1000.0 * foodTypes));
+			incrementStockpile(Resource.MEAT, -1.0 * (double) getCityPopulation() / (1000.0 * foodTypes));
+			incrementStockpile(Resource.FISH, -1.0 * (double) getCityPopulation() / (1000.0 * foodTypes));
 		}
+
 		increaseByAmount *= foodMult;
 		
 		if(increaseByAmount > 10) {
@@ -183,7 +189,7 @@ public class City {
 		double stockpiled = this.stockpile.get(k);
 		
 		double baseAmount = ((produce/100.0)*days*getProductionPower());
-		if(Game.ADVANCED.get(k) != null){
+		if(Game.ADVANCED.get(k) != null) {
 			Resource baseRes = Game.ADVANCED.get(k);
 			if(this.stockpile.get(baseRes) < baseAmount) {
                 baseAmount = this.stockpile.get(baseRes);

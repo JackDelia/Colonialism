@@ -53,7 +53,7 @@ public class ResourceCollection {
      * @return Resource[] the inner resource array
      */
     public Resource[] getResources() {
-        return (Resource[]) this.resources.toArray();
+        return this.resources.toArray(new Resource[0]);
     }
 
     /**

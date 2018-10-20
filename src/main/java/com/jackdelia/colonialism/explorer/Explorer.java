@@ -134,6 +134,8 @@ public class Explorer {
                 );
 
                 break;
+            default:
+                break;
         }
 
 		this.location.translate(direction);
@@ -202,7 +204,7 @@ public class Explorer {
 
     private void updateExplorerLocation(int i) {
         if (this.target.equals(this.location) ||
-                (this.travelled > this.range + (RandomNumberGenerator.generate() * (this.range / 2)) && !this.target.equals(this.origin))) {
+                ((this.travelled > (this.range + ((int) RandomNumberGenerator.generate() * (this.range / 2)))) && !this.target.equals(this.origin))) {
             if (this.target.equals(this.origin)) {
                 this.exploring = false;
                 this.travelled = 0;

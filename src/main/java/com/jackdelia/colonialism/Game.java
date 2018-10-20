@@ -45,7 +45,7 @@ public class Game extends JFrame {
 	private String currentMessage = "";
 	private DayModel dayModel;
 	private long lastUpdate;
-	
+
 	public static final HashMap<Resource, Resource> ADVANCED;
 
 	static {
@@ -304,7 +304,7 @@ public class Game extends JFrame {
 				JButton backButton = new JButton("Back");
 				backButton.addActionListener(this::performBackButtonClick);
 				JPanel instructions = createMessageBox();
-                this.messages.setText("Colonialism!\n\nExplore the map and found cities to \nmake money!\n\nTIPS:\n\n You lose if you run out of money, so be careful!\n\nYour explorers can be a bit lazy. You may have to move yourself a bit to get them to explore what you want\n\nYou've gotta spend money to make money!");
+                this.messages.setText("Colonialism!%n%nExplore the map and found cities to %nmake money!%n%nTIPS:%n%n You lose if you run out of money, so be careful!%n%nYour explorers can be a bit lazy. You may have to move yourself a bit to get them to explore what you want%n%nYou've gotta spend money to make money!");
 				container.add(backButton);
 				container.add(instructions);
 				container.validate();

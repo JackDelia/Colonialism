@@ -345,6 +345,10 @@ public class City {
 		return this.population.getNumberOfPeople();
 	}
 
+	public Population getPopulation() {
+        return this.population;
+    }
+
 	public double getFunding() {
 		return this.funding;
 	}

@@ -17,7 +17,7 @@ import java.util.Observable;
  */
 public class Funding extends Observable {
 
-    public static final int DEFAULT_STARTING_CASH = 1;
+    private static final int DEFAULT_STARTING_CASH = 1;
 
     private int cash;
 

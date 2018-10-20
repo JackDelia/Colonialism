@@ -1,14 +1,15 @@
 package com.jackdelia.colonialism;
 
+import com.jackdelia.colonialism.basics.BasicsPanelView;
 import com.jackdelia.colonialism.city.City;
 import com.jackdelia.colonialism.day.DayModel;
 import com.jackdelia.colonialism.input.PromptUser;
 import com.jackdelia.colonialism.resource.Resource;
-import com.jackdelia.colonialism.basics.BasicsPanel;
 import com.jackdelia.colonialism.city.CityPanel;
 import com.jackdelia.colonialism.map.Map;
 import com.jackdelia.colonialism.player.Player;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Contract;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -88,8 +89,9 @@ public class Game extends JFrame {
 
 	    return constructedGame;
     }
-	
-	public static double trim(double d){
+
+	@Contract(pure = true)
+    public static double trim(double d){
 		if(Math.abs(d - ((int) d)) < .01) {
 			d = (int) d;
 		}
@@ -196,8 +198,8 @@ public class Game extends JFrame {
 
 		setupMoveButtonPanel();
 		setupButtonPanel();
-		JPanel basicsPanel = BasicsPanel.create(pc, this);
-		this.uiPanel.add(basicsPanel);
+
+		this.uiPanel.add(new BasicsPanelView(pc, this));
 		this.uiPanel.add(this.buttonPanel);
 		setupMouseListener();
 		

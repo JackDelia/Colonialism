@@ -6,41 +6,32 @@ import com.jackdelia.colonialism.Game;
 import com.jackdelia.colonialism.money.MoneyController;
 import com.jackdelia.colonialism.player.Player;
 import com.jackdelia.colonialism.player.PlayerNameController;
-import com.jackdelia.colonialism.player.PlayerNameModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Graphics;
-
 import javax.swing.BoxLayout;
-
 import javax.swing.JPanel;
 
 /**
- *
- *
+ * JPanel that Displays basic information about the Player
  */
 public class BasicsPanel extends JPanel {
 
-    private MoneyController moneyController;
-    private DayController dayController;
-    private PlayerNameController playerNameController;
-
-	public BasicsPanel(Player player, Game game) {
+    private BasicsPanel(@NotNull Player player, @NotNull Game game) {
 
         JPanel rootPanel = new JPanel();
         rootPanel.setLayout(new BoxLayout(rootPanel, BoxLayout.PAGE_AXIS));
 
-	    this.moneyController = new MoneyController();
-	    this.moneyController.setObservable(player.getMoney());
-	    this.moneyController.subscribe();
-	    this.moneyController.addViewToPanel(rootPanel);
+        MoneyController moneyController = new MoneyController();
+	    moneyController.setObservable(player.getMoney());
+	    moneyController.subscribe();
+	    moneyController.addViewToPanel(rootPanel);
 
-	    this.dayController = new DayController(game.getDay());
-	    this.dayController.addViewToPanel(rootPanel);
+        DayController dayController = new DayController(game.getDay());
+	    dayController.addViewToPanel(rootPanel);
 
-	    this.playerNameController = new PlayerNameController(player.getName());
-	    this.playerNameController.addViewToPanel(rootPanel);
+        PlayerNameController playerNameController = new PlayerNameController(player.getName());
+	    playerNameController.addViewToPanel(rootPanel);
 
         JPanel explorerPanel = ExplorationPanel.create(player);
         rootPanel.add(explorerPanel);
@@ -60,8 +51,6 @@ public class BasicsPanel extends JPanel {
         return new BasicsPanel(player, game);
     }
 
-	public void paintComponent(Graphics g) {
 
-	}
 
 }

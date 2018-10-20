@@ -27,7 +27,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 
-public class Game extends JFrame{
+public class Game extends JFrame {
 	private boolean exploreClicked;
 	private boolean foundClicked;
 	private boolean moving;
@@ -347,7 +347,7 @@ public class Game extends JFrame{
 
 	public void run() {	
 		setup(showMenu());
-		while(this.pc.getMoney() >= 1) {
+		while(this.pc.getMoney().getCash() >= 1) {
 			validate();
 			repaint();
             this.gameMap.repaint();

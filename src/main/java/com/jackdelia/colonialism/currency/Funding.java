@@ -1,5 +1,7 @@
 package com.jackdelia.colonialism.currency;
 
+import java.util.Observable;
+
 /**
  * <p>Information about an Explorer or Player's Funding</p>
  * <p>
@@ -13,16 +15,16 @@ package com.jackdelia.colonialism.currency;
  * @since 0.5
  * @version 0.5
  */
-public class Funding {
+public class Funding extends Observable {
 
-    private static final int DEFAULT_STARTING_CASH = 1;
+    public static final int DEFAULT_STARTING_CASH = 1;
 
     private int cash;
 
     /**
      * Default Constructor
      */
-    public Funding(){
+    public Funding() {
         this.cash = DEFAULT_STARTING_CASH;
     }
 
@@ -36,7 +38,7 @@ public class Funding {
             cash = DEFAULT_STARTING_CASH;
         }
 
-        this.cash = cash;
+        setCash(cash);
     }
 
     /**
@@ -54,7 +56,18 @@ public class Funding {
      * @param howMuch cash to add into the funding
      */
     public void addCash(int howMuch){
-        this.cash += howMuch;
+        if(howMuch == 0) {
+            return;
+        }
+
+        if(howMuch < 0) {
+            removeCash(-1 * howMuch);
+        }
+
+        final int initialCash = this.cash;
+        int newCashAmount = initialCash + howMuch;
+
+        setCash(newCashAmount);
     }
 
     /**
@@ -63,11 +76,30 @@ public class Funding {
      * @param howMuch cash to remove from the funding
      */
     public void removeCash(int howMuch){
-        this.cash -= howMuch;
+        if(howMuch == 0) {
+            return;
+        }
+
+        if(howMuch < 0) {
+            addCash(-1 * howMuch);
+        }
+
+        final int initialCash = this.cash;
+        int newCashAmount = initialCash - howMuch;
 
         // prevent the explorer from going completely broke
-        if(this.cash <= 0) {
-            this.cash = 1;
+        if(newCashAmount <= 0) {
+            newCashAmount = 1;
+        }
+
+        setCash(newCashAmount);
+    }
+
+    private void setCash(int newCashValue) {
+        if(this.cash != newCashValue) {
+            this.cash = newCashValue;
+            setChanged();
+            notifyObservers(newCashValue);
         }
     }
 

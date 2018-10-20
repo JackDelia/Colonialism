@@ -102,7 +102,7 @@ public class City {
     }
 
 	
-	public double getProductionPower(){
+	public double getProductionPower() {
 		double toolsMult = 1;
 		if(this.stockpile.get(Resource.TOOLS) != null){
 			toolsMult += this.stockpile.get(Resource.TOOLS) / 5;
@@ -110,7 +110,7 @@ public class City {
 		return (((int) this.funding / 10) + 1) * (getCityPopulation() / 10) * .01 * toolsMult;
 	}
 	
-	private double getProductionOf(Resource res){
+	private double getProductionOf(Resource res) {
 		Double prod = this.production.get(res);
 		if(prod == null) {
             return 0;
@@ -118,7 +118,7 @@ public class City {
 		return getProductionPower()*(prod/100);
 	}
 	
-	private void addPopulation(){
+	private void addPopulation() {
 		
 		int increaseByAmount = (int)(this.funding * 100.0 / getCityPopulation());
 		increaseByAmount += getProductionOf(Resource.GRAIN);
@@ -207,8 +207,8 @@ public class City {
 	}
 	
 	public void update(int days) {
-		if(this.player.getMoney() < this.funding) {
-			this.funding = this.player.getMoney();
+		if(this.player.getMoney().getCash() < this.funding) {
+			this.funding = this.player.getMoney().getCash();
 		}
 
         IntStream.range(0, days).forEachOrdered(i -> addPopulation());

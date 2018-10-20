@@ -10,7 +10,6 @@ import com.jackdelia.colonialism.map.Map;
 public class Player extends BasePlayer {
 
 
-
     private Player(String name, Map map) {
         super(name, map);
     }

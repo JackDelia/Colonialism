@@ -122,8 +122,8 @@ public abstract class BasePlayer {
         return this.empire.findCityByName(name);
     }
 
-    public double getMoney() {
-        return this.money.getCash();
+    public Funding getMoney() {
+        return this.money;
     }
 
     public void incrementMoney(double money) {

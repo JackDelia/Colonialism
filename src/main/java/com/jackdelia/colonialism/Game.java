@@ -1,6 +1,7 @@
 package com.jackdelia.colonialism;
 
 import com.jackdelia.colonialism.city.City;
+import com.jackdelia.colonialism.day.DayModel;
 import com.jackdelia.colonialism.input.PromptUser;
 import com.jackdelia.colonialism.resource.Resource;
 import com.jackdelia.colonialism.basics.BasicsPanel;
@@ -41,7 +42,7 @@ public class Game extends JFrame {
 	private JPanel uiPanel;
 	private JEditorPane messages;
 	private String currentMessage = "";
-	private int day;
+	private DayModel dayModel;
 	private long lastUpdate;
 	
 	public static final HashMap<Resource, Resource> ADVANCED;
@@ -57,7 +58,7 @@ public class Game extends JFrame {
 	
 	private Game(){
 		super("Colonialism!");
-
+		this.dayModel = new DayModel();
         this.exploreClicked = false;
         this.foundClicked = false;
         this.players = new ArrayList<>();
@@ -357,7 +358,7 @@ public class Game extends JFrame {
             }
 
 			if(System.currentTimeMillis() - this.lastUpdate > 500) {
-                this.day++;
+                this.dayModel.setDay(this.dayModel.getDay() + 1);
                 this.lastUpdate = System.currentTimeMillis();
 
 				for(Player p: this.players) {
@@ -373,8 +374,8 @@ public class Game extends JFrame {
 		Game.create().run();
 	}
 	
-	public int getDay(){
-		return this.day;
+	public DayModel getDay(){
+		return this.dayModel;
 	}
 
     public boolean isExploreClicked() {
@@ -479,10 +480,6 @@ public class Game extends JFrame {
 
     public void setCurrentMessage(String currentMessage) {
         this.currentMessage = currentMessage;
-    }
-
-    public void setDay(int day) {
-        this.day = day;
     }
 
     public long getLastUpdate() {

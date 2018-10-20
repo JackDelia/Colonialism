@@ -8,8 +8,16 @@ class DayController {
     DayLabelView dayLabelView
 
     DayController() {
-        dayModel = new DayModel()
-        dayLabelView = new DayLabelView(observable: dayModel)
+        this(null)
+    }
+
+    DayController(DayModel dayModel) {
+        if(dayModel == null) {
+            dayModel = new DayModel()
+        }
+
+        this.dayModel = dayModel
+        dayLabelView = new DayLabelView(observable: this.dayModel)
         dayLabelView.subscribe()
     }
 

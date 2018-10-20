@@ -2,7 +2,7 @@ package com.jackdelia.colonialism.day
 
 class DayModel extends Observable {
 
-    private int day
+    int day
 
     DayModel() {
         day = 0

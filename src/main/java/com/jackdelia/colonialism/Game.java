@@ -1,13 +1,15 @@
 package com.jackdelia.colonialism;
 
+import com.jackdelia.colonialism.basics.BasicsPanelView;
 import com.jackdelia.colonialism.city.City;
+import com.jackdelia.colonialism.day.DayModel;
 import com.jackdelia.colonialism.input.PromptUser;
 import com.jackdelia.colonialism.resource.Resource;
-import com.jackdelia.colonialism.basics.BasicsPanel;
 import com.jackdelia.colonialism.city.CityPanel;
 import com.jackdelia.colonialism.map.Map;
 import com.jackdelia.colonialism.player.Player;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Contract;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -27,7 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 
-public class Game extends JFrame{
+public class Game extends JFrame {
 	private boolean exploreClicked;
 	private boolean foundClicked;
 	private boolean moving;
@@ -41,7 +43,7 @@ public class Game extends JFrame{
 	private JPanel uiPanel;
 	private JEditorPane messages;
 	private String currentMessage = "";
-	private int day;
+	private DayModel dayModel;
 	private long lastUpdate;
 	
 	public static final HashMap<Resource, Resource> ADVANCED;
@@ -57,7 +59,7 @@ public class Game extends JFrame{
 	
 	private Game(){
 		super("Colonialism!");
-
+		this.dayModel = new DayModel();
         this.exploreClicked = false;
         this.foundClicked = false;
         this.players = new ArrayList<>();
@@ -87,8 +89,9 @@ public class Game extends JFrame{
 
 	    return constructedGame;
     }
-	
-	public static double trim(double d){
+
+	@Contract(pure = true)
+    public static double trim(double d){
 		if(Math.abs(d - ((int) d)) < .01) {
 			d = (int) d;
 		}
@@ -195,8 +198,8 @@ public class Game extends JFrame{
 
 		setupMoveButtonPanel();
 		setupButtonPanel();
-		JPanel basicsPanel = BasicsPanel.create(pc, this);
-		this.uiPanel.add(basicsPanel);
+
+		this.uiPanel.add(new BasicsPanelView(pc, this));
 		this.uiPanel.add(this.buttonPanel);
 		setupMouseListener();
 		
@@ -347,7 +350,7 @@ public class Game extends JFrame{
 
 	public void run() {	
 		setup(showMenu());
-		while(this.pc.getMoney() >= 1) {
+		while(this.pc.getMoney().getCash() >= 1) {
 			validate();
 			repaint();
             this.gameMap.repaint();
@@ -357,7 +360,7 @@ public class Game extends JFrame{
             }
 
 			if(System.currentTimeMillis() - this.lastUpdate > 500) {
-                this.day++;
+                this.dayModel.setDay(this.dayModel.getDay() + 1);
                 this.lastUpdate = System.currentTimeMillis();
 
 				for(Player p: this.players) {
@@ -373,8 +376,8 @@ public class Game extends JFrame{
 		Game.create().run();
 	}
 	
-	public int getDay(){
-		return this.day;
+	public DayModel getDay(){
+		return this.dayModel;
 	}
 
     public boolean isExploreClicked() {
@@ -479,10 +482,6 @@ public class Game extends JFrame{
 
     public void setCurrentMessage(String currentMessage) {
         this.currentMessage = currentMessage;
-    }
-
-    public void setDay(int day) {
-        this.day = day;
     }
 
     public long getLastUpdate() {

@@ -76,10 +76,10 @@ public class ComputerPlayer extends BasePlayer {
 	}
 
 	private void incrementCityExpenses(City c) {
-		if (c.getCityPopulation() / 90 > c.getFunding() && getMoney() > getTotalExpenses() * 1.2) {
+		if (c.getCityPopulation() / 90 > c.getFunding() && getMoney().getCash() > getTotalExpenses() * 1.2) {
 			c.incrementFunding(1);
 		}
-		if (getMoney() > getTotalExpenses() * 4) {
+		if (getMoney().getCash() > getTotalExpenses() * 4) {
 			c.incrementFunding(1);
 		}
 	}

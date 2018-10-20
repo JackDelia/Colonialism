@@ -1,5 +1,7 @@
 package com.jackdelia.colonialism.city;
 
+import java.util.Observable;
+
 /**
  * <p>Information about a City's Population</p>
  * <p>
@@ -13,7 +15,7 @@ package com.jackdelia.colonialism.city;
  * @since 0.5
  * @version 0.5
  */
-public class Population {
+public class Population extends Observable {
 
     private static final int DEFAULT_STARTING_POPULATION = 50;
 
@@ -22,8 +24,8 @@ public class Population {
     /**
      * Default Constructor
      */
-    public Population(){
-        this.numberOfPeople = DEFAULT_STARTING_POPULATION;
+    Population(){
+        setPopulation(DEFAULT_STARTING_POPULATION);
     }
 
     /**
@@ -36,7 +38,7 @@ public class Population {
             numberOfPeople = DEFAULT_STARTING_POPULATION;
         }
 
-        this.numberOfPeople = numberOfPeople;
+        setPopulation(numberOfPeople);
     }
 
     /**
@@ -44,7 +46,7 @@ public class Population {
      *
      * @return int the population count
      */
-    public int getNumberOfPeople(){
+    int getNumberOfPeople(){
         return this.numberOfPeople;
     }
 
@@ -53,8 +55,25 @@ public class Population {
      *
      * @param howManyPeople the number to increase the population by
      */
-    public void increasePopulation(int howManyPeople){
-        this.numberOfPeople += howManyPeople;
+    void increasePopulation(int howManyPeople){
+
+        if(howManyPeople == 0) {
+            return;
+        }
+
+        if(howManyPeople < 0) {
+            decreasePopulation(-1 * howManyPeople);
+        }
+
+        final int initialPopulation = this.numberOfPeople;
+        int newPopulationAmount = initialPopulation + howManyPeople;
+
+        // prevent the explorer from going completely broke
+        if(newPopulationAmount < 0) {
+            newPopulationAmount = 0;
+        }
+
+        setPopulation(newPopulationAmount);
     }
 
     /**
@@ -62,14 +81,34 @@ public class Population {
      *
      * @param howManyPeople the number to decrease the population by
      */
-    public void decreasePopulation(int howManyPeople){
-        this.numberOfPeople -= howManyPeople;
+    void decreasePopulation(int howManyPeople){
 
-        // if the decrease drops into the negatives, then set to zero
-        if(this.numberOfPeople < 0){
-            this.numberOfPeople = 0;
+        if(howManyPeople == 0) {
+            return;
         }
 
+        if(howManyPeople < 0) {
+            increasePopulation(-1 * howManyPeople);
+        }
+
+
+        final int initialPopulation = this.numberOfPeople;
+        int newPopulationAmount = initialPopulation - howManyPeople;
+
+        // prevent the explorer from going completely broke
+        if(newPopulationAmount < 0) {
+            newPopulationAmount = 0;
+        }
+
+        setPopulation(newPopulationAmount);
+    }
+
+    private void setPopulation(int newPopulationValue) {
+        if(this.numberOfPeople != newPopulationValue) {
+            this.numberOfPeople = newPopulationValue;
+            setChanged();
+            notifyObservers(newPopulationValue);
+        }
     }
 
 }

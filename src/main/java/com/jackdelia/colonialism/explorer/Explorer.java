@@ -10,7 +10,7 @@ import com.jackdelia.colonialism.math.RandomNumberGenerator;
 import java.awt.Point;
 import java.util.stream.IntStream;
 
-public class Explorer{
+public class Explorer {
 	private static final String[] FIRST_NAMES = new String[]{"Jack", "Devin", "Brandon", "James", "Kenneth", "Allen", "Joeseph", "Jonathon", "George", "Thomas", "Christopher"};
 	private static final String[] LAST_NAMES = new String[]{"Delia", "Smith", "Jones", "Joestar", "Mitchell", "Davidson", "Johnson", "Jefferson", "Washington", "Colombus"};
 

@@ -16,7 +16,7 @@ public abstract class BasePlayer {
 
     private static final int STARTING_CASH = 1000;
 
-    private String name;
+    private PlayerNameModel playerNameModel;
     protected Map map;
 
     private Influence influence;
@@ -34,6 +34,8 @@ public abstract class BasePlayer {
 
 
     public BasePlayer(String name, Map map) {
+
+        this.playerNameModel = new PlayerNameModel();
 
         setName(name);
         setMap(map);
@@ -86,7 +88,7 @@ public abstract class BasePlayer {
     }
 
     public String toString(){
-        StringBuilder constructedMessage = new StringBuilder(String.format("name: %s\nMoney: %s\nselectedCity: ", this.name, this.money));
+        StringBuilder constructedMessage = new StringBuilder(String.format("name: %s\nMoney: %s\nselectedCity: ", this.playerNameModel.getName(), this.money));
 
         if(this.selectedCity != null) {
             constructedMessage.append(this.selectedCity.getName());
@@ -122,8 +124,8 @@ public abstract class BasePlayer {
         return this.empire.findCityByName(name);
     }
 
-    public double getMoney() {
-        return this.money.getCash();
+    public Funding getMoney() {
+        return this.money;
     }
 
     public void incrementMoney(double money) {
@@ -189,12 +191,12 @@ public abstract class BasePlayer {
         return this.visible[p.x][p.y];
     }
 
-    public String getName() {
-        return name;
+    public PlayerNameModel getName() {
+        return playerNameModel;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.playerNameModel.setName(name);
     }
 
     public Map getMap() {

@@ -54,7 +54,6 @@ public class ResourceFactory {
                 Resource.WEAPONS,
                 Resource.IRON,
                 Resource.SOLDIERS,
-                Resource.WEAPONS,
                 Resource.TOOLS,
                 Resource.STONE,
                 Resource.CLOTHING,

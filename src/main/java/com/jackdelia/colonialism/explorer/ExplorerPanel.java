@@ -38,8 +38,8 @@ public class ExplorerPanel extends JPanel {
         JButton decreaseFunding = new JButton("v");
         decreaseFunding.addActionListener((ActionEvent e) -> explorer.incrementFunding(-1));
 
-        constructedExplorerPanel.add(decreaseFunding);
         constructedExplorerPanel.add(increaseFunding);
+        constructedExplorerPanel.add(decreaseFunding);
 
 	    return constructedExplorerPanel;
     }

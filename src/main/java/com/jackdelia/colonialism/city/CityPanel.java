@@ -170,13 +170,13 @@ public class CityPanel extends JPanel {
 		// setup increase stock button
 		JButton increaseStock= new JButton("^");
 		increaseStock.addActionListener((ActionEvent e) ->
-                city.setInstruction(type, "stockpile", city.getInstruction(type, "stockpile") + 1)
+				city.setStockpileTarget(type, city.getStockpileTargetForResource(type)+1)
         );
 
 		// setup decrease stock button
 		JButton decreaseStock = new JButton("v");
 		decreaseStock.addActionListener((ActionEvent e) ->
-				city.setInstruction(type, "stockpile", city.getInstruction(type, "stockpile")-1)
+				city.setStockpileTarget(type, city.getStockpileTargetForResource(type)-1)
         );
 		
 		stock.setLayout(new BoxLayout(stock, BoxLayout.X_AXIS));
@@ -296,7 +296,7 @@ public class CityPanel extends JPanel {
 
     private void setStockpileQuantityOnPanel(Resource type, JEditorPane pane) {
         double amount = city.getStockpile(type);
-        pane.setText(String.format("%s (%s)", Game.trim(amount), Game.trim(city.getInstruction(type, "stockpile"))));
+        pane.setText(String.format("%s (%s)", Game.trim(amount), Game.trim(city.getStockpileTargetForResource(type))));
     }
 
     private void setProductionQuantityOnPanel(Resource type, JEditorPane pane) {
